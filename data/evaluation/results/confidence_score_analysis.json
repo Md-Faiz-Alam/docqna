@@ -1,0 +1,355 @@
+{
+  "retrieval_configuration": {
+    "rrf_k": 60,
+    "rrf_candidate_pool_size": 10,
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "reranker_candidate_pool_size": 20,
+    "top_k": 5
+  },
+  "answerable_summary": {
+    "count": 18,
+    "min": 1.335381269454956,
+    "mean": 6.089553925726149,
+    "median": 6.619671821594238,
+    "max": 8.225724220275879
+  },
+  "unanswerable_summary": {
+    "count": 12,
+    "min": -11.237931251525879,
+    "mean": -10.216780026753744,
+    "median": -10.987144947052002,
+    "max": -7.574321746826172
+  },
+  "cases": [
+    {
+      "case_id": "wbs_001",
+      "question": "How is a Work Breakdown Structure developed, and what advantages does it provide for project planning and control?",
+      "should_answer": true,
+      "top_score": 6.6617279052734375,
+      "second_score": 3.4167919158935547,
+      "score_margin": 3.244935989379883,
+      "top_chunk_id": "chunk_a0f3ea2d893e5f9f",
+      "top_page_start": 26,
+      "top_page_end": 27
+    },
+    {
+      "case_id": "scheduling_001",
+      "question": "Which tools and techniques are described for project scheduling and estimating task durations?",
+      "should_answer": true,
+      "top_score": 6.607117652893066,
+      "second_score": 4.991101264953613,
+      "score_margin": 1.6160163879394531,
+      "top_chunk_id": "chunk_c6517babba020e11",
+      "top_page_start": 22,
+      "top_page_end": 22
+    },
+    {
+      "case_id": "ethics_001",
+      "question": "What are the four pillars of the PMI Code of Ethics and Professional Conduct?",
+      "should_answer": true,
+      "top_score": 8.225724220275879,
+      "second_score": -2.0231404304504395,
+      "score_margin": 10.248864650726318,
+      "top_chunk_id": "chunk_3a9c72ed302bf53b",
+      "top_page_start": 32,
+      "top_page_end": 32
+    },
+    {
+      "case_id": "cpm_pert_001",
+      "question": "How do CPM and PERT differ in the way they estimate project duration and analyze the critical path?",
+      "should_answer": true,
+      "top_score": 4.5611162185668945,
+      "second_score": 4.2993011474609375,
+      "score_margin": 0.26181507110595703,
+      "top_chunk_id": "chunk_1a2c133e6a84cf30",
+      "top_page_start": 38,
+      "top_page_end": 38
+    },
+    {
+      "case_id": "lean_001",
+      "question": "What techniques are used in Lean Project Management to improve efficiency and reduce waste?",
+      "should_answer": true,
+      "top_score": 6.63222599029541,
+      "second_score": 5.258874416351318,
+      "score_margin": 1.3733515739440918,
+      "top_chunk_id": "chunk_0d52f1d522af6509",
+      "top_page_start": 45,
+      "top_page_end": 46
+    },
+    {
+      "case_id": "hybrid_001",
+      "question": "How does Hybrid Project Management combine traditional and Agile approaches?",
+      "should_answer": true,
+      "top_score": 6.744510650634766,
+      "second_score": 6.305665969848633,
+      "score_margin": 0.4388446807861328,
+      "top_chunk_id": "chunk_aecce270d9a51659",
+      "top_page_start": 47,
+      "top_page_end": 48
+    },
+    {
+      "case_id": "scope_change_001",
+      "question": "What processes are recommended for preventing scope creep and controlling project scope changes?",
+      "should_answer": true,
+      "top_score": 6.797745704650879,
+      "second_score": 5.561638832092285,
+      "score_margin": 1.2361068725585938,
+      "top_chunk_id": "chunk_0294f4812151972f",
+      "top_page_start": 57,
+      "top_page_end": 58
+    },
+    {
+      "case_id": "quality_001",
+      "question": "Which tools and control measures are described for project quality management and assurance?",
+      "should_answer": true,
+      "top_score": 3.8814597129821777,
+      "second_score": 2.733351230621338,
+      "score_margin": 1.1481084823608398,
+      "top_chunk_id": "chunk_ce543d5314f7f525",
+      "top_page_start": 53,
+      "top_page_end": 54
+    },
+    {
+      "case_id": "cost_estimation_001",
+      "question": "What cost estimation techniques are described for building a project budget?",
+      "should_answer": true,
+      "top_score": 5.004551887512207,
+      "second_score": 4.080228805541992,
+      "score_margin": 0.9243230819702148,
+      "top_chunk_id": "chunk_8acb15115b31bace",
+      "top_page_start": 81,
+      "top_page_end": 82
+    },
+    {
+      "case_id": "evm_001",
+      "question": "What are the key Earned Value Management metrics and forecasts used to measure project performance?",
+      "should_answer": true,
+      "top_score": 6.186104774475098,
+      "second_score": 5.30375337600708,
+      "score_margin": 0.8823513984680176,
+      "top_chunk_id": "chunk_793b111c2095a81e",
+      "top_page_start": 56,
+      "top_page_end": 56
+    },
+    {
+      "case_id": "cost_benefit_001",
+      "question": "What steps are involved in performing a project cost-benefit analysis?",
+      "should_answer": true,
+      "top_score": 6.492155075073242,
+      "second_score": 3.4313197135925293,
+      "score_margin": 3.060835361480713,
+      "top_chunk_id": "chunk_5d7a269bdd556a0b",
+      "top_page_start": 71,
+      "top_page_end": 71
+    },
+    {
+      "case_id": "financial_risk_001",
+      "question": "Which financial instruments and strategies are used to mitigate project financial risks?",
+      "should_answer": true,
+      "top_score": 6.6677727699279785,
+      "second_score": 6.3108696937561035,
+      "score_margin": 0.356903076171875,
+      "top_chunk_id": "chunk_32297931f99e0027",
+      "top_page_start": 81,
+      "top_page_end": 82
+    },
+    {
+      "case_id": "eva_001",
+      "question": "How is Economic Value Added calculated and how should positive or negative EVA be interpreted?",
+      "should_answer": true,
+      "top_score": 6.113333702087402,
+      "second_score": 2.4888224601745605,
+      "score_margin": 3.624511241912842,
+      "top_chunk_id": "chunk_c02c9376268611cc",
+      "top_page_start": 83,
+      "top_page_end": 84
+    },
+    {
+      "case_id": "cash_flow_001",
+      "question": "How should project cash flows be projected, monitored, and corrected when deviations occur?",
+      "should_answer": true,
+      "top_score": 5.077975749969482,
+      "second_score": 3.839311122894287,
+      "score_margin": 1.2386646270751953,
+      "top_chunk_id": "chunk_d49d96bb69def283",
+      "top_page_start": 87,
+      "top_page_end": 87
+    },
+    {
+      "case_id": "risk_identification_001",
+      "question": "What techniques are used for identifying and qualitatively analyzing project risks?",
+      "should_answer": true,
+      "top_score": 7.656576633453369,
+      "second_score": 7.520672798156738,
+      "score_margin": 0.13590383529663086,
+      "top_chunk_id": "chunk_3a1f1c069aa6caf7",
+      "top_page_start": 90,
+      "top_page_end": 91
+    },
+    {
+      "case_id": "quant_risk_001",
+      "question": "Which quantitative modeling techniques are used to analyze project risks numerically?",
+      "should_answer": true,
+      "top_score": 7.76136589050293,
+      "second_score": 5.659028053283691,
+      "score_margin": 2.1023378372192383,
+      "top_chunk_id": "chunk_62f449482c3fdd8e",
+      "top_page_start": 90,
+      "top_page_end": 91
+    },
+    {
+      "case_id": "report_elements_001",
+      "question": "What are the main elements of a comprehensive project report?",
+      "should_answer": true,
+      "top_score": 7.205124855041504,
+      "second_score": 6.287550449371338,
+      "score_margin": 0.917574405670166,
+      "top_chunk_id": "chunk_c5f812ab175802fc",
+      "top_page_start": 95,
+      "top_page_end": 96
+    },
+    {
+      "case_id": "report_review_001",
+      "question": "What review and revision steps are recommended before a project report is finalized?",
+      "should_answer": true,
+      "top_score": 1.335381269454956,
+      "second_score": 0.3711458444595337,
+      "score_margin": 0.9642354249954224,
+      "top_chunk_id": "chunk_d157c017d44ad841",
+      "top_page_start": 98,
+      "top_page_end": 99
+    },
+    {
+      "case_id": "unans_001",
+      "question": "What is the capital city of Japan?",
+      "should_answer": false,
+      "top_score": -10.991371154785156,
+      "second_score": -11.035762786865234,
+      "score_margin": 0.044391632080078125,
+      "top_chunk_id": "chunk_c02c9376268611cc",
+      "top_page_start": 83,
+      "top_page_end": 84
+    },
+    {
+      "case_id": "unans_002",
+      "question": "Who wrote Pride and Prejudice?",
+      "should_answer": false,
+      "top_score": -10.982918739318848,
+      "second_score": -11.016716003417969,
+      "score_margin": 0.033797264099121094,
+      "top_chunk_id": "chunk_fb647276beee8fa4",
+      "top_page_start": 62,
+      "top_page_end": 63
+    },
+    {
+      "case_id": "unans_003",
+      "question": "What is Newton's second law of motion?",
+      "should_answer": false,
+      "top_score": -11.237931251525879,
+      "second_score": -11.243593215942383,
+      "score_margin": 0.005661964416503906,
+      "top_chunk_id": "chunk_73594e2d438f0e01",
+      "top_page_start": 17,
+      "top_page_end": 17
+    },
+    {
+      "case_id": "unans_004",
+      "question": "What is the chemical symbol for gold?",
+      "should_answer": false,
+      "top_score": -11.123409271240234,
+      "second_score": -11.143732070922852,
+      "score_margin": 0.020322799682617188,
+      "top_chunk_id": "chunk_a5d7fe1bf0cec4ea",
+      "top_page_start": 63,
+      "top_page_end": 64
+    },
+    {
+      "case_id": "unans_005",
+      "question": "How does DNA replication work?",
+      "should_answer": false,
+      "top_score": -10.82227897644043,
+      "second_score": -11.134998321533203,
+      "score_margin": 0.31271934509277344,
+      "top_chunk_id": "chunk_a0f3ea2d893e5f9f",
+      "top_page_start": 26,
+      "top_page_end": 27
+    },
+    {
+      "case_id": "unans_006",
+      "question": "What is the boiling point of water at sea level?",
+      "should_answer": false,
+      "top_score": -11.030176162719727,
+      "second_score": -11.040125846862793,
+      "score_margin": 0.009949684143066406,
+      "top_chunk_id": "chunk_da43ddba648b8790",
+      "top_page_start": 59,
+      "top_page_end": 60
+    },
+    {
+      "case_id": "unans_007",
+      "question": "What is the current PMP certification exam fee in US dollars?",
+      "should_answer": false,
+      "top_score": -10.868501663208008,
+      "second_score": -11.096810340881348,
+      "score_margin": 0.22830867767333984,
+      "top_chunk_id": "chunk_e2a38e36aa1a4de6",
+      "top_page_start": 33,
+      "top_page_end": 35
+    },
+    {
+      "case_id": "unans_008",
+      "question": "How many questions are currently on the PMP certification exam?",
+      "should_answer": false,
+      "top_score": -7.84853458404541,
+      "second_score": -9.487489700317383,
+      "score_margin": 1.6389551162719727,
+      "top_chunk_id": "chunk_e2a38e36aa1a4de6",
+      "top_page_start": 33,
+      "top_page_end": 35
+    },
+    {
+      "case_id": "unans_009",
+      "question": "What keyboard shortcut in Jira creates a new issue?",
+      "should_answer": false,
+      "top_score": -8.092246055603027,
+      "second_score": -11.115846633911133,
+      "score_margin": 3.0236005783081055,
+      "top_chunk_id": "chunk_9392679b5749c59d",
+      "top_page_start": 30,
+      "top_page_end": 31
+    },
+    {
+      "case_id": "unans_010",
+      "question": "What is the latest version number of Microsoft Project?",
+      "should_answer": false,
+      "top_score": -7.574321746826172,
+      "second_score": -8.432278633117676,
+      "score_margin": 0.8579568862915039,
+      "top_chunk_id": "chunk_de8fd81d06fad4dc",
+      "top_page_start": 101,
+      "top_page_end": 102
+    },
+    {
+      "case_id": "unans_011",
+      "question": "What is the current market price of Microsoft stock?",
+      "should_answer": false,
+      "top_score": -11.002019882202148,
+      "second_score": -11.059432983398438,
+      "score_margin": 0.05741310119628906,
+      "top_chunk_id": "chunk_de8fd81d06fad4dc",
+      "top_page_start": 101,
+      "top_page_end": 102
+    },
+    {
+      "case_id": "unans_012",
+      "question": "Who is the current president of the United States?",
+      "should_answer": false,
+      "top_score": -11.027650833129883,
+      "second_score": -11.033811569213867,
+      "score_margin": 0.006160736083984375,
+      "top_chunk_id": "chunk_e440a5dbe6451eb5",
+      "top_page_start": 9,
+      "top_page_end": 9
+    }
+  ]
+}

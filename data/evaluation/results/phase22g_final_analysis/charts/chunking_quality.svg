@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560">
+<rect x="0" y="0" width="100%" height="100%" fill="none"/>
+<text x="500.0" y="36" text-anchor="middle" font-size="22" font-family="sans-serif" fill="currentColor">Chunking Strategy Retrieval Quality</text>
+<line x1="90" y1="420.0" x2="960" y2="420.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="425.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.00</text>
+<line x1="90" y1="352.0" x2="960" y2="352.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="357.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.20</text>
+<line x1="90" y1="284.0" x2="960" y2="284.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="289.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.40</text>
+<line x1="90" y1="216.0" x2="960" y2="216.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="221.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.60</text>
+<line x1="90" y1="148.0" x2="960" y2="148.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="153.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.80</text>
+<line x1="90" y1="80.0" x2="960" y2="80.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="85.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">1.00</text>
+<rect x="130.6" y="136.7" width="49.2" height="283.3" fill="currentColor" opacity="0.49"/>
+<rect x="182.8" y="111.5" width="49.2" height="308.5" fill="currentColor" opacity="0.62"/>
+<rect x="235.0" y="80.0" width="49.2" height="340.0" fill="currentColor" opacity="0.76"/>
+<rect x="287.2" y="112.3" width="49.2" height="307.7" fill="currentColor" opacity="0.90"/>
+<text x="235.0" y="445" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">fixed</text>
+<rect x="420.6" y="174.4" width="49.2" height="245.6" fill="currentColor" opacity="0.49"/>
+<rect x="472.8" y="130.4" width="49.2" height="289.6" fill="currentColor" opacity="0.62"/>
+<rect x="525.0" y="80.0" width="49.2" height="340.0" fill="currentColor" opacity="0.76"/>
+<rect x="577.2" y="121.3" width="49.2" height="298.7" fill="currentColor" opacity="0.90"/>
+<text x="525.0" y="445" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">structure_aware</text>
+<rect x="710.6" y="155.6" width="49.2" height="264.4" fill="currentColor" opacity="0.49"/>
+<rect x="762.8" y="117.8" width="49.2" height="302.2" fill="currentColor" opacity="0.62"/>
+<rect x="815.0" y="117.8" width="49.2" height="302.2" fill="currentColor" opacity="0.76"/>
+<rect x="867.2" y="115.8" width="49.2" height="304.2" fill="currentColor" opacity="0.90"/>
+<text x="815.0" y="445" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">semantic</text>
+<rect x="90.0" y="486" width="18" height="12" fill="currentColor" opacity="0.49"/>
+<text x="115.0" y="498" font-size="13" font-family="sans-serif" fill="currentColor">Hit@1</text>
+<rect x="307.5" y="486" width="18" height="12" fill="currentColor" opacity="0.62"/>
+<text x="332.5" y="498" font-size="13" font-family="sans-serif" fill="currentColor">MRR@5</text>
+<rect x="525.0" y="486" width="18" height="12" fill="currentColor" opacity="0.76"/>
+<text x="550.0" y="498" font-size="13" font-family="sans-serif" fill="currentColor">Recall@5</text>
+<rect x="742.5" y="486" width="18" height="12" fill="currentColor" opacity="0.90"/>
+<text x="767.5" y="498" font-size="13" font-family="sans-serif" fill="currentColor">nDCG@5</text>
+</svg>

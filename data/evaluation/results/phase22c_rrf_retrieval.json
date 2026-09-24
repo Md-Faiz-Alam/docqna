@@ -1,0 +1,626 @@
+{
+  "metadata": {
+    "chunk_count": 192,
+    "chunk_size": 200,
+    "chunking_strategy": "fixed",
+    "dataset": "data\\evaluation\\evaluation_dataset_v2.json",
+    "description": "Dense + BM25 with RRF (k=60, candidate_pool=10)",
+    "mean_query_retrieval_seconds": 0.013959027777370162,
+    "overlap": 40,
+    "phase": "22C",
+    "retrieval_total_seconds": 0.2512624999926629,
+    "retriever": "rrf",
+    "retriever_build_seconds": 0.019061900000451715,
+    "sample": "data\\samples\\sample.pdf"
+  },
+  "report": {
+    "cases": [
+      {
+        "case_id": "wbs_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.031746031746031744,
+          -0.030536130536130537,
+          -0.015625
+        ],
+        "hit_at_1": 0.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.6934264036172708,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "How is a Work Breakdown Structure developed, and what advantages does it provide for project planning and control?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.5,
+        "retrieved_chunk_ids": [
+          "chunk_a0f3ea2d893e5f9f",
+          "chunk_7c48903a397a5553",
+          "chunk_117c2e76bbd42d68",
+          "chunk_8b824b06770700d9",
+          "chunk_6d8e1b37210679bc"
+        ],
+        "retrieved_pages": [
+          "26-27",
+          "18-19",
+          "19-20",
+          "52-53",
+          "26-27"
+        ]
+      },
+      {
+        "case_id": "scheduling_001",
+        "distances": [
+          -0.032018442622950824,
+          -0.032018442622950824,
+          -0.031024531024531024,
+          -0.03007688828584351,
+          -0.029411764705882353
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.8503449055347546,
+        "page_recall_at_5": 0.5,
+        "precision_at_k": 0.4,
+        "question": "Which tools and techniques are described for project scheduling and estimating task durations?",
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_c6517babba020e11",
+          "chunk_5a1238cb085117b5",
+          "chunk_e841f1adbab07e3b",
+          "chunk_f3d49c97f79e13a7",
+          "chunk_ea50b4fec9be8a99"
+        ],
+        "retrieved_pages": [
+          "22",
+          "65",
+          "39-40",
+          "65-66",
+          "21-22"
+        ]
+      },
+      {
+        "case_id": "ethics_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.03149801587301587,
+          -0.031024531024531024,
+          -0.031009615384615385
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "What are the four pillars of the PMI Code of Ethics and Professional Conduct?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_3a9c72ed302bf53b",
+          "chunk_a4d043009d0ac33b",
+          "chunk_2a05da1119066e06",
+          "chunk_6d8e1b37210679bc",
+          "chunk_ef95a0c8ff9cc892"
+        ],
+        "retrieved_pages": [
+          "32",
+          "33",
+          "32-33",
+          "26-27",
+          "35-36"
+        ]
+      },
+      {
+        "case_id": "cpm_pert_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.031024531024531024,
+          -0.031009615384615385,
+          -0.030798389007344232
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.9469024295259745,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "How do CPM and PERT differ in the way they estimate project duration and analyze the critical path?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_1a2c133e6a84cf30",
+          "chunk_f24d83813b8981ce",
+          "chunk_c6517babba020e11",
+          "chunk_ef95a0c8ff9cc892",
+          "chunk_ffd33250f8fe836d"
+        ],
+        "retrieved_pages": [
+          "38",
+          "38-39",
+          "22",
+          "35-36",
+          "39-40"
+        ]
+      },
+      {
+        "case_id": "lean_001",
+        "distances": [
+          -0.03252247488101534,
+          -0.032266458495966696,
+          -0.03200204813108039,
+          -0.031009615384615385,
+          -0.031009615384615385
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.8854598815714874,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "What techniques are used in Lean Project Management to improve efficiency and reduce waste?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_0d52f1d522af6509",
+          "chunk_9da65ffefe5da526",
+          "chunk_18ec9f238e1048ad",
+          "chunk_9b59cae73e3ff6a3",
+          "chunk_6477e3ee44978ac2"
+        ],
+        "retrieved_pages": [
+          "45-46",
+          "29-30",
+          "46-47",
+          "42",
+          "45"
+        ]
+      },
+      {
+        "case_id": "hybrid_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.0315136476426799,
+          -0.0315136476426799,
+          -0.03149801587301587,
+          -0.030798389007344232
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "How does Hybrid Project Management combine traditional and Agile approaches?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_aecce270d9a51659",
+          "chunk_22647f85c0fd56e7",
+          "chunk_d1eda06b3f964fca",
+          "chunk_a3fa76069c8b9aa9",
+          "chunk_e9c489e4f97e1cc1"
+        ],
+        "retrieved_pages": [
+          "47-48",
+          "46-47",
+          "50",
+          "43-44",
+          "50-52"
+        ]
+      },
+      {
+        "case_id": "scope_change_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.03149801587301587,
+          -0.030798389007344232,
+          -0.03076923076923077
+        ],
+        "hit_at_1": 0.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.6934264036172708,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "What processes are recommended for preventing scope creep and controlling project scope changes?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.5,
+        "retrieved_chunk_ids": [
+          "chunk_0294f4812151972f",
+          "chunk_8b824b06770700d9",
+          "chunk_e9288ebe27810358",
+          "chunk_86ea0fd35519c738",
+          "chunk_4b5691d582b48f1e"
+        ],
+        "retrieved_pages": [
+          "57-58",
+          "52-53",
+          "52-53",
+          "57",
+          "11-12"
+        ]
+      },
+      {
+        "case_id": "quality_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.031024531024531024,
+          -0.030798389007344232,
+          -0.030117753623188408
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "Which tools and control measures are described for project quality management and assurance?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_ce543d5314f7f525",
+          "chunk_e9288ebe27810358",
+          "chunk_a5d5e646be81053e",
+          "chunk_ffc072afe3186475",
+          "chunk_05fd530d3998c616"
+        ],
+        "retrieved_pages": [
+          "53-54",
+          "52-53",
+          "54",
+          "12-13",
+          "55"
+        ]
+      },
+      {
+        "case_id": "cost_estimation_001",
+        "distances": [
+          -0.032266458495966696,
+          -0.03177805800756621,
+          -0.03149801587301587,
+          -0.030834914611005692,
+          -0.016129032258064516
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.8503449055347546,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "What cost estimation techniques are described for building a project budget?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_a5d5e646be81053e",
+          "chunk_bc1d2b10622fce91",
+          "chunk_303e50dbbc17fa10",
+          "chunk_8acb15115b31bace",
+          "chunk_18c489b154591e4c"
+        ],
+        "retrieved_pages": [
+          "54",
+          "103-104",
+          "80-81",
+          "81-82",
+          "54-55"
+        ]
+      },
+      {
+        "case_id": "evm_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03200204813108039,
+          -0.03125763125763126,
+          -0.03055037313432836,
+          -0.030090497737556562
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "What are the key Earned Value Management metrics and forecasts used to measure project performance?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_4a6a7a23d9c0f56d",
+          "chunk_793b111c2095a81e",
+          "chunk_05fd530d3998c616",
+          "chunk_4de88d07651946ea",
+          "chunk_2999d4058b4d05ef"
+        ],
+        "retrieved_pages": [
+          "55-56",
+          "56",
+          "55",
+          "75-77",
+          "70"
+        ]
+      },
+      {
+        "case_id": "cost_benefit_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03128054740957967,
+          -0.03125763125763126,
+          -0.02877846790890269,
+          -0.016129032258064516
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "What steps are involved in performing a project cost-benefit analysis?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_5d7a269bdd556a0b",
+          "chunk_45e166981519cf5e",
+          "chunk_0195521b11e6e53c",
+          "chunk_2477ebc1eb76c770",
+          "chunk_529f21e9baa569ba"
+        ],
+        "retrieved_pages": [
+          "71",
+          "72",
+          "71-72",
+          "68",
+          "66-68"
+        ]
+      },
+      {
+        "case_id": "financial_risk_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03036576949620428,
+          -0.030330882352941176,
+          -0.028991596638655463,
+          -0.016129032258064516
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.8503449055347546,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "Which financial instruments and strategies are used to mitigate project financial risks?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_32297931f99e0027",
+          "chunk_86e1849eeae1cf2f",
+          "chunk_3463914322079070",
+          "chunk_d9381d6948d22669",
+          "chunk_597976b204d0ff6a"
+        ],
+        "retrieved_pages": [
+          "81-82",
+          "23-24",
+          "113-114",
+          "24",
+          "82-83"
+        ]
+      },
+      {
+        "case_id": "eva_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03225806451612903,
+          -0.031746031746031744,
+          -0.031009615384615385,
+          -0.030309988518943745
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "How is Economic Value Added calculated and how should positive or negative EVA be interpreted?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_c02c9376268611cc",
+          "chunk_4c1fe76f90de9e9a",
+          "chunk_e3d441d896ca4360",
+          "chunk_446811291df0a27a",
+          "chunk_3617d36ca72f042f"
+        ],
+        "retrieved_pages": [
+          "83-84",
+          "83",
+          "84",
+          "77-78",
+          "77-78"
+        ]
+      },
+      {
+        "case_id": "cash_flow_001",
+        "distances": [
+          -0.03252247488101534,
+          -0.03177805800756621,
+          -0.031746031746031744,
+          -0.0315136476426799,
+          -0.03125
+        ],
+        "hit_at_1": 0.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.6797310500037655,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "How should project cash flows be projected, monitored, and corrected when deviations occur?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.5,
+        "retrieved_chunk_ids": [
+          "chunk_5f3b66b420e10a61",
+          "chunk_c237697a2929d58c",
+          "chunk_0b4c8690c95c9eb1",
+          "chunk_e27b6b6083b227ed",
+          "chunk_d49d96bb69def283"
+        ],
+        "retrieved_pages": [
+          "93-94",
+          "86-87",
+          "94-95",
+          "85-86",
+          "87"
+        ]
+      },
+      {
+        "case_id": "risk_identification_001",
+        "distances": [
+          -0.03252247488101534,
+          -0.031754032258064516,
+          -0.031024531024531024,
+          -0.031024531024531024,
+          -0.029877369007803793
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.8772153153380493,
+        "page_recall_at_5": 0.5,
+        "precision_at_k": 0.4,
+        "question": "What techniques are used for identifying and qualitatively analyzing project risks?",
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_3a1f1c069aa6caf7",
+          "chunk_7cffc08a9f2be384",
+          "chunk_86e1849eeae1cf2f",
+          "chunk_62f449482c3fdd8e",
+          "chunk_fa85260353af7fc0"
+        ],
+        "retrieved_pages": [
+          "90-91",
+          "63-64",
+          "23-24",
+          "90-91",
+          "64-65"
+        ]
+      },
+      {
+        "case_id": "quant_risk_001",
+        "distances": [
+          -0.03278688524590164,
+          -0.03200204813108039,
+          -0.03200204813108039,
+          -0.031009615384615385,
+          -0.030303030303030304
+        ],
+        "hit_at_1": 1.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 1.0,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.6,
+        "question": "Which quantitative modeling techniques are used to analyze project risks numerically?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "retrieved_chunk_ids": [
+          "chunk_62f449482c3fdd8e",
+          "chunk_3a1f1c069aa6caf7",
+          "chunk_e2eb84d8def9660e",
+          "chunk_e5b94c25904257f0",
+          "chunk_86e1849eeae1cf2f"
+        ],
+        "retrieved_pages": [
+          "90-91",
+          "90-91",
+          "91-92",
+          "92",
+          "23-24"
+        ]
+      },
+      {
+        "case_id": "report_elements_001",
+        "distances": [
+          -0.03252247488101534,
+          -0.031746031746031744,
+          -0.03131881575727918,
+          -0.03128054740957967,
+          -0.031009615384615385
+        ],
+        "hit_at_1": 0.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.5437713091520254,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "What are the main elements of a comprehensive project report?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.3333333333333333,
+        "retrieved_chunk_ids": [
+          "chunk_a3349e9f7086eaa0",
+          "chunk_04badc45f97e2543",
+          "chunk_0b4c8690c95c9eb1",
+          "chunk_371f88d6439f437b",
+          "chunk_c5f812ab175802fc"
+        ],
+        "retrieved_pages": [
+          "97-98",
+          "97-98",
+          "94-95",
+          "100-102",
+          "95-96"
+        ]
+      },
+      {
+        "case_id": "report_review_001",
+        "distances": [
+          -0.032266458495966696,
+          -0.032018442622950824,
+          -0.031054405392392875,
+          -0.016129032258064516,
+          -0.015873015873015872
+        ],
+        "hit_at_1": 0.0,
+        "hit_at_3": 1.0,
+        "hit_at_5": 1.0,
+        "ndcg_at_k": 0.6240505200038379,
+        "page_recall_at_5": 1.0,
+        "precision_at_k": 0.4,
+        "question": "What review and revision steps are recommended before a project report is finalized?",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.5,
+        "retrieved_chunk_ids": [
+          "chunk_0b4c8690c95c9eb1",
+          "chunk_d157c017d44ad841",
+          "chunk_371f88d6439f437b",
+          "chunk_86ea0fd35519c738",
+          "chunk_8ac74093f3e3c74b"
+        ],
+        "retrieved_pages": [
+          "94-95",
+          "98-99",
+          "100-102",
+          "57",
+          "98-99"
+        ]
+      }
+    ],
+    "mean_hit_at_1": 0.7222222222222222,
+    "mean_hit_at_3": 1.0,
+    "mean_hit_at_5": 1.0,
+    "mean_ndcg_at_k": 0.8608343349685524,
+    "mean_page_recall_at_5": 0.9444444444444444,
+    "mean_precision_at_k": 0.48888888888888893,
+    "mean_recall_at_k": 0.9444444444444444,
+    "mean_reciprocal_rank": 0.8518518518518519,
+    "num_cases": 18,
+    "num_skipped_unanswerable": 12,
+    "top_k": 5
+  },
+  "report_type": "RetrievalEvaluationReport"
+}

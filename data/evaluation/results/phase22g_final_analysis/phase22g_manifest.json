@@ -1,0 +1,22 @@
+{
+  "inputs": {
+    "chunking": "data\\evaluation\\results\\phase22b_chunking_comparison.json",
+    "embedding": "data\\evaluation\\results\\phase22d_embedding_comparison.json",
+    "retrieval": "data\\evaluation\\results\\phase22c_retrieval_comparison.json",
+    "threshold": "data\\evaluation\\results\\phase22f_abstention_threshold_comparison.json",
+    "topk": "data\\evaluation\\results\\phase22e_topk_comparison.json"
+  },
+  "outputs": {
+    "charts": [
+      "data\\evaluation\\results\\phase22g_final_analysis\\charts\\chunking_quality.svg",
+      "data\\evaluation\\results\\phase22g_final_analysis\\charts\\retrieval_quality.svg",
+      "data\\evaluation\\results\\phase22g_final_analysis\\charts\\embedding_quality.svg",
+      "data\\evaluation\\results\\phase22g_final_analysis\\charts\\topk_tradeoff.svg",
+      "data\\evaluation\\results\\phase22g_final_analysis\\charts\\threshold_calibration.svg"
+    ],
+    "error_analysis": "data\\evaluation\\results\\phase22g_final_analysis\\phase22g_error_analysis.csv",
+    "experiment_matrix": "data\\evaluation\\results\\phase22g_final_analysis\\phase22g_experiment_matrix.csv",
+    "report": "data\\evaluation\\results\\phase22g_final_analysis\\phase22g_final_analysis.md"
+  },
+  "phase": "22G"
+}

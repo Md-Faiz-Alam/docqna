@@ -1,0 +1,5 @@
+analysis_type,case_id,should_answer,value,detail
+top_k_3_incomplete_retrieval,cash_flow_001,True,0.5,top_k=3 did not retain all labeled relevant evidence; top_k=5 reached full aggregate recall.
+confidence_boundary_answerable,report_review_001,True,1.335381269454956,Lowest answerable rank-1 cross-encoder score; closest answerable case to the production threshold.
+confidence_boundary_unanswerable,unans_010,False,-7.574321746826172,Highest unanswerable rank-1 cross-encoder score; closest unanswerable case to the production threshold.
+production_threshold_errors,,,0,No answerability classification errors were observed at threshold 0.0 on the 30-case evaluation set.

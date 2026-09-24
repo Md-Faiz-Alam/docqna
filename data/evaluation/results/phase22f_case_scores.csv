@@ -1,0 +1,31 @@
+case_id,question,should_answer,top_score,second_score,score_margin,result_count,retrieval_seconds
+wbs_001,"How is a Work Breakdown Structure developed, and what advantages does it provide for project planning and control?",True,6.6617279052734375,3.4167919158935547,3.244935989379883,5,0.9983535999999731
+scheduling_001,Which tools and techniques are described for project scheduling and estimating task durations?,True,6.607117652893066,4.991101264953613,1.6160163879394531,5,0.9643201999988378
+ethics_001,What are the four pillars of the PMI Code of Ethics and Professional Conduct?,True,8.225724220275879,-2.0231404304504395,10.248864650726318,5,0.9117378999999346
+cpm_pert_001,How do CPM and PERT differ in the way they estimate project duration and analyze the critical path?,True,4.5611162185668945,4.2993011474609375,0.26181507110595703,5,0.9267414999994799
+lean_001,What techniques are used in Lean Project Management to improve efficiency and reduce waste?,True,6.63222599029541,5.258874416351318,1.3733515739440918,5,0.8526267999986885
+hybrid_001,How does Hybrid Project Management combine traditional and Agile approaches?,True,6.744510650634766,6.305665969848633,0.4388446807861328,5,0.8833149000001868
+scope_change_001,What processes are recommended for preventing scope creep and controlling project scope changes?,True,6.797745704650879,5.561638832092285,1.2361068725585938,5,0.7556476000008843
+quality_001,Which tools and control measures are described for project quality management and assurance?,True,3.8814597129821777,2.733351230621338,1.1481084823608398,5,0.8359101000005467
+cost_estimation_001,What cost estimation techniques are described for building a project budget?,True,5.004551887512207,4.080228805541992,0.9243230819702148,5,0.9360281999997824
+evm_001,What are the key Earned Value Management metrics and forecasts used to measure project performance?,True,6.186104774475098,5.30375337600708,0.8823513984680176,5,0.978391599999668
+cost_benefit_001,What steps are involved in performing a project cost-benefit analysis?,True,6.492155075073242,3.4313197135925293,3.060835361480713,5,1.051612600000226
+financial_risk_001,Which financial instruments and strategies are used to mitigate project financial risks?,True,6.6677727699279785,6.3108696937561035,0.356903076171875,5,0.9411599999984901
+eva_001,How is Economic Value Added calculated and how should positive or negative EVA be interpreted?,True,6.113333702087402,2.4888224601745605,3.624511241912842,5,1.0475351999994018
+cash_flow_001,"How should project cash flows be projected, monitored, and corrected when deviations occur?",True,5.077975749969482,3.839311122894287,1.2386646270751953,5,0.8792358999999124
+risk_identification_001,What techniques are used for identifying and qualitatively analyzing project risks?,True,7.656576633453369,7.520672798156738,0.13590383529663086,5,0.8566360999993776
+quant_risk_001,Which quantitative modeling techniques are used to analyze project risks numerically?,True,7.76136589050293,5.659028053283691,2.1023378372192383,5,0.906631699999707
+report_elements_001,What are the main elements of a comprehensive project report?,True,7.205124855041504,6.287550449371338,0.917574405670166,5,0.845873099999153
+report_review_001,What review and revision steps are recommended before a project report is finalized?,True,1.335381269454956,0.3711458444595337,0.9642354249954224,5,0.7278230000010808
+unans_001,What is the capital city of Japan?,False,-10.991371154785156,-11.035762786865234,0.044391632080078125,5,0.8469745999991574
+unans_002,Who wrote Pride and Prejudice?,False,-10.982918739318848,-11.016716003417969,0.033797264099121094,5,0.7585118999995757
+unans_003,What is Newton's second law of motion?,False,-11.237931251525879,-11.243593215942383,0.005661964416503906,5,0.7802934999999707
+unans_004,What is the chemical symbol for gold?,False,-11.123409271240234,-11.143732070922852,0.020322799682617188,5,0.7483228999990388
+unans_005,How does DNA replication work?,False,-10.82227897644043,-11.134998321533203,0.31271934509277344,5,0.7350864999989426
+unans_006,What is the boiling point of water at sea level?,False,-11.030176162719727,-11.040125846862793,0.009949684143066406,5,0.7584850999992341
+unans_007,What is the current PMP certification exam fee in US dollars?,False,-10.868501663208008,-11.096810340881348,0.22830867767333984,5,0.7352135000000999
+unans_008,How many questions are currently on the PMP certification exam?,False,-7.84853458404541,-9.487489700317383,1.6389551162719727,5,0.8581837000001542
+unans_009,What keyboard shortcut in Jira creates a new issue?,False,-8.092246055603027,-11.115846633911133,3.0236005783081055,5,0.7704297000000224
+unans_010,What is the latest version number of Microsoft Project?,False,-7.574321746826172,-8.432278633117676,0.8579568862915039,5,0.7180767999998352
+unans_011,What is the current market price of Microsoft stock?,False,-11.002019882202148,-11.059432983398438,0.05741310119628906,5,0.8277889999990293
+unans_012,Who is the current president of the United States?,False,-11.027650833129883,-11.033811569213867,0.006160736083984375,5,0.855931199999759

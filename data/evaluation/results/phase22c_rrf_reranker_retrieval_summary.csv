@@ -1,0 +1,25 @@
+metric,value
+report_type,RetrievalEvaluationReport
+metadata.phase,22C
+metadata.sample,data\samples\sample.pdf
+metadata.dataset,data\evaluation\evaluation_dataset_v2.json
+metadata.retriever,rrf_reranker
+metadata.description,"Dense + BM25 + RRF + CrossEncoder (RRF k=60, RRF pool=10, reranker pool=20)"
+metadata.chunking_strategy,fixed
+metadata.chunk_size,200
+metadata.overlap,40
+metadata.chunk_count,192
+metadata.retriever_build_seconds,9.633723499999178
+metadata.retrieval_total_seconds,12.989505399997142
+metadata.mean_query_retrieval_seconds,0.7216391888887301
+num_cases,18
+top_k,5
+num_skipped_unanswerable,12
+mean_hit_at_1,0.8333333333333334
+mean_hit_at_3,1.0
+mean_hit_at_5,1.0
+mean_reciprocal_rank,0.9074074074074073
+mean_page_recall_at_5,1.0
+mean_precision_at_k,0.5111111111111111
+mean_recall_at_k,1.0
+mean_ndcg_at_k,0.9049506170889763

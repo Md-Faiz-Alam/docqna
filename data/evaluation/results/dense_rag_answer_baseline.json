@@ -1,0 +1,614 @@
+{
+  "num_cases": 18,
+  "successful_cases": 12,
+  "failed_cases": 6,
+  "top_k": 5,
+  "mean_answer_term_coverage": 0.5015873015873016,
+  "mean_citation_presence": 0.6666666666666666,
+  "mean_citation_validity": 0.6666666666666666,
+  "mean_cited_evidence_term_coverage": 0.5716931216931216,
+  "mean_answer_word_count": 55.666666666666664,
+  "mean_case_elapsed_seconds": 62.0877688999999,
+  "total_case_elapsed_seconds": 1117.5798401999982,
+  "cases": [
+    {
+      "case_id": "wbs_001",
+      "question": "How is a Work Breakdown Structure developed, and what advantages does it provide for project planning and control?",
+      "answer": "A Work Breakdown Structure (WBS) is developed by first establishing the project scope as the boundary within which project activities will reside, which sets the foundation for what is expected to be delivered. A well-worded scope statement is crucial, as it should be comprehensive yet precise to set clear expectations for stakeholders. The WBS begins with the primary deliverable at the top, followed by major sub-deliverables, and continues to break down each element until reaching a level that allows for accurate effort estimation and resource allocation. The WBS facilitates project planning and execution by decomposing the project into smaller parts that can be more easily managed and estimated, leading to more precise planning, particularly in complex environments like India's. It also aids in project tracking and control by providing a clear framework for monitoring progress and managing changes. [1] [2] [3] [4] [5]",
+      "expected_answer_terms": [
+        "hierarchical decomposition",
+        "primary deliverable",
+        "work packages",
+        "WBS Dictionary",
+        "streamlined planning",
+        "monitoring and control"
+      ],
+      "matched_answer_terms": [
+        "primary deliverable",
+        "monitoring and control"
+      ],
+      "answer_term_coverage": 0.3333333333333333,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "matched_cited_evidence_terms": [
+        "hierarchical decomposition",
+        "primary deliverable",
+        "work packages"
+      ],
+      "cited_evidence_term_coverage": 0.5,
+      "answer_word_count": 143,
+      "elapsed_seconds": 78.76286679999976,
+      "error": null
+    },
+    {
+      "case_id": "scheduling_001",
+      "question": "Which tools and techniques are described for project scheduling and estimating task durations?",
+      "answer": "",
+      "expected_answer_terms": [
+        "Gantt Charts",
+        "Critical Path Method",
+        "expert judgment",
+        "historical data",
+        "three-point estimating",
+        "dependency identification"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 29.4141324000002,
+      "error": "CitationError: Generated answer did not contain any source citations."
+    },
+    {
+      "case_id": "ethics_001",
+      "question": "What are the four pillars of the PMI Code of Ethics and Professional Conduct?",
+      "answer": "",
+      "expected_answer_terms": [
+        "responsibility",
+        "respect",
+        "fairness",
+        "honesty"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 27.615082899999834,
+      "error": "CitationError: Generated answer did not contain any source citations."
+    },
+    {
+      "case_id": "cpm_pert_001",
+      "question": "How do CPM and PERT differ in the way they estimate project duration and analyze the critical path?",
+      "answer": "Critical Path Method (CPM) uses a single time estimate for each task, focusing on identifying the longest sequence of dependent tasks to determine the shortest possible project duration. In contrast, Program Evaluation and Review Technique (PERT) employs three time estimates—optimistic, pessimistic, and most likely—to account for uncertainty in task duration, providing a range of possible completion times for the project. CPM identifies the critical path with deterministic time estimates, while PERT's probabilistic approach offers a spectrum of potential project completion times, highlighting the most likely duration and the associated risks of delays. ([2])",
+      "expected_answer_terms": [
+        "Critical Path Method",
+        "Program Evaluation and Review Technique",
+        "deterministic",
+        "probabilistic",
+        "one time estimate",
+        "three time estimates"
+      ],
+      "matched_answer_terms": [
+        "Critical Path Method",
+        "Program Evaluation and Review Technique",
+        "deterministic",
+        "probabilistic",
+        "three time estimates"
+      ],
+      "answer_term_coverage": 0.8333333333333334,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        2
+      ],
+      "matched_cited_evidence_terms": [
+        "Program Evaluation and Review Technique",
+        "deterministic",
+        "probabilistic",
+        "one time estimate",
+        "three time estimates"
+      ],
+      "cited_evidence_term_coverage": 0.8333333333333334,
+      "answer_word_count": 93,
+      "elapsed_seconds": 25.594653500000277,
+      "error": null
+    },
+    {
+      "case_id": "lean_001",
+      "question": "What techniques are used in Lean Project Management to improve efficiency and reduce waste?",
+      "answer": "Lean Project Management employs techniques such as Value Stream Mapping to identify and remove non-value-adding steps, Just-In-Time (JIT) Delivery to align task completion with demand, and Kaizen for continuous incremental improvements [1][2]. These techniques aim to enhance efficiency and minimize waste [1][2].",
+      "expected_answer_terms": [
+        "Value Stream Mapping",
+        "Just-In-Time",
+        "Kaizen",
+        "continuous improvement",
+        "minimizing waste"
+      ],
+      "matched_answer_terms": [
+        "Value Stream Mapping",
+        "Just-In-Time",
+        "Kaizen"
+      ],
+      "answer_term_coverage": 0.6,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2
+      ],
+      "matched_cited_evidence_terms": [
+        "Value Stream Mapping",
+        "Just-In-Time",
+        "Kaizen",
+        "continuous improvement",
+        "minimizing waste"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 42,
+      "elapsed_seconds": 51.369450200000756,
+      "error": null
+    },
+    {
+      "case_id": "hybrid_001",
+      "question": "How does Hybrid Project Management combine traditional and Agile approaches?",
+      "answer": "",
+      "expected_answer_terms": [
+        "phase-gate",
+        "iterative cycles",
+        "upfront planning",
+        "adaptive execution",
+        "feedback loops",
+        "phase gates"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 58.384257000000616,
+      "error": "CitationError: Generated answer contains invalid citation IDs: [6, 7, 8, 9, 10]"
+    },
+    {
+      "case_id": "scope_change_001",
+      "question": "What processes are recommended for preventing scope creep and controlling project scope changes?",
+      "answer": "To prevent scope creep and control project scope changes, it is recommended to establish a clear scope statement and work breakdown structure (WBS) at the project's outset. Engage stakeholders in defining the scope to ensure buy-in and reduce the likelihood of changes later on. Implement a formal change management strategy, including a change control process that formalizes change requests through a Change Review Board. Document all changes meticulously for traceability. Balance rigidity with adaptability by setting boundaries within which scope changes are permissible, and consider iterative approaches like Agile methodologies that allow for regular adaptation. Ensure that scope changes are aligned with project objectives and that they do not compromise the project's budget and schedule. Maintaining quality assurance processes is also essential to uphold the project's quality standards. [1] [2] [3] [4] [5]",
+      "expected_answer_terms": [
+        "clear requirements",
+        "stakeholder engagement",
+        "change management plan",
+        "formalize change requests",
+        "Change Review Board",
+        "documenting changes"
+      ],
+      "matched_answer_terms": [
+        "Change Review Board"
+      ],
+      "answer_term_coverage": 0.16666666666666666,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "matched_cited_evidence_terms": [
+        "clear requirements",
+        "stakeholder engagement",
+        "change management plan",
+        "formalize change requests",
+        "Change Review Board",
+        "documenting changes"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 133,
+      "elapsed_seconds": 74.66735889999927,
+      "error": null
+    },
+    {
+      "case_id": "quality_001",
+      "question": "Which tools and control measures are described for project quality management and assurance?",
+      "answer": "Pareto Analysis, Root Cause Analysis, and Six Sigma are tools for quality management [1]. Quality Assurance Plans include stakeholder expectations, standards and regulations, and benchmarking [1]. Quality Control Measures involve inspections, audits, and testing [1]. Corrective actions are taken to address issues immediately [1]. The Plan-Do-Check-Act (PDCA) Cycle and documenting lessons learned are part of the Continual Improvement Cycle [1].\n\n[1] [1]",
+      "expected_answer_terms": [
+        "Pareto Analysis",
+        "Root Cause Analysis",
+        "Six Sigma",
+        "inspections",
+        "audits",
+        "testing",
+        "PDCA"
+      ],
+      "matched_answer_terms": [
+        "Pareto Analysis",
+        "Root Cause Analysis",
+        "Six Sigma",
+        "inspections",
+        "audits",
+        "testing",
+        "PDCA"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1
+      ],
+      "matched_cited_evidence_terms": [
+        "Pareto Analysis",
+        "Root Cause Analysis",
+        "Six Sigma",
+        "inspections",
+        "audits",
+        "testing"
+      ],
+      "cited_evidence_term_coverage": 0.8571428571428571,
+      "answer_word_count": 62,
+      "elapsed_seconds": 61.08363259999987,
+      "error": null
+    },
+    {
+      "case_id": "cost_estimation_001",
+      "question": "What cost estimation techniques are described for building a project budget?",
+      "answer": "",
+      "expected_answer_terms": [
+        "Top-Down Estimating",
+        "Bottom-Up Estimating",
+        "Parametric Estimating",
+        "Analogous Estimating"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 64.5450509000002,
+      "error": "CitationError: Generated answer did not contain any source citations."
+    },
+    {
+      "case_id": "evm_001",
+      "question": "What are the key Earned Value Management metrics and forecasts used to measure project performance?",
+      "answer": "The key Earned Value Management (EVM) metrics include Planned Value (PV), Actual Cost (AC), and Earned Value (EV). Forecasts used in EVM are Estimate at Completion (EAC) and Estimate to Complete (ETC). These metrics and forecasts are essential for measuring project performance and predicting future trends. ([1])",
+      "expected_answer_terms": [
+        "Planned Value",
+        "Actual Cost",
+        "Earned Value",
+        "Estimate at Completion",
+        "Estimate to Complete"
+      ],
+      "matched_answer_terms": [
+        "Planned Value",
+        "Actual Cost",
+        "Earned Value",
+        "Estimate at Completion",
+        "Estimate to Complete"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1
+      ],
+      "matched_cited_evidence_terms": [
+        "Planned Value",
+        "Actual Cost",
+        "Earned Value"
+      ],
+      "cited_evidence_term_coverage": 0.6,
+      "answer_word_count": 47,
+      "elapsed_seconds": 57.86878909999996,
+      "error": null
+    },
+    {
+      "case_id": "cost_benefit_001",
+      "question": "What steps are involved in performing a project cost-benefit analysis?",
+      "answer": "1. List Project Costs: o Identify all expected expenses such as labor, materials, equipment, and overhead costs. o Include initial investment costs and ongoing operational expenses. 2. Quantify Benefits: o Estimate all the direct and indirect revenue streams and cost savings the project is expected to generate. o Account for intangible benefits like customer satisfaction and brand reputation, when applicable. 3. Time Value of Money: o Factor in the time value of money through techniques like Net Present Value (NPV) or Internal Rate of Return (IRR) to evaluate future benefits in today's terms. 4. Cost and Benefit Comparison: o Summarize and compare the total costs and benefits over the project lifecycle. o Use a rational, quantitative method for comparison, such as ROI, NPV, or payback period. [1] [2] [3] [4] [5]",
+      "expected_answer_terms": [
+        "list project costs",
+        "quantify benefits",
+        "time value of money",
+        "Net Present Value",
+        "Internal Rate of Return",
+        "ROI",
+        "payback period"
+      ],
+      "matched_answer_terms": [
+        "list project costs",
+        "quantify benefits",
+        "time value of money",
+        "Net Present Value",
+        "Internal Rate of Return",
+        "ROI",
+        "payback period"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "matched_cited_evidence_terms": [
+        "list project costs",
+        "quantify benefits",
+        "time value of money",
+        "Net Present Value",
+        "Internal Rate of Return",
+        "ROI",
+        "payback period"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 131,
+      "elapsed_seconds": 78.56736869999986,
+      "error": null
+    },
+    {
+      "case_id": "financial_risk_001",
+      "question": "Which financial instruments and strategies are used to mitigate project financial risks?",
+      "answer": "Financial instruments such as futures and forwards, options, and swaps are used to mitigate project financial risks. Futures and forwards contracts set prices for future transactions, options provide the right to buy or sell at a set price, and swaps exchange financial instruments to manage interest rate risks or currency exchange rates. Hedging strategies, including diversification and the use of financial instruments, are also employed to reduce exposure to financial risks. [1] [2] [3] [4] [5]",
+      "expected_answer_terms": [
+        "futures",
+        "forwards",
+        "options",
+        "swaps",
+        "diversification",
+        "hedging"
+      ],
+      "matched_answer_terms": [
+        "futures",
+        "forwards",
+        "options",
+        "swaps",
+        "diversification",
+        "hedging"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "matched_cited_evidence_terms": [
+        "futures",
+        "forwards",
+        "options",
+        "swaps",
+        "diversification",
+        "hedging"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 76,
+      "elapsed_seconds": 65.2559969999993,
+      "error": null
+    },
+    {
+      "case_id": "eva_001",
+      "question": "How is Economic Value Added calculated and how should positive or negative EVA be interpreted?",
+      "answer": "Economic Value Added (EVA) is calculated by subtracting the capital charge (the total cost of capital) from the Net Operating Profit After Taxes (NOPAT). The formula is EVA = NOPAT - (Capital Invested x WACC). A positive EVA indicates that a project is generating returns above the cost of capital, adding economic value. Conversely, a negative EVA means the project is not covering its cost of capital and is destroying value. ([1])",
+      "expected_answer_terms": [
+        "NOPAT",
+        "capital charge",
+        "WACC",
+        "EVA = NOPAT",
+        "positive EVA",
+        "negative EVA"
+      ],
+      "matched_answer_terms": [
+        "NOPAT",
+        "capital charge",
+        "WACC",
+        "EVA = NOPAT",
+        "positive EVA",
+        "negative EVA"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1
+      ],
+      "matched_cited_evidence_terms": [
+        "NOPAT",
+        "WACC",
+        "EVA = NOPAT",
+        "positive EVA",
+        "negative EVA"
+      ],
+      "cited_evidence_term_coverage": 0.8333333333333334,
+      "answer_word_count": 72,
+      "elapsed_seconds": 58.964460500000314,
+      "error": null
+    },
+    {
+      "case_id": "cash_flow_001",
+      "question": "How should project cash flows be projected, monitored, and corrected when deviations occur?",
+      "answer": "Project cash flows should be projected by considering the project timeline, scheduled activities, payment terms with suppliers and clients, and potential delays or advancements in project phases [1]. Monitoring involves comparing actual cash movements to forecasted projections at regular intervals and resolving discrepancies to align actual flows with expected patterns [1]. When deviations occur, managers should investigate the root cause, take corrective actions such as expediting receivables or deferring non-critical payments, and integrate risk management with project cash flows [1] [2].\n\n\nCitations:\n\n[1] [1]\n\n[2] [2]",
+      "expected_answer_terms": [
+        "cash inflows",
+        "cash outflows",
+        "forecasted projections",
+        "actual cash movements",
+        "root cause",
+        "corrective actions"
+      ],
+      "matched_answer_terms": [
+        "forecasted projections",
+        "actual cash movements",
+        "root cause",
+        "corrective actions"
+      ],
+      "answer_term_coverage": 0.6666666666666666,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2
+      ],
+      "matched_cited_evidence_terms": [
+        "cash inflows",
+        "cash outflows",
+        "forecasted projections",
+        "actual cash movements"
+      ],
+      "cited_evidence_term_coverage": 0.6666666666666666,
+      "answer_word_count": 86,
+      "elapsed_seconds": 70.4219721999998,
+      "error": null
+    },
+    {
+      "case_id": "risk_identification_001",
+      "question": "What techniques are used for identifying and qualitatively analyzing project risks?",
+      "answer": "Brainstorming sessions, checklists, and SWOT analysis are employed for identifying and qualitatively analyzing project risks [1][2][3].",
+      "expected_answer_terms": [
+        "brainstorming sessions",
+        "checklists",
+        "SWOT analysis",
+        "historical data review",
+        "expert judgement",
+        "Delphi technique",
+        "assumption analysis"
+      ],
+      "matched_answer_terms": [
+        "brainstorming sessions",
+        "checklists",
+        "SWOT analysis"
+      ],
+      "answer_term_coverage": 0.42857142857142855,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3
+      ],
+      "matched_cited_evidence_terms": [
+        "brainstorming sessions",
+        "checklists",
+        "SWOT analysis",
+        "historical data review",
+        "expert judgement",
+        "Delphi technique",
+        "assumption analysis"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 16,
+      "elapsed_seconds": 47.4997244999995,
+      "error": null
+    },
+    {
+      "case_id": "quant_risk_001",
+      "question": "Which quantitative modeling techniques are used to analyze project risks numerically?",
+      "answer": "Quantitative Risk Analysis employs several modeling techniques to numerically analyze project risks. These include Decision Trees, which map out decision paths and their outcomes, Probability Distributions, which represent uncertainty in values like cost estimates, and Expected Monetary Value (EMV), which calculates the financial impact of risks by multiplying their probability of occurrence. Additionally, Monte Carlo Simulations are used to simulate models multiple times to understand possible outcomes and their probabilities, while Sensitivity Analysis assesses how changes in project variables influence outcomes to identify critical risks. These techniques provide a data-driven basis for risk analysis and decision-making. [1] [2] [3] [4] [5]",
+      "expected_answer_terms": [
+        "Decision Trees",
+        "Probability Distributions",
+        "Expected Monetary Value",
+        "Monte Carlo Simulations",
+        "Sensitivity Analysis"
+      ],
+      "matched_answer_terms": [
+        "Decision Trees",
+        "Probability Distributions",
+        "Expected Monetary Value",
+        "Monte Carlo Simulations",
+        "Sensitivity Analysis"
+      ],
+      "answer_term_coverage": 1.0,
+      "citation_presence": 1.0,
+      "citation_validity": 1.0,
+      "cited_source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "matched_cited_evidence_terms": [
+        "Decision Trees",
+        "Probability Distributions",
+        "Expected Monetary Value",
+        "Monte Carlo Simulations",
+        "Sensitivity Analysis"
+      ],
+      "cited_evidence_term_coverage": 1.0,
+      "answer_word_count": 101,
+      "elapsed_seconds": 67.87377109999943,
+      "error": null
+    },
+    {
+      "case_id": "report_elements_001",
+      "question": "What are the main elements of a comprehensive project report?",
+      "answer": "",
+      "expected_answer_terms": [
+        "Executive Summary",
+        "Project Background",
+        "Methodology",
+        "Findings",
+        "Conclusions",
+        "Recommendations",
+        "Appendices"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 98.02611309999975,
+      "error": "CitationError: Generated answer did not contain any source citations."
+    },
+    {
+      "case_id": "report_review_001",
+      "question": "What review and revision steps are recommended before a project report is finalized?",
+      "answer": "",
+      "expected_answer_terms": [
+        "Internal Review",
+        "Peer Review",
+        "Stakeholder Feedback",
+        "track changes",
+        "refining arguments",
+        "multiple review cycles"
+      ],
+      "matched_answer_terms": [],
+      "answer_term_coverage": 0.0,
+      "citation_presence": 0.0,
+      "citation_validity": 0.0,
+      "cited_source_ids": [],
+      "matched_cited_evidence_terms": [],
+      "cited_evidence_term_coverage": 0.0,
+      "answer_word_count": 0,
+      "elapsed_seconds": 101.66515879999952,
+      "error": "CitationError: Generated answer did not contain any source citations."
+    }
+  ]
+}

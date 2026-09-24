@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560">
+<text x="500.0" y="36" text-anchor="middle" font-size="22" font-family="sans-serif" fill="currentColor">Abstention Threshold Calibration</text>
+<line x1="90" y1="440.0" x2="960" y2="440.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="445.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.00</text>
+<line x1="90" y1="368.0" x2="960" y2="368.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="373.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.20</text>
+<line x1="90" y1="296.0" x2="960" y2="296.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="301.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.40</text>
+<line x1="90" y1="224.0" x2="960" y2="224.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="229.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.60</text>
+<line x1="90" y1="152.0" x2="960" y2="152.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="157.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">0.80</text>
+<line x1="90" y1="80.0" x2="960" y2="80.0" stroke="currentColor" opacity="0.15"/>
+<text x="78" y="85.0" text-anchor="end" font-size="13" font-family="sans-serif" fill="currentColor">1.00</text>
+<text x="90.0" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">-10</text>
+<text x="186.7" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">-8</text>
+<text x="331.7" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">-5</text>
+<text x="573.3" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">0</text>
+<text x="621.7" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">1</text>
+<text x="670.0" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">2</text>
+<text x="766.7" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">4</text>
+<text x="863.3" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">6</text>
+<text x="960.0" y="466" text-anchor="middle" font-size="13" font-family="sans-serif" fill="currentColor">8</text>
+<polyline points="90.0,116.0 186.7,104.0 331.7,80.0 573.3,80.0 621.7,80.0 670.0,92.0 766.7,104.0 863.3,140.0 960.0,284.0" fill="none" stroke="currentColor" stroke-width="3" opacity="0.67"/>
+<circle cx="90.0" cy="116.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="186.7" cy="104.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="331.7" cy="80.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="573.3" cy="80.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="621.7" cy="80.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="670.0" cy="92.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="766.7" cy="104.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="863.3" cy="140.0" r="4" fill="currentColor" opacity="0.67"/>
+<circle cx="960.0" cy="284.0" r="4" fill="currentColor" opacity="0.67"/>
+<polyline points="90.0,107.7 186.7,98.9 331.7,80.0 573.3,80.0 621.7,80.0 670.0,90.3 766.7,101.2 863.3,138.1 960.0,402.1" fill="none" stroke="currentColor" stroke-width="3" opacity="0.78" stroke-dasharray="8 5"/>
+<circle cx="90.0" cy="107.7" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="186.7" cy="98.9" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="331.7" cy="80.0" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="573.3" cy="80.0" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="621.7" cy="80.0" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="670.0" cy="90.3" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="766.7" cy="101.2" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="863.3" cy="138.1" r="4" fill="currentColor" opacity="0.78"/>
+<circle cx="960.0" cy="402.1" r="4" fill="currentColor" opacity="0.78"/>
+<polyline points="90.0,131.4 186.7,112.7 331.7,80.0 573.3,80.0 621.7,80.0 670.0,94.4 766.7,107.7 863.3,142.1 960.0,229.3" fill="none" stroke="currentColor" stroke-width="3" opacity="0.90" stroke-dasharray="2 4"/>
+<circle cx="90.0" cy="131.4" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="186.7" cy="112.7" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="331.7" cy="80.0" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="573.3" cy="80.0" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="621.7" cy="80.0" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="670.0" cy="94.4" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="766.7" cy="107.7" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="863.3" cy="142.1" r="4" fill="currentColor" opacity="0.90"/>
+<circle cx="960.0" cy="229.3" r="4" fill="currentColor" opacity="0.90"/>
+<text x="500.0" y="506" text-anchor="middle" font-size="14" font-family="sans-serif" fill="currentColor">Minimum rank-1 cross-encoder score</text>
+<text x="90.0" y="538" font-size="13" font-family="sans-serif" fill="currentColor">Accuracy</text>
+<text x="380.0" y="538" font-size="13" font-family="sans-serif" fill="currentColor">Answer F1</text>
+<text x="670.0" y="538" font-size="13" font-family="sans-serif" fill="currentColor">Abstention F1</text>
+</svg>

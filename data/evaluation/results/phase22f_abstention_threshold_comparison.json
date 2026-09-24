@@ -1,0 +1,471 @@
+{
+  "cases": [
+    {
+      "case_id": "wbs_001",
+      "question": "How is a Work Breakdown Structure developed, and what advantages does it provide for project planning and control?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9983535999999731,
+      "score_margin": 3.244935989379883,
+      "second_score": 3.4167919158935547,
+      "should_answer": true,
+      "top_score": 6.6617279052734375
+    },
+    {
+      "case_id": "scheduling_001",
+      "question": "Which tools and techniques are described for project scheduling and estimating task durations?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9643201999988378,
+      "score_margin": 1.6160163879394531,
+      "second_score": 4.991101264953613,
+      "should_answer": true,
+      "top_score": 6.607117652893066
+    },
+    {
+      "case_id": "ethics_001",
+      "question": "What are the four pillars of the PMI Code of Ethics and Professional Conduct?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9117378999999346,
+      "score_margin": 10.248864650726318,
+      "second_score": -2.0231404304504395,
+      "should_answer": true,
+      "top_score": 8.225724220275879
+    },
+    {
+      "case_id": "cpm_pert_001",
+      "question": "How do CPM and PERT differ in the way they estimate project duration and analyze the critical path?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9267414999994799,
+      "score_margin": 0.26181507110595703,
+      "second_score": 4.2993011474609375,
+      "should_answer": true,
+      "top_score": 4.5611162185668945
+    },
+    {
+      "case_id": "lean_001",
+      "question": "What techniques are used in Lean Project Management to improve efficiency and reduce waste?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8526267999986885,
+      "score_margin": 1.3733515739440918,
+      "second_score": 5.258874416351318,
+      "should_answer": true,
+      "top_score": 6.63222599029541
+    },
+    {
+      "case_id": "hybrid_001",
+      "question": "How does Hybrid Project Management combine traditional and Agile approaches?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8833149000001868,
+      "score_margin": 0.4388446807861328,
+      "second_score": 6.305665969848633,
+      "should_answer": true,
+      "top_score": 6.744510650634766
+    },
+    {
+      "case_id": "scope_change_001",
+      "question": "What processes are recommended for preventing scope creep and controlling project scope changes?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7556476000008843,
+      "score_margin": 1.2361068725585938,
+      "second_score": 5.561638832092285,
+      "should_answer": true,
+      "top_score": 6.797745704650879
+    },
+    {
+      "case_id": "quality_001",
+      "question": "Which tools and control measures are described for project quality management and assurance?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8359101000005467,
+      "score_margin": 1.1481084823608398,
+      "second_score": 2.733351230621338,
+      "should_answer": true,
+      "top_score": 3.8814597129821777
+    },
+    {
+      "case_id": "cost_estimation_001",
+      "question": "What cost estimation techniques are described for building a project budget?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9360281999997824,
+      "score_margin": 0.9243230819702148,
+      "second_score": 4.080228805541992,
+      "should_answer": true,
+      "top_score": 5.004551887512207
+    },
+    {
+      "case_id": "evm_001",
+      "question": "What are the key Earned Value Management metrics and forecasts used to measure project performance?",
+      "result_count": 5,
+      "retrieval_seconds": 0.978391599999668,
+      "score_margin": 0.8823513984680176,
+      "second_score": 5.30375337600708,
+      "should_answer": true,
+      "top_score": 6.186104774475098
+    },
+    {
+      "case_id": "cost_benefit_001",
+      "question": "What steps are involved in performing a project cost-benefit analysis?",
+      "result_count": 5,
+      "retrieval_seconds": 1.051612600000226,
+      "score_margin": 3.060835361480713,
+      "second_score": 3.4313197135925293,
+      "should_answer": true,
+      "top_score": 6.492155075073242
+    },
+    {
+      "case_id": "financial_risk_001",
+      "question": "Which financial instruments and strategies are used to mitigate project financial risks?",
+      "result_count": 5,
+      "retrieval_seconds": 0.9411599999984901,
+      "score_margin": 0.356903076171875,
+      "second_score": 6.3108696937561035,
+      "should_answer": true,
+      "top_score": 6.6677727699279785
+    },
+    {
+      "case_id": "eva_001",
+      "question": "How is Economic Value Added calculated and how should positive or negative EVA be interpreted?",
+      "result_count": 5,
+      "retrieval_seconds": 1.0475351999994018,
+      "score_margin": 3.624511241912842,
+      "second_score": 2.4888224601745605,
+      "should_answer": true,
+      "top_score": 6.113333702087402
+    },
+    {
+      "case_id": "cash_flow_001",
+      "question": "How should project cash flows be projected, monitored, and corrected when deviations occur?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8792358999999124,
+      "score_margin": 1.2386646270751953,
+      "second_score": 3.839311122894287,
+      "should_answer": true,
+      "top_score": 5.077975749969482
+    },
+    {
+      "case_id": "risk_identification_001",
+      "question": "What techniques are used for identifying and qualitatively analyzing project risks?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8566360999993776,
+      "score_margin": 0.13590383529663086,
+      "second_score": 7.520672798156738,
+      "should_answer": true,
+      "top_score": 7.656576633453369
+    },
+    {
+      "case_id": "quant_risk_001",
+      "question": "Which quantitative modeling techniques are used to analyze project risks numerically?",
+      "result_count": 5,
+      "retrieval_seconds": 0.906631699999707,
+      "score_margin": 2.1023378372192383,
+      "second_score": 5.659028053283691,
+      "should_answer": true,
+      "top_score": 7.76136589050293
+    },
+    {
+      "case_id": "report_elements_001",
+      "question": "What are the main elements of a comprehensive project report?",
+      "result_count": 5,
+      "retrieval_seconds": 0.845873099999153,
+      "score_margin": 0.917574405670166,
+      "second_score": 6.287550449371338,
+      "should_answer": true,
+      "top_score": 7.205124855041504
+    },
+    {
+      "case_id": "report_review_001",
+      "question": "What review and revision steps are recommended before a project report is finalized?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7278230000010808,
+      "score_margin": 0.9642354249954224,
+      "second_score": 0.3711458444595337,
+      "should_answer": true,
+      "top_score": 1.335381269454956
+    },
+    {
+      "case_id": "unans_001",
+      "question": "What is the capital city of Japan?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8469745999991574,
+      "score_margin": 0.044391632080078125,
+      "second_score": -11.035762786865234,
+      "should_answer": false,
+      "top_score": -10.991371154785156
+    },
+    {
+      "case_id": "unans_002",
+      "question": "Who wrote Pride and Prejudice?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7585118999995757,
+      "score_margin": 0.033797264099121094,
+      "second_score": -11.016716003417969,
+      "should_answer": false,
+      "top_score": -10.982918739318848
+    },
+    {
+      "case_id": "unans_003",
+      "question": "What is Newton's second law of motion?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7802934999999707,
+      "score_margin": 0.005661964416503906,
+      "second_score": -11.243593215942383,
+      "should_answer": false,
+      "top_score": -11.237931251525879
+    },
+    {
+      "case_id": "unans_004",
+      "question": "What is the chemical symbol for gold?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7483228999990388,
+      "score_margin": 0.020322799682617188,
+      "second_score": -11.143732070922852,
+      "should_answer": false,
+      "top_score": -11.123409271240234
+    },
+    {
+      "case_id": "unans_005",
+      "question": "How does DNA replication work?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7350864999989426,
+      "score_margin": 0.31271934509277344,
+      "second_score": -11.134998321533203,
+      "should_answer": false,
+      "top_score": -10.82227897644043
+    },
+    {
+      "case_id": "unans_006",
+      "question": "What is the boiling point of water at sea level?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7584850999992341,
+      "score_margin": 0.009949684143066406,
+      "second_score": -11.040125846862793,
+      "should_answer": false,
+      "top_score": -11.030176162719727
+    },
+    {
+      "case_id": "unans_007",
+      "question": "What is the current PMP certification exam fee in US dollars?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7352135000000999,
+      "score_margin": 0.22830867767333984,
+      "second_score": -11.096810340881348,
+      "should_answer": false,
+      "top_score": -10.868501663208008
+    },
+    {
+      "case_id": "unans_008",
+      "question": "How many questions are currently on the PMP certification exam?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8581837000001542,
+      "score_margin": 1.6389551162719727,
+      "second_score": -9.487489700317383,
+      "should_answer": false,
+      "top_score": -7.84853458404541
+    },
+    {
+      "case_id": "unans_009",
+      "question": "What keyboard shortcut in Jira creates a new issue?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7704297000000224,
+      "score_margin": 3.0236005783081055,
+      "second_score": -11.115846633911133,
+      "should_answer": false,
+      "top_score": -8.092246055603027
+    },
+    {
+      "case_id": "unans_010",
+      "question": "What is the latest version number of Microsoft Project?",
+      "result_count": 5,
+      "retrieval_seconds": 0.7180767999998352,
+      "score_margin": 0.8579568862915039,
+      "second_score": -8.432278633117676,
+      "should_answer": false,
+      "top_score": -7.574321746826172
+    },
+    {
+      "case_id": "unans_011",
+      "question": "What is the current market price of Microsoft stock?",
+      "result_count": 5,
+      "retrieval_seconds": 0.8277889999990293,
+      "score_margin": 0.05741310119628906,
+      "second_score": -11.059432983398438,
+      "should_answer": false,
+      "top_score": -11.002019882202148
+    },
+    {
+      "case_id": "unans_012",
+      "question": "Who is the current president of the United States?",
+      "result_count": 5,
+      "retrieval_seconds": 0.855931199999759,
+      "score_margin": 0.006160736083984375,
+      "second_score": -11.033811569213867,
+      "should_answer": false,
+      "top_score": -11.027650833129883
+    }
+  ],
+  "controlled_variables": {
+    "chunk_size": 200,
+    "chunking_strategy": "fixed",
+    "confidence_signal": "rank_1_cross_encoder_score",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "indexing_seconds": 9.375931599999603,
+    "overlap": 40,
+    "retrieval_architecture": "dense+bm25->rrf(k=60,pool=10)->cross_encoder(pool=20,cpu)"
+  },
+  "dataset": "data\\evaluation\\evaluation_dataset_v2.json",
+  "experiment": "abstention_threshold_calibration",
+  "phase": "22F",
+  "production_threshold": 0.0,
+  "sample": "data\\samples\\sample.pdf",
+  "score_distribution": {
+    "answerable": {
+      "count": 18,
+      "max": 8.225724220275879,
+      "mean": 6.089553925726149,
+      "min": 1.335381269454956
+    },
+    "separation_gap": 8.909703016281128,
+    "unanswerable": {
+      "count": 12,
+      "max": -7.574321746826172,
+      "mean": -10.216780026753744,
+      "min": -11.237931251525879
+    }
+  },
+  "threshold_results": [
+    {
+      "abstention_f1": 0.8571428571428571,
+      "abstention_precision": 1.0,
+      "abstention_recall": 0.75,
+      "accuracy": 0.9,
+      "answer_f1": 0.923076923076923,
+      "answer_precision": 0.8571428571428571,
+      "answer_recall": 1.0,
+      "false_abstentions": 0,
+      "false_answers": 3,
+      "num_cases": 30,
+      "threshold": -10.0,
+      "true_abstentions": 9,
+      "true_answers": 18
+    },
+    {
+      "abstention_f1": 0.9090909090909091,
+      "abstention_precision": 1.0,
+      "abstention_recall": 0.8333333333333334,
+      "accuracy": 0.9333333333333333,
+      "answer_f1": 0.9473684210526316,
+      "answer_precision": 0.9,
+      "answer_recall": 1.0,
+      "false_abstentions": 0,
+      "false_answers": 2,
+      "num_cases": 30,
+      "threshold": -8.0,
+      "true_abstentions": 10,
+      "true_answers": 18
+    },
+    {
+      "abstention_f1": 1.0,
+      "abstention_precision": 1.0,
+      "abstention_recall": 1.0,
+      "accuracy": 1.0,
+      "answer_f1": 1.0,
+      "answer_precision": 1.0,
+      "answer_recall": 1.0,
+      "false_abstentions": 0,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": -5.0,
+      "true_abstentions": 12,
+      "true_answers": 18
+    },
+    {
+      "abstention_f1": 1.0,
+      "abstention_precision": 1.0,
+      "abstention_recall": 1.0,
+      "accuracy": 1.0,
+      "answer_f1": 1.0,
+      "answer_precision": 1.0,
+      "answer_recall": 1.0,
+      "false_abstentions": 0,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 0.0,
+      "true_abstentions": 12,
+      "true_answers": 18
+    },
+    {
+      "abstention_f1": 1.0,
+      "abstention_precision": 1.0,
+      "abstention_recall": 1.0,
+      "accuracy": 1.0,
+      "answer_f1": 1.0,
+      "answer_precision": 1.0,
+      "answer_recall": 1.0,
+      "false_abstentions": 0,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 1.0,
+      "true_abstentions": 12,
+      "true_answers": 18
+    },
+    {
+      "abstention_f1": 0.9600000000000001,
+      "abstention_precision": 0.9230769230769231,
+      "abstention_recall": 1.0,
+      "accuracy": 0.9666666666666667,
+      "answer_f1": 0.9714285714285714,
+      "answer_precision": 1.0,
+      "answer_recall": 0.9444444444444444,
+      "false_abstentions": 1,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 2.0,
+      "true_abstentions": 12,
+      "true_answers": 17
+    },
+    {
+      "abstention_f1": 0.923076923076923,
+      "abstention_precision": 0.8571428571428571,
+      "abstention_recall": 1.0,
+      "accuracy": 0.9333333333333333,
+      "answer_f1": 0.9411764705882353,
+      "answer_precision": 1.0,
+      "answer_recall": 0.8888888888888888,
+      "false_abstentions": 2,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 4.0,
+      "true_abstentions": 12,
+      "true_answers": 16
+    },
+    {
+      "abstention_f1": 0.8275862068965517,
+      "abstention_precision": 0.7058823529411765,
+      "abstention_recall": 1.0,
+      "accuracy": 0.8333333333333334,
+      "answer_f1": 0.8387096774193548,
+      "answer_precision": 1.0,
+      "answer_recall": 0.7222222222222222,
+      "false_abstentions": 5,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 6.0,
+      "true_abstentions": 12,
+      "true_answers": 13
+    },
+    {
+      "abstention_f1": 0.5853658536585366,
+      "abstention_precision": 0.41379310344827586,
+      "abstention_recall": 1.0,
+      "accuracy": 0.43333333333333335,
+      "answer_f1": 0.10526315789473684,
+      "answer_precision": 1.0,
+      "answer_recall": 0.05555555555555555,
+      "false_abstentions": 17,
+      "false_answers": 0,
+      "num_cases": 30,
+      "threshold": 8.0,
+      "true_abstentions": 12,
+      "true_answers": 1
+    }
+  ],
+  "top_k": 5
+}

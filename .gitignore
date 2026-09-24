@@ -1,0 +1,94 @@
+# ---------------------------------------------------------
+# Environment / secrets
+# ---------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+.venv/
+venv/
+
+
+# ---------------------------------------------------------
+# Python generated files
+# ---------------------------------------------------------
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.coverage
+.coverage.*
+htmlcov/
+
+build/
+dist/
+
+
+# ---------------------------------------------------------
+# IDE / editor
+# ---------------------------------------------------------
+
+.vscode/
+.idea/
+
+
+# ---------------------------------------------------------
+# Operating system
+# ---------------------------------------------------------
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# ---------------------------------------------------------
+# Application runtime data
+# ---------------------------------------------------------
+
+logs/*.log
+
+data/raw/*
+data/processed/*
+data/indexes/
+data/metadata/*
+
+
+# ---------------------------------------------------------
+# Temporary evaluation / experiment indexes
+# ---------------------------------------------------------
+
+data/evaluation/work/
+
+
+# ---------------------------------------------------------
+# Local development files
+# ---------------------------------------------------------
+
+current_project_structure.txt
+
+
+# ---------------------------------------------------------
+# Streamlit secrets
+# ---------------------------------------------------------
+
+.streamlit/secrets.toml
+
+
+# ---------------------------------------------------------
+# Keep placeholder files
+# ---------------------------------------------------------
+
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/metadata/.gitkeep
+
+# Local/sample source documents
+data/samples/*
+!data/samples/.gitkeep
+!data/samples/README.md

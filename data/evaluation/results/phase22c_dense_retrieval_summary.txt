@@ -1,0 +1,24 @@
+report_type: RetrievalEvaluationReport
+metadata.phase: 22C
+metadata.sample: data\samples\sample.pdf
+metadata.dataset: data\evaluation\evaluation_dataset_v2.json
+metadata.retriever: dense
+metadata.description: Dense retrieval with all-MiniLM-L6-v2 embeddings
+metadata.chunking_strategy: fixed
+metadata.chunk_size: 200
+metadata.overlap: 40
+metadata.chunk_count: 192
+metadata.retriever_build_seconds: 0.021768999999039806
+metadata.retrieval_total_seconds: 0.20935150000150315
+metadata.mean_query_retrieval_seconds: 0.011630638888972398
+num_cases: 18
+top_k: 5
+num_skipped_unanswerable: 12
+mean_hit_at_1: 0.6666666666666666
+mean_hit_at_3: 0.8888888888888888
+mean_hit_at_5: 1.0
+mean_reciprocal_rank: 0.7962962962962963
+mean_page_recall_at_5: 0.9444444444444444
+mean_precision_at_k: 0.5
+mean_recall_at_k: 0.9444444444444444
+mean_ndcg_at_k: 0.8418083469801534
