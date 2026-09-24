@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_host: str = "0.0.0.0"
     app_port: int = 8000
+    max_upload_size_mb: int = 20
 
     llm_provider: str = "ollama"
     ollama_base_url: str = "http://localhost:11434"

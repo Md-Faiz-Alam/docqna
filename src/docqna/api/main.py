@@ -3,7 +3,6 @@ import re
 from collections.abc import Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
-from shutil import copyfileobj
 from tempfile import TemporaryDirectory
 from time import perf_counter
 from uuid import uuid4
@@ -668,6 +667,10 @@ def ask_question(
             "model": ErrorResponse,
             "description": "Unsupported document type",
         },
+        413: {
+            "model": ErrorResponse,
+            "description": "Uploaded document is too large",
+        },
         422: {
             "model": ErrorResponse,
             "description": "Document could not be processed",
@@ -712,6 +715,28 @@ def upload_document(
             f"Unsupported document type: '{extension or '<none>'}'."
         )
 
+    settings = get_settings()
+    max_upload_bytes = (
+        settings.max_upload_size_mb
+        * 1024
+        * 1024
+    )
+
+    if (
+        file.size is not None
+        and file.size > max_upload_bytes
+    ):
+        raise HTTPException(
+            status_code=(
+                status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+            ),
+            detail=(
+                "Uploaded document exceeds the "
+                f"{settings.max_upload_size_mb} MB "
+                "file-size limit."
+            ),
+        )
+
     with TemporaryDirectory(
         ignore_cleanup_errors=True,
     ) as temp_dir:
@@ -721,12 +746,36 @@ def upload_document(
 
         try:
             file.file.seek(0)
+            total_bytes = 0
+            read_size = 1024 * 1024
 
             with temp_path.open("wb") as target:
-                copyfileobj(
-                    file.file,
-                    target,
-                )
+                while True:
+                    chunk = file.file.read(
+                        read_size
+                    )
+
+                    if not chunk:
+                        break
+
+                    total_bytes += len(chunk)
+
+                    if total_bytes > max_upload_bytes:
+                        raise HTTPException(
+                            status_code=(
+                                status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+                            ),
+                            detail=(
+                                "Uploaded document exceeds the "
+                                f"{settings.max_upload_size_mb} MB "
+                                "file-size limit."
+                            ),
+                        )
+
+                    target.write(chunk)
+
+        except HTTPException:
+            raise
 
         except OSError as exc:
             raise DocumentLoadError(

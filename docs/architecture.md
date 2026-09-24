@@ -1,10 +1,14 @@
 # DocQ&A Architecture
 
+---
+
 ## 1. Purpose
 
-DocQ&A is a document-question-answering system designed around grounded retrieval, measurable quality, and operational reliability.
+DocQ&A is a document-question-answering system designed around grounded retrieval, measurable quality, operational reliability, and reproducible deployment.
 
-The architecture separates document ingestion/indexing, online question answering, evaluation/experimentation, anonymous session isolation, persistence, and observability.
+The architecture separates document ingestion/indexing, online question answering, evaluation/experimentation, anonymous session isolation, persistence, observability, and container deployment.
+
+---
 
 ## 2. System context
 
@@ -20,23 +24,26 @@ flowchart LR
 
 | Component | Responsibility |
 |---|---|
-| Streamlit | UI, anonymous session ID generation, upload/query/document actions |
-| FastAPI | API boundary, validation, session enforcement, orchestration |
+| Streamlit | UI, browser-cookie-backed anonymous session identity, upload/query/document actions |
+| FastAPI | API boundary, validation, session enforcement, upload-size enforcement, orchestration |
 | Ingestion | parsing, validation, cleaning, metadata, chunking |
 | ChromaDB | persistent dense-vector storage |
 | BM25 | lexical scoring over indexed chunks |
 | RRF | rank fusion across dense and lexical retrieval |
 | Cross-Encoder | reranking candidate chunks |
 | Answerability gate | abstain when evidence confidence is insufficient |
-| Ollama | LLM generation |
-| Citation validation | normalize and verify source references |
+| Ollama | local LLM generation |
+| Citation validation | normalize, repair, and verify source references |
 | Registry | document identity, versioning, ownership/session scope |
+
+---
 
 ## 3. Ingestion and indexing
 
 ```mermaid
 flowchart TD
     UP[Uploaded PDF / DOCX / TXT]
+    --> SIZE[Upload-size check]
     --> VAL[Validate type/content]
     --> HASH[Content hash]
     --> REGCHECK[Dedup + version check]
@@ -49,14 +56,17 @@ flowchart TD
     --> COMMIT[Registry commit]
 ```
 
-Behavior:
+Current behavior:
 
-- exact duplicate in the same session scope is rejected,
-- same filename with changed content becomes a new version,
-- a new filename becomes a new logical document,
-- registry persistence uses atomic JSON writes,
-- indexed chunks carry document and session metadata,
-- deleting a document removes its indexed representation for that session.
+- uploads are capped at 20 MB by backend enforcement
+- exact duplicates in the same session scope are rejected
+- the same filename with changed content becomes a new version
+- a new filename becomes a new logical document
+- registry persistence uses atomic JSON writes
+- indexed chunks carry document and anonymous-session metadata
+- deleting a document removes its indexed representation for that session
+
+---
 
 ## 4. Online QA pipeline
 
@@ -71,7 +81,7 @@ flowchart TD
     RRF --> CE[Cross-Encoder reranking]
     CE --> TOP[Top evidence]
     TOP --> CONF{Rank-1 CE score >= 0?}
-    CONF -->|No| ABS[Safe abstention]
+    CONF -->|No| ABS[Exact safe abstention]
     CONF -->|Yes| PROMPT[Grounded prompt]
     PROMPT --> LLM[Ollama phi3:mini]
     LLM --> SAN[Output sanitization]
@@ -79,7 +89,15 @@ flowchart TD
     CIT --> RESP[Answer + sources]
 ```
 
-## 5. Frozen production configuration
+The exact abstention response is:
+
+```text
+The provided documents do not contain enough information to answer the question.
+```
+
+---
+
+## 5. Frozen production RAG configuration
 
 | Parameter | Value |
 |---|---|
@@ -87,6 +105,7 @@ flowchart TD
 | Fixed overlap | 40 words |
 | Embedding model | `sentence-transformers/all-MiniLM-L6-v2` |
 | Embedding device | CPU |
+| Embedding batch size | 32 |
 | Vector similarity | cosine |
 | Candidate pool | 10 |
 | RRF constant | 60 |
@@ -99,7 +118,11 @@ flowchart TD
 | Max generated tokens | 320 |
 | Ollama timeout | 180 seconds |
 
-These values are frozen from the project evaluation work and should only change with new evaluation evidence.
+These values are frozen from the project evaluation work and should change only when new evaluation evidence justifies a change.
+
+Operational deployment controls such as the upload-size limit are separate from this frozen RAG configuration.
+
+---
 
 ## 6. Anonymous session isolation
 
@@ -110,8 +133,16 @@ sequenceDiagram
     participant A as FastAPI
     participant R as Registry/Retrieval
 
-    B->>S: Open app
-    S->>S: Generate UUID4 session ID
+    B->>S: Open or refresh app
+    B-->>S: Existing docqna_session_id cookie (if present)
+
+    alt Valid cookie exists
+        S->>S: Reuse anonymous session ID
+    else Cookie missing or invalid
+        S->>S: Generate UUID4 session ID
+        S-->>B: Persist docqna_session_id cookie
+    end
+
     S->>A: Request + X-DocQNA-Session-ID
     A->>A: Validate session header
     A->>R: Apply backend-owned session filter
@@ -121,7 +152,11 @@ sequenceDiagram
 
 Isolation is enforced in registry ownership, Chroma metadata, BM25 filtering, QA retrieval, and list/delete operations.
 
-A session ID is not an account credential. This design does not provide authenticated identity or account recovery.
+The browser cookie preserves the anonymous namespace across normal page refreshes in the same browser. A different browser profile or incognito session receives a different namespace.
+
+A session ID is not an account credential. This design does not provide authenticated identity, cross-device identity, or account recovery.
+
+---
 
 ## 7. Grounding and prompt safety
 
@@ -129,15 +164,32 @@ Uploaded documents are treated as untrusted evidence.
 
 The system separates application instructions, user questions, and retrieved document text. Reliability hardening includes prompt-injection-resistant grounding instructions, exact safe abstention behavior, output sanitization, citation normalization/repair, and safe fallback behavior when citation validation fails.
 
+---
+
 ## 8. Persistence
 
+Local runtime paths:
+
 ```text
-data/indexes/        # local Chroma runtime data (ignored by Git)
-data/metadata/       # document registry/runtime metadata (ignored by Git)
-logs/                # runtime logs (ignored by Git)
+data/indexes/        # Chroma runtime data, ignored by Git
+data/metadata/       # document registry/runtime metadata, ignored by Git
+logs/                # runtime logs, ignored by Git
 ```
 
+Docker persistence:
+
+| Compose volume | Container path | Purpose |
+|---|---|---|
+| `ollama_data` | `/root/.ollama` | Ollama model data |
+| `docqna_indexes` | `/app/data/indexes` | persistent Chroma index |
+| `docqna_metadata` | `/app/data/metadata` | persistent document registry |
+| `huggingface_cache` | `/root/.cache/huggingface` | embedding/reranker model cache |
+
+API-container recreation has been validated without loss of indexed document state.
+
 Evaluation artifacts under `data/evaluation/results/` are versioned because they support architectural decisions.
+
+---
 
 ## 9. Evaluation architecture
 
@@ -154,23 +206,58 @@ flowchart TD
     --> ERR[Error analysis]
 ```
 
-## 10. Deployment target
+Evaluation is intentionally separate from the online serving path. Deployment validation does not change the frozen evaluation metrics.
 
-Planned Phase 23 topology:
+---
+
+## 10. Validated Docker topology
 
 ```mermaid
 flowchart LR
-    USER[Public user]
-    --> ST[Streamlit container]
-    --> API[FastAPI container]
-    --> OLL[Ollama service]
-    API --> VOL1[(Persistent Chroma volume)]
-    API --> VOL2[(Persistent registry/data volume)]
+    USER[Browser User] --> ST[Streamlit :8501]
+    ST --> API[FastAPI :8000]
+    API --> OLL[Ollama]
+    API --> VOL1[(Chroma volume)]
+    API --> VOL2[(Registry volume)]
+    API --> HFC[(HF model cache)]
+    OLL --> OLLV[(Ollama model volume)]
+    INIT[One-shot ollama-init] --> OLL
 ```
 
-This is the target deployment design. Docker support should only be claimed after end-to-end validation.
+Container/network behavior:
 
-## 11. Key trade-offs
+- Streamlit is published on host port `8501`
+- FastAPI is published only on host loopback at `127.0.0.1:8000`
+- Streamlit reaches FastAPI internally at `http://api:8000`
+- FastAPI reaches Ollama internally at `http://ollama:11434`
+- Ollama is not published directly to the host by the Compose file
+- `ollama-init` pulls `phi3:mini` into the persistent Ollama volume
+- Chroma, registry metadata, Ollama model data, and Hugging Face model downloads survive container recreation
+
+The local Docker stack has passed end-to-end validation for service health, document upload/indexing, grounded QA with citations, exact abstention, browser-refresh session continuity, persistent Chroma/registry data, and API-container recreation.
+
+Public cloud hosting, reverse-proxy configuration, and HTTPS are still pending.
+
+---
+
+## 11. Deployment validation boundary
+
+The successful local Docker validation proves packaging, service connectivity, persistence, and the tested product flow on the development machine.
+
+It does **not** prove:
+
+- large-scale multi-user capacity
+- public-internet security hardening
+- production-grade backup/recovery
+- rate-limit behavior
+- long-running resource stability
+- cloud-provider availability characteristics
+
+Those concerns remain part of public deployment hardening rather than RAG architecture tuning.
+
+---
+
+## 12. Key trade-offs
 
 ### Hybrid retrieval
 
@@ -184,20 +271,34 @@ The cross-encoder is applied only to a small candidate set, trading some latency
 
 Retrievers always return nearest results. The answerability gate prevents weak evidence from automatically becoming an LLM answer.
 
+### Anonymous isolation without accounts
+
+Anonymous session namespaces keep different browser sessions separated without introducing an authentication system. The trade-off is that there is no account recovery or durable identity.
+
+### Local-model deployment
+
+Ollama keeps generation self-hosted and avoids an external generation API dependency, but CPU-only local inference creates a quality/latency ceiling relative to larger hosted models.
+
 ### No agent framework
 
 The workload is a deterministic retrieval-and-answer pipeline. Additional orchestration complexity is not justified unless future requirements need multi-step tool use.
 
-## 12. Failure modes
+---
+
+## 13. Failure modes
 
 | Failure mode | Current mitigation |
 |---|---|
+| Oversized upload | 20 MB backend limit; request rejected |
 | Duplicate upload | content hashing + scoped registry checks |
 | Changed file with same name | versioning |
 | Cross-session leakage | backend-enforced session filters |
-| Weak evidence | CE threshold + abstention |
+| Browser refresh loses session namespace | browser-cookie-backed anonymous session ID |
+| API container recreated | named volumes preserve Chroma and registry data |
+| Weak evidence | CE threshold + exact abstention |
 | Prompt injection in documents | untrusted-context prompting + sanitization |
 | Invalid citations | normalization, repair, validation |
 | Ollama unavailable | health check and typed generation errors |
-| Scanned PDF | unsupported; documented limitation |
+| Scanned/image-only PDF | unsupported; documented limitation |
 | Over-citation | known quality limitation |
+| Public traffic abuse | rate/resource/storage controls still pending |

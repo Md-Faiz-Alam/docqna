@@ -1,5 +1,7 @@
 import json
 import mimetypes
+import os
+import re
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -9,9 +11,16 @@ from uuid import uuid4
 import streamlit as st
 
 
-DEFAULT_API_URL = "http://127.0.0.1:8000"
+DEFAULT_API_URL = os.getenv(
+    "DOCQNA_API_URL",
+    "http://127.0.0.1:8000",
+).rstrip("/")
 SUPPORTED_UPLOAD_TYPES = ("pdf", "docx", "txt")
 SESSION_HEADER_NAME = "X-DocQNA-Session-ID"
+SESSION_COOKIE_NAME = "docqna_session_id"
+_SESSION_ID_PATTERN = re.compile(
+    r"^[A-Za-z0-9_-]{32,128}$"
+)
 
 
 def _decode_json_bytes(
@@ -682,14 +691,119 @@ def render_sources(
             st.divider()
 
 
+def _valid_session_id(
+    value: str | None,
+) -> bool:
+    """Return whether a browser session ID is safe to reuse."""
+
+    if value is None:
+        return False
+
+    return bool(
+        _SESSION_ID_PATTERN.fullmatch(
+            value.strip()
+        )
+    )
+
+
+def _persist_session_cookie(
+    session_id: str,
+) -> None:
+    """
+    Persist the anonymous session namespace in the browser.
+
+    The cookie is intentionally client-side and non-authenticated.
+    SameSite=Lax limits cross-site sending, and Secure is added
+    automatically when the app is served over HTTPS.
+    """
+
+    cookie_name = json.dumps(
+        SESSION_COOKIE_NAME
+    )
+    cookie_value = json.dumps(
+        session_id
+    )
+
+    st.html(
+        f"""
+        <script>
+        (() => {{
+            const name = {cookie_name};
+            const value = {cookie_value};
+
+            let cookie = (
+                name
+                + "="
+                + encodeURIComponent(value)
+                + "; Path=/; SameSite=Lax"
+            );
+
+            if (window.location.protocol === "https:") {{
+                cookie += "; Secure";
+            }}
+
+            document.cookie = cookie;
+        }})();
+        </script>
+        """,
+        unsafe_allow_javascript=True,
+    )
+
+
 def _initialize_session_state() -> None:
-    """Initialize Streamlit session state."""
+    """Initialize Streamlit state and stable browser session identity."""
+
+    browser_session_id = (
+        st.context.cookies.get(
+            SESSION_COOKIE_NAME
+        )
+    )
 
     if (
         "session_id"
         not in st.session_state
     ):
-        st.session_state.session_id = uuid4().hex
+        if (
+            isinstance(
+                browser_session_id,
+                str,
+            )
+            and _valid_session_id(
+                browser_session_id
+            )
+        ):
+            st.session_state.session_id = (
+                browser_session_id.strip()
+            )
+
+        else:
+            st.session_state.session_id = (
+                uuid4().hex
+            )
+
+    if (
+        "session_cookie_initialized"
+        not in st.session_state
+    ):
+        session_id = str(
+            st.session_state.session_id
+        )
+
+        if (
+            not isinstance(
+                browser_session_id,
+                str,
+            )
+            or browser_session_id.strip()
+            != session_id
+        ):
+            _persist_session_cookie(
+                session_id
+            )
+
+        st.session_state.session_cookie_initialized = (
+            True
+        )
 
     if (
         "messages"
@@ -774,18 +888,7 @@ def main() -> None:
     # Backend
     # -----------------------------------------------------
 
-    st.sidebar.header(
-        "Backend"
-    )
-
-    api_url = (
-        st.sidebar.text_input(
-            "FastAPI URL",
-            value=DEFAULT_API_URL,
-        )
-        .strip()
-        .rstrip("/")
-    )
+    api_url = DEFAULT_API_URL
 
     top_k = st.sidebar.slider(
         "Retrieved chunks",
