@@ -135,6 +135,79 @@ def main() -> None:
     )
     print("BM25 session isolation: PASS")
 
+    ranking_chunk_a1 = make_chunk(
+        chunk_id="a_rank_1",
+        text="alpha beta x",
+        session_id=SESSION_A,
+    )
+    ranking_chunk_a2 = make_chunk(
+        chunk_id="a_rank_2",
+        text="beta y",
+        session_id=SESSION_A,
+    )
+
+    baseline_bm25 = BM25Retriever(
+        [
+            ranking_chunk_a1,
+            ranking_chunk_a2,
+        ]
+    )
+    baseline_results = baseline_bm25.retrieve(
+        "alpha beta",
+        top_k=2,
+        metadata_filters={
+            "session_id": SESSION_A,
+        },
+    )
+
+    other_session_chunks = [
+        make_chunk(
+            chunk_id=f"b_noise_{index}",
+            text="alpha noise",
+            session_id=SESSION_B,
+        )
+        for index in range(5)
+    ]
+
+    mixed_bm25 = BM25Retriever(
+        [
+            ranking_chunk_a1,
+            ranking_chunk_a2,
+            *other_session_chunks,
+        ]
+    )
+    mixed_results = mixed_bm25.retrieve(
+        "alpha beta",
+        top_k=2,
+        metadata_filters={
+            "session_id": SESSION_A,
+        },
+    )
+
+    assert [
+        result.chunk_id
+        for result in baseline_results
+    ] == [
+        result.chunk_id
+        for result in mixed_results
+    ]
+
+    assert [
+        result.score
+        for result in baseline_results
+    ] == [
+        result.score
+        for result in mixed_results
+    ]
+
+    assert baseline_results[0].chunk_id == (
+        "a_rank_1"
+    )
+
+    print(
+        "BM25 cross-session scoring isolation: PASS"
+    )
+
     with TemporaryDirectory(ignore_cleanup_errors=True) as temp_dir:
         store = ChromaVectorStore(
             persist_directory=temp_dir,

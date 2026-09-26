@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -97,11 +98,9 @@ class QARequest(BaseModel):
 
     question: str
 
-    top_k: int = Field(
-        default=5,
-        ge=1,
-        le=20,
-    )
+    # Production retrieval configuration is frozen at top_k=5.
+    # Reject client attempts to run an unevaluated retrieval depth.
+    top_k: Literal[5] = 5
 
     filters: QAMetadataFilters | None = None
 

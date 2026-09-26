@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docqna"
-version = "0.0.0"
+version = "0.1.0"
 description = "Production-oriented document question answering system using hybrid RAG."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -1,10 +1,14 @@
 import logging
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from time import perf_counter
 from pathlib import Path
 
 from docqna.embeddings import BaseEmbeddingModel
-from docqna.exceptions import IndexingError
+from docqna.exceptions import (
+    IndexingError,
+    ResourceLimitError,
+)
 from docqna.indexing.chroma import ChromaVectorStore
 from docqna.ingestion import (
     DocumentIngestionService,
@@ -46,11 +50,129 @@ class DocumentIndexService:
         registry: DocumentRegistry,
         embedding_model: BaseEmbeddingModel,
         vector_store: ChromaVectorStore,
+        max_documents_per_session: int | None = None,
+        max_active_documents: int | None = None,
+        max_chunks_per_document: int | None = None,
+        document_retention_hours: int | None = None,
     ) -> None:
         self.ingestion_service = ingestion_service
         self.registry = registry
         self.embedding_model = embedding_model
         self.vector_store = vector_store
+        self.max_documents_per_session = (
+            max_documents_per_session
+        )
+        self.max_active_documents = max_active_documents
+        self.max_chunks_per_document = max_chunks_per_document
+        self.document_retention_hours = document_retention_hours
+
+    def purge_expired_documents(
+        self,
+        *,
+        now: datetime | None = None,
+    ) -> int:
+        """Delete logical documents older than the retention window.
+
+        Expiration is based on the latest registered version of each
+        logical document. A recent version keeps that logical document
+        active even when older version records are older than the cutoff.
+
+        Returns the number of logical documents deleted.
+        """
+
+        retention_hours = self.document_retention_hours
+
+        if retention_hours is None or retention_hours <= 0:
+            return 0
+
+        current_time = now or datetime.now(timezone.utc)
+
+        if current_time.tzinfo is None:
+            current_time = current_time.replace(tzinfo=timezone.utc)
+        else:
+            current_time = current_time.astimezone(timezone.utc)
+
+        cutoff = current_time - timedelta(hours=retention_hours)
+
+        expired_records: list[DocumentRecord] = []
+
+        for record in self.registry.list_latest_records():
+            registered_at = record.registered_at
+
+            if registered_at.tzinfo is None:
+                registered_at = registered_at.replace(tzinfo=timezone.utc)
+            else:
+                registered_at = registered_at.astimezone(timezone.utc)
+
+            if registered_at <= cutoff:
+                expired_records.append(record)
+
+        deleted_count = 0
+
+        for record in expired_records:
+            if self.delete_document(
+                record.document_id,
+                session_id=record.session_id,
+            ):
+                deleted_count += 1
+
+        if expired_records:
+            logger.info(
+                (
+                    "document_retention_cleanup candidates=%d "
+                    "deleted=%d retention_hours=%d"
+                ),
+                len(expired_records),
+                deleted_count,
+                retention_hours,
+            )
+
+        return deleted_count
+
+
+    def _enforce_document_limits(
+        self,
+        path: str | Path,
+        session_id: str | None,
+    ) -> None:
+        """Enforce logical-document quotas before expensive processing."""
+
+        filename = Path(path).name
+
+        session_records = self.registry.list_latest_records(
+            session_id=session_id
+        )
+
+        # Uploading changed content under an existing filename creates
+        # a new version of the same logical document and does not consume
+        # another active-document quota slot.
+        is_existing_logical_document = any(
+            record.filename.casefold() == filename.casefold()
+            for record in session_records
+        )
+
+        if is_existing_logical_document:
+            return
+
+        if (
+            self.max_documents_per_session is not None
+            and len(session_records)
+            >= self.max_documents_per_session
+        ):
+            raise ResourceLimitError(
+                "Anonymous session document limit reached "
+                f"({self.max_documents_per_session}). "
+                "Delete an existing document before uploading another."
+            )
+
+        if self.max_active_documents is not None:
+            active_records = self.registry.list_latest_records()
+
+            if len(active_records) >= self.max_active_documents:
+                raise ResourceLimitError(
+                    "Server active-document capacity has been reached. "
+                    "Please try again later."
+                )
 
     @staticmethod
     def _attach_document_identity(
@@ -113,6 +235,11 @@ class DocumentIndexService:
             filename,
         )
 
+        self._enforce_document_limits(
+            path=path,
+            session_id=session_id,
+        )
+
         record = self.registry.prepare(
             path,
             session_id=session_id,
@@ -127,6 +254,18 @@ class DocumentIndexService:
         processing_ms = (
             perf_counter() - processing_started
         ) * 1000.0
+
+        if (
+            self.max_chunks_per_document is not None
+            and len(processing_result.chunks)
+            > self.max_chunks_per_document
+        ):
+            raise ResourceLimitError(
+                "Document produces too many chunks "
+                f"({len(processing_result.chunks)}). "
+                "The public deployment limit is "
+                f"{self.max_chunks_per_document} chunks per document."
+            )
 
         chunks = self._attach_document_identity(
             chunks=processing_result.chunks,

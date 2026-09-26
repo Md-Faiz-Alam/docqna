@@ -24,6 +24,7 @@ class CrossEncoderReranker(BaseRetriever):
         ),
         candidate_pool_size: int = 20,
         device: str = "cpu",
+        model: CrossEncoder | None = None,
     ) -> None:
         if candidate_pool_size <= 0:
             raise ValueError(
@@ -43,17 +44,21 @@ class CrossEncoderReranker(BaseRetriever):
             candidate_pool_size
         )
 
-        try:
-            self.model = CrossEncoder(
-                model_name,
-                device=device,
-            )
+        if model is not None:
+            self.model = model
 
-        except Exception as exc:
-            raise RetrievalError(
-                "Could not load cross-encoder "
-                f"model '{model_name}'."
-            ) from exc
+        else:
+            try:
+                self.model = CrossEncoder(
+                    model_name,
+                    device=device,
+                )
+
+            except Exception as exc:
+                raise RetrievalError(
+                    "Could not load cross-encoder "
+                    f"model '{model_name}'."
+                ) from exc
 
     def retrieve(
         self,

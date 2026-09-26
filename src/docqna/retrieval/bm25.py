@@ -1,6 +1,7 @@
 import math
 import re
 from collections import Counter, defaultdict
+from collections.abc import Mapping
 
 from docqna.exceptions import RetrievalError
 from docqna.filters import (
@@ -80,6 +81,15 @@ class BM25Retriever(BaseRetriever):
             for token in set(tokens):
                 self.document_frequencies[token] += 1
 
+        self._session_statistics_cache: dict[
+            str,
+            tuple[
+                int,
+                float,
+                dict[str, int],
+            ],
+        ] = {}
+
     @staticmethod
     def _tokenize(
         text: str,
@@ -96,14 +106,140 @@ class BM25Retriever(BaseRetriever):
             flags=re.UNICODE,
         )
 
-    def _idf(
+    @staticmethod
+    def _build_statistics(
+        *,
+        document_indices: list[int],
+        tokenized_documents: list[list[str]],
+        document_lengths: list[int],
+    ) -> tuple[int, float, dict[str, int]]:
+        """Build BM25 corpus statistics for a document subset."""
+
+        num_documents = len(
+            document_indices
+        )
+
+        if num_documents == 0:
+            return (
+                0,
+                0.0,
+                {},
+            )
+
+        average_document_length = (
+            sum(
+                document_lengths[
+                    document_index
+                ]
+                for document_index
+                in document_indices
+            )
+            / num_documents
+        )
+
+        document_frequencies: dict[
+            str,
+            int,
+        ] = defaultdict(int)
+
+        for document_index in document_indices:
+            for token in set(
+                tokenized_documents[
+                    document_index
+                ]
+            ):
+                document_frequencies[
+                    token
+                ] += 1
+
+        return (
+            num_documents,
+            average_document_length,
+            dict(document_frequencies),
+        )
+
+    def _scoring_statistics(
         self,
+        metadata_filters: MetadataFilters | None,
+    ) -> tuple[
+        int,
+        float,
+        Mapping[str, int],
+    ]:
+        """Return BM25 statistics for the active session scope."""
+
+        session_id = (
+            metadata_filters.get(
+                "session_id"
+            )
+            if metadata_filters
+            else None
+        )
+
+        if session_id is None:
+            return (
+                self.num_documents,
+                self.average_document_length,
+                self.document_frequencies,
+            )
+
+        if not isinstance(
+            session_id,
+            str,
+        ):
+            raise ValueError(
+                "session_id filter must be a string."
+            )
+
+        cached_statistics = (
+            self._session_statistics_cache.get(
+                session_id
+            )
+        )
+
+        if cached_statistics is not None:
+            return cached_statistics
+
+        session_document_indices = [
+            document_index
+            for document_index, chunk
+            in enumerate(
+                self.chunks
+            )
+            if chunk.metadata.get(
+                "session_id"
+            ) == session_id
+        ]
+
+        statistics = self._build_statistics(
+            document_indices=(
+                session_document_indices
+            ),
+            tokenized_documents=(
+                self.tokenized_documents
+            ),
+            document_lengths=(
+                self.document_lengths
+            ),
+        )
+
+        self._session_statistics_cache[
+            session_id
+        ] = statistics
+
+        return statistics
+
+    @staticmethod
+    def _idf(
         term: str,
+        *,
+        num_documents: int,
+        document_frequencies: Mapping[str, int],
     ) -> float:
         """Calculate BM25 inverse document frequency."""
 
         document_frequency = (
-            self.document_frequencies.get(
+            document_frequencies.get(
                 term,
                 0,
             )
@@ -112,7 +248,7 @@ class BM25Retriever(BaseRetriever):
         return math.log(
             1.0
             + (
-                self.num_documents
+                num_documents
                 - document_frequency
                 + 0.5
             )
@@ -126,6 +262,10 @@ class BM25Retriever(BaseRetriever):
         self,
         query_terms: list[str],
         document_index: int,
+        *,
+        num_documents: int,
+        average_document_length: float,
+        document_frequencies: Mapping[str, int],
     ) -> float:
         """Calculate BM25 score for one document."""
 
@@ -155,7 +295,13 @@ class BM25Retriever(BaseRetriever):
                 continue
 
             idf = self._idf(
-                term
+                term,
+                num_documents=(
+                    num_documents
+                ),
+                document_frequencies=(
+                    document_frequencies
+                ),
             )
 
             numerator = (
@@ -172,7 +318,7 @@ class BM25Retriever(BaseRetriever):
                     + self.b
                     * (
                         document_length
-                        / self.average_document_length
+                        / average_document_length
                     )
                 )
             )
@@ -260,6 +406,17 @@ class BM25Retriever(BaseRetriever):
             if not query_terms:
                 return []
 
+            (
+                scoring_num_documents,
+                scoring_average_document_length,
+                scoring_document_frequencies,
+            ) = self._scoring_statistics(
+                metadata_filters
+            )
+
+            if scoring_num_documents == 0:
+                return []
+
             scored_documents: list[
                 tuple[int, float]
             ] = []
@@ -280,6 +437,15 @@ class BM25Retriever(BaseRetriever):
                 score = self._score_document(
                     query_terms=query_terms,
                     document_index=document_index,
+                    num_documents=(
+                        scoring_num_documents
+                    ),
+                    average_document_length=(
+                        scoring_average_document_length
+                    ),
+                    document_frequencies=(
+                        scoring_document_frequencies
+                    ),
                 )
 
                 if score > 0:

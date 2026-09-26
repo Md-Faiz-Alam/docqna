@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import chromadb
+from chromadb.config import Settings
 from chromadb.api.types import (
     Metadata,
     OneOrMany,
@@ -41,7 +42,10 @@ class ChromaVectorStore(BaseVectorStore):
             self.client = chromadb.PersistentClient(
                 path=str(
                     self.persist_directory
-                )
+                ),
+                settings=Settings(
+                    anonymized_telemetry=False,
+                ),
             )
 
             self.collection = (

@@ -1,7 +1,22 @@
+x-default-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.34.1
     restart: unless-stopped
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_MAX_QUEUE: "4"
+      OLLAMA_KEEP_ALIVE: "5m"
+      OLLAMA_CONTEXT_LENGTH: "4096"
+      OLLAMA_NO_CLOUD: "true"
+    mem_limit: 5g
+    logging: *default-logging
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
@@ -12,7 +27,7 @@ services:
       start_period: 10s
 
   ollama-init:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.34.1
     depends_on:
       ollama:
         condition: service_healthy
@@ -21,6 +36,8 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: ["ollama pull phi3:mini"]
     restart: "no"
+    mem_limit: 512m
+    logging: *default-logging
 
   api:
     build:
@@ -44,9 +61,22 @@ services:
       EMBEDDING_BATCH_SIZE: 32
 
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-20}
+      MAX_QUESTION_CHARS: ${MAX_QUESTION_CHARS:-2000}
+      MAX_DOCUMENTS_PER_SESSION: ${MAX_DOCUMENTS_PER_SESSION:-3}
+      MAX_ACTIVE_DOCUMENTS: ${MAX_ACTIVE_DOCUMENTS:-25}
+      MAX_CHUNKS_PER_DOCUMENT: ${MAX_CHUNKS_PER_DOCUMENT:-1000}
+      DOCUMENT_RETENTION_HOURS: ${DOCUMENT_RETENTION_HOURS:-24}
+
+      # Keep third-party model/index telemetry disabled in the
+      # self-hosted public deployment.
+      ANONYMIZED_TELEMETRY: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
 
       LOG_LEVEL: INFO
       LOG_TO_FILE: "false"
+
+    mem_limit: 5g
+    logging: *default-logging
 
     volumes:
       - docqna_indexes:/app/data/indexes
@@ -56,8 +86,8 @@ services:
     expose:
       - "8000"
 
-    # Localhost-only host binding: useful for diagnostics without publicly
-    # exposing FastAPI when this Compose file is used on a server.
+    # Diagnostics remain available from the VM itself, but FastAPI is
+    # not directly exposed to the public network.
     ports:
       - "127.0.0.1:8000:8000"
 
@@ -85,8 +115,16 @@ services:
     environment:
       DOCQNA_API_URL: http://api:8000
       STREAMLIT_SERVER_MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE_MB:-20}
+      DOCQNA_MAX_QUESTION_CHARS: ${MAX_QUESTION_CHARS:-2000}
+
+    mem_limit: 512m
+    logging: *default-logging
+
+    # The public reverse proxy added on the VM will be the only
+    # internet-facing entry point. Streamlit stays host-local.
     ports:
-      - "8501:8501"
+      - "127.0.0.1:8501:8501"
+
     healthcheck:
       test:
         [

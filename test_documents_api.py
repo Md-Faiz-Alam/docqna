@@ -17,15 +17,17 @@ class FakeDocumentIndexService:
 
     def __init__(self) -> None:
         self.records: dict[str, DocumentRecord] = {}
-        self._filename_to_id: dict[str, str] = {}
+        self._filename_to_id: dict[tuple[str, str], str] = {}
 
     def index_document(
         self,
         path: str | Path,
+        session_id: str | None = None,
     ) -> DocumentIndexingResult:
         file_path = Path(path)
         filename = file_path.name
-        key = filename.casefold()
+        effective_session_id = session_id or "legacy_local_session"
+        key = (effective_session_id, filename.casefold())
 
         if key in self._filename_to_id:
             raise DuplicateDocumentError(
@@ -37,6 +39,7 @@ class FakeDocumentIndexService:
 
         record = DocumentRecord(
             document_id=document_id,
+            session_id=effective_session_id,
             filename=filename,
             file_type=file_path.suffix.lower().lstrip("."),
             version=1,
@@ -57,25 +60,39 @@ class FakeDocumentIndexService:
 
     def list_documents(
         self,
+        session_id: str | None = None,
     ) -> list[DocumentRecord]:
-        return list(
-            self.records.values()
-        )
+        records = list(self.records.values())
+
+        if session_id is None:
+            return records
+
+        return [
+            record
+            for record in records
+            if record.session_id == session_id
+        ]
+
+    def purge_expired_documents(self) -> int:
+        return 0
 
     def delete_document(
         self,
         document_id: str,
+        session_id: str | None = None,
     ) -> bool:
-        record = self.records.pop(
-            document_id,
-            None,
-        )
+        record = self.records.get(document_id)
 
         if record is None:
             return False
 
+        if session_id is not None and record.session_id != session_id:
+            return False
+
+        self.records.pop(document_id, None)
+
         self._filename_to_id.pop(
-            record.filename.casefold(),
+            (record.session_id, record.filename.casefold()),
             None,
         )
 
@@ -93,6 +110,11 @@ def main() -> None:
 
     try:
         client = TestClient(app)
+        client.headers.update(
+            {
+                "X-DocQNA-Session-ID": "a" * 32,
+            }
+        )
 
         # ---------------------------------
         # Initially empty

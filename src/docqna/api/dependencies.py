@@ -1,6 +1,8 @@
 from collections.abc import Callable
 from functools import lru_cache
 
+from sentence_transformers import CrossEncoder
+
 from docqna.constants import (
     CHROMA_INDEX_DIR,
     DEFAULT_CHROMA_COLLECTION,
@@ -9,6 +11,7 @@ from docqna.embeddings import SentenceTransformerEmbedding
 from docqna.exceptions import (
     IndexingError,
     LLMConnectionError,
+    RetrievalError,
 )
 from docqna.generation.providers.ollama import OllamaProvider
 from docqna.indexing import (
@@ -43,6 +46,30 @@ def get_embedding_model() -> SentenceTransformerEmbedding:
     )
 
 
+
+
+@lru_cache(maxsize=1)
+def get_cross_encoder_model() -> CrossEncoder:
+    """Return the shared production cross-encoder model."""
+
+    model_name = (
+        "cross-encoder/"
+        "ms-marco-MiniLM-L-6-v2"
+    )
+
+    try:
+        return CrossEncoder(
+            model_name,
+            device="cpu",
+        )
+
+    except Exception as exc:
+        raise RetrievalError(
+            "Could not load cross-encoder "
+            f"model '{model_name}'."
+        ) from exc
+
+
 @lru_cache(maxsize=1)
 def get_vector_store() -> ChromaVectorStore:
     """Return the shared production Chroma vector store."""
@@ -73,11 +100,23 @@ def get_document_index_service() -> DocumentIndexService:
     Build and cache the production document index service.
     """
 
+    settings = get_settings()
+
     return DocumentIndexService(
         ingestion_service=get_document_ingestion_service(),
         registry=get_document_registry(),
         embedding_model=get_embedding_model(),
         vector_store=get_vector_store(),
+        max_documents_per_session=(
+            settings.max_documents_per_session
+        ),
+        max_active_documents=settings.max_active_documents,
+        max_chunks_per_document=(
+            settings.max_chunks_per_document
+        ),
+        document_retention_hours=(
+            settings.document_retention_hours
+        ),
     )
 
 
@@ -156,6 +195,7 @@ def get_rag_pipeline() -> RAGPipeline:
         ),
         candidate_pool_size=20,
         device="cpu",
+        model=get_cross_encoder_model(),
     )
 
     confidence_gate = RetrievalConfidenceGate(
@@ -184,9 +224,10 @@ def clear_rag_pipeline_cache() -> None:
     Invalidate the cached retrieval/RAG stack after
     document index mutations.
 
-    The shared embedding model and Chroma client remain
-    cached. The next QA request rebuilds BM25/RRF/reranking
-    against the current corpus.
+    The shared embedding model, cross-encoder model, and
+    Chroma client remain cached. The next QA request rebuilds
+    BM25/RRF/reranking against the current corpus without
+    reloading model weights.
     """
 
     get_rag_pipeline.cache_clear()

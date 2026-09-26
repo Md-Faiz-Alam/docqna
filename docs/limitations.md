@@ -34,19 +34,20 @@ Embeddings and cross-encoder reranking are configured for CPU, and the current d
 
 Session isolation has automated and manual validation, but the system has not been load-tested as a large multi-user service.
 
-### Public-traffic controls are incomplete
+### Public-traffic controls are only partially complete
 
-Uploads are capped at 20 MB and the backend enforces the limit. Broader public exposure still needs controls such as:
+The backend now enforces a 20 MB upload cap, a 2,000-character question limit, three logical documents per anonymous session, 25 active logical documents globally, 1,000 chunks per document, and 24-hour anonymous-document cleanup. Docker also applies memory caps and log rotation.
 
-- request/rate limiting
-- storage quotas or automated cleanup
-- CPU/memory resource limits
+Broader public exposure still needs:
+
+- reverse-proxy request/rate limiting
 - production timeout policies
+- host firewall/network rules
 - abuse monitoring appropriate to the hosting environment
 
-### Backup and retention policy is not finalized
+### Backup policy is not finalized
 
-Docker volumes persist Chroma indexes, registry metadata, Ollama model data, and Hugging Face model downloads across container recreation. A production backup/recovery policy and uploaded-document retention policy have not yet been finalized.
+Docker volumes persist Chroma indexes, registry metadata, Ollama model data, and Hugging Face model downloads across container recreation. Anonymous uploaded documents now expire after 24 hours, but a production backup/recovery policy for persistent volumes has not yet been finalized.
 
 ### Public cloud deployment is pending
 

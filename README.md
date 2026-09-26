@@ -34,6 +34,11 @@ It is intentionally more than a basic “chat with PDF” demo: the project comp
 - evaluation datasets, experiment runners, and saved experiment artifacts
 - Docker / Docker Compose packaging with persistent volumes
 - 20 MB upload-size enforcement
+- fixed production `top_k=5` and 2,000-character question limit
+- anonymous-session document quotas and global active-document cap
+- 1,000-chunk per-document cap and 24-hour anonymous-document retention
+- Docker memory limits and log rotation for small-VM deployment
+- pinned Ollama `0.34.1` runtime with bounded concurrency/queueing
 
 ---
 
@@ -269,6 +274,11 @@ EMBEDDING_DEVICE=cpu
 EMBEDDING_BATCH_SIZE=32
 
 MAX_UPLOAD_SIZE_MB=20
+MAX_QUESTION_CHARS=2000
+MAX_DOCUMENTS_PER_SESSION=3
+MAX_ACTIVE_DOCUMENTS=25
+MAX_CHUNKS_PER_DOCUMENT=1000
+DOCUMENT_RETENTION_HOURS=24
 LOG_LEVEL=INFO
 ```
 
@@ -328,7 +338,7 @@ FastAPI:   http://127.0.0.1:8000
 Health:    http://127.0.0.1:8000/health
 ```
 
-The Compose topology intentionally keeps FastAPI bound to the Docker host loopback address while Streamlit is published on port `8501`. Ollama is reachable by the API over the internal Compose network.
+The Compose topology binds both FastAPI and Streamlit to the Docker host loopback address (`127.0.0.1`). Ollama is reachable only over the internal Compose network. In public deployment, a reverse proxy will be the internet-facing entry point.
 
 The Docker stack uses persistent named volumes for:
 
@@ -410,7 +420,7 @@ See [`SECURITY.md`](SECURITY.md).
 - the answerability threshold is calibrated on the project evaluation dataset
 - CPU-only embedding, reranking, and local generation can introduce noticeable first-use or inference latency
 - the system has not been load-tested as a large multi-user service
-- the 20 MB upload cap is implemented, but rate limiting, storage quotas/cleanup, production resource limits, and persistent-volume backup policy are still pending
+- upload-size, question-size, document/chunk quotas, 24-hour anonymous-document cleanup, Docker memory caps, and log rotation are implemented; request/rate limiting and persistent-volume backup/recovery are still pending
 - local Docker deployment is validated, but public cloud hosting, reverse-proxy configuration, and HTTPS are still pending
 
 See [`docs/limitations.md`](docs/limitations.md).
@@ -439,13 +449,19 @@ Completed:
 - browser-refresh session persistence
 - local Docker end-to-end validation
 - persistent Chroma/registry validation across API-container recreation
+- BM25 session-scoped scoring isolation
+- fixed production `top_k=5` and question/document/chunk limits
+- 24-hour anonymous-document retention cleanup
+- cross-encoder model reuse across RAG cache invalidation
+- Chroma/Hugging Face telemetry disabled in Docker runtime
+- Docker memory limits, log rotation, localhost-only host bindings, and pinned Ollama runtime
 
 Next:
 
 - deploy the validated Docker stack to a remote Linux VM/server
 - add reverse proxy and HTTPS for the public URL
-- add rate/resource/storage controls appropriate for public traffic
-- define backup/retention policy for persistent data
+- add reverse-proxy request/rate limiting and host firewall rules appropriate for public traffic
+- define persistent-volume backup/recovery policy
 - final public demo and portfolio polish
 
 ---

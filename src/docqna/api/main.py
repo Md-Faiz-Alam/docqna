@@ -54,6 +54,7 @@ from docqna.exceptions import (
     LLMConnectionError,
     LLMModelError,
     RetrievalError,
+    ResourceLimitError,
     UnsupportedFileTypeError,
 )
 from docqna.indexing import DocumentIndexService
@@ -104,6 +105,24 @@ def require_session_id(
         )
 
     return session_id
+
+
+def _purge_expired_documents(
+    service: DocumentIndexService,
+) -> int:
+    """Apply the configured anonymous-document retention policy."""
+
+    deleted_count = service.purge_expired_documents()
+
+    if deleted_count > 0:
+        clear_rag_pipeline_cache()
+
+        logger.info(
+            "document_retention_cache_invalidated deleted=%d",
+            deleted_count,
+        )
+
+    return deleted_count
 
 
 @asynccontextmanager
@@ -313,6 +332,27 @@ async def document_validation_error_handler(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={
             "error": "document_validation_error",
+            "detail": str(exc),
+        },
+    )
+
+
+@app.exception_handler(ResourceLimitError)
+async def resource_limit_error_handler(
+    request: Request,
+    exc: ResourceLimitError,
+) -> JSONResponse:
+    _log_handled_error(
+        request,
+        exc,
+        error_code="resource_limit",
+        level=logging.WARNING,
+    )
+
+    return JSONResponse(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        content={
+            "error": "resource_limit",
             "detail": str(exc),
         },
     )
@@ -562,6 +602,10 @@ def health_check() -> HealthResponse:
     "/qa",
     response_model=QAResponse,
     responses={
+        422: {
+            "model": ErrorResponse,
+            "description": "Invalid question or production retrieval configuration",
+        },
         500: {
             "model": ErrorResponse,
             "description": "DocQ&A processing error",
@@ -578,6 +622,11 @@ def ask_question(
     session_id: str = Depends(
         require_session_id
     ),
+    service_provider: Callable[
+        [], DocumentIndexService
+    ] = Depends(
+        get_document_index_service_provider
+    ),
     pipeline_provider: Callable[
         [], RAGPipeline
     ] = Depends(
@@ -587,6 +636,20 @@ def ask_question(
     """
     Answer a question using the production RAG pipeline.
     """
+
+    settings = get_settings()
+
+    if len(request.question) > settings.max_question_chars:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                "Question exceeds the "
+                f"{settings.max_question_chars}-character limit."
+            ),
+        )
+
+    service = service_provider()
+    _purge_expired_documents(service)
 
     pipeline = pipeline_provider()
 
@@ -675,6 +738,10 @@ def ask_question(
             "model": ErrorResponse,
             "description": "Document could not be processed",
         },
+        429: {
+            "model": ErrorResponse,
+            "description": "Public deployment resource limit reached",
+        },
         500: {
             "model": ErrorResponse,
             "description": "Indexing error",
@@ -737,6 +804,9 @@ def upload_document(
             ),
         )
 
+    service = service_provider()
+    _purge_expired_documents(service)
+
     with TemporaryDirectory(
         ignore_cleanup_errors=True,
     ) as temp_dir:
@@ -786,8 +856,6 @@ def upload_document(
             raise DocumentValidationError(
                 "Uploaded document is empty."
             )
-
-        service = service_provider()
 
         result = service.index_document(
             temp_path,
@@ -844,6 +912,7 @@ def list_documents(
     """
 
     service = service_provider()
+    _purge_expired_documents(service)
 
     records = service.list_documents(
         session_id=session_id
@@ -899,6 +968,7 @@ def delete_document(
     """
 
     service = service_provider()
+    _purge_expired_documents(service)
 
     deleted = service.delete_document(
         document_id,

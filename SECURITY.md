@@ -61,6 +61,16 @@ FastAPI performs the authoritative size check while streaming the uploaded file 
 
 Oversized uploads are rejected rather than fully copied into application storage.
 
+Additional public-demo limits are enforced by the backend:
+
+```text
+Question length:              2,000 characters
+Logical documents/session:   3
+Active logical documents:    25
+Chunks/document:              1,000
+Anonymous document retention: 24 hours
+```
+
 Image-only/scanned PDFs are not OCR-processed and are documented as unsupported.
 
 ---
@@ -120,11 +130,11 @@ The production Docker configuration currently uses Ollama only; no external gene
 The validated local Compose topology exposes:
 
 ```text
-Streamlit: 0.0.0.0:8501
+Streamlit: 127.0.0.1:8501
 FastAPI:   127.0.0.1:8000
 ```
 
-FastAPI is therefore bound to the Docker host loopback address in the local Compose configuration.
+FastAPI and Streamlit are both bound to the Docker host loopback address in the local Compose configuration. A public deployment should expose only the reverse proxy on ports 80/443.
 
 Ollama is reachable by FastAPI over the internal Compose network and is not directly published to the host by the Compose file.
 
@@ -151,7 +161,7 @@ docker compose down -v
 
 unless deleting persisted Docker data is intentional.
 
-For public deployment, define an explicit backup/recovery strategy and retention policy for uploaded-document metadata and indexes.
+Anonymous uploaded-document metadata and indexes are automatically expired after 24 hours of inactivity based on the latest document version. Public deployment still needs an explicit persistent-volume backup/recovery strategy.
 
 ---
 
@@ -164,7 +174,7 @@ Avoid logging:
 - anonymous session identifiers
 - secrets or credentials
 
-Production log retention should be intentionally configured rather than left unbounded.
+Docker JSON logs are rotated with bounded size/file-count settings. Host-level log retention and monitoring should still be configured for the final deployment environment.
 
 Operators are responsible for appropriate data-retention and hosting policies for uploaded documents.
 
@@ -178,15 +188,14 @@ Public cloud deployment is still pending. Before broad public exposure, add or v
 
 - reverse proxy and HTTPS/TLS
 - request/rate limiting
-- CPU and memory limits
-- storage quotas or cleanup
+- reverse-proxy request/rate limiting
 - production timeout policies
-- log-retention policy
+- host-level log-retention/monitoring policy
 - persistent-volume backup/recovery
 - host firewall/network rules
 - monitoring appropriate to the deployment environment
 
-The 20 MB upload-size limit is already implemented and is not an outstanding deployment control.
+The 20 MB upload-size limit, question/document/chunk quotas, 24-hour anonymous-document cleanup, Docker memory limits, and Docker log rotation are already implemented and are not outstanding deployment controls.
 
 ---
 

@@ -16,6 +16,10 @@ DEFAULT_API_URL = os.getenv(
     "http://127.0.0.1:8000",
 ).rstrip("/")
 SUPPORTED_UPLOAD_TYPES = ("pdf", "docx", "txt")
+PRODUCTION_TOP_K = 5
+MAX_QUESTION_CHARS = int(
+    os.getenv("DOCQNA_MAX_QUESTION_CHARS", "2000")
+)
 SESSION_HEADER_NAME = "X-DocQNA-Session-ID"
 SESSION_COOKIE_NAME = "docqna_session_id"
 _SESSION_ID_PATTERN = re.compile(
@@ -890,12 +894,10 @@ def main() -> None:
 
     api_url = DEFAULT_API_URL
 
-    top_k = st.sidebar.slider(
-        "Retrieved chunks",
-        min_value=1,
-        max_value=20,
-        value=5,
-        step=1,
+    top_k = PRODUCTION_TOP_K
+
+    st.sidebar.caption(
+        "Retrieval depth: production top-k = 5"
     )
 
     (
@@ -1291,6 +1293,7 @@ def main() -> None:
 
     question = st.chat_input(
         "Ask a question about your documents...",
+        max_chars=MAX_QUESTION_CHARS,
         disabled=chat_disabled,
     )
 

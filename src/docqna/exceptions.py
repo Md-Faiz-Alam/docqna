@@ -30,6 +30,10 @@ class DuplicateDocumentError(DocumentValidationError):
     """Raised when an identical document has already been ingested."""
 
 
+class ResourceLimitError(DocumentError):
+    """Raised when a public deployment resource limit is exceeded."""
+
+
 class DocumentLoadError(DocumentError):
     """Raised when document contents cannot be loaded."""
 
@@ -60,7 +64,7 @@ class GenerationError(DocQNAError):
 
 class LLMModelError(GenerationError):
     """Raised when the configured LLM model is unavailable."""
-    
+
 class LLMConnectionError(GenerationError):
     """Raised when the configured LLM provider cannot be reached."""
 

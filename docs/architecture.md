@@ -214,7 +214,8 @@ Evaluation is intentionally separate from the online serving path. Deployment va
 
 ```mermaid
 flowchart LR
-    USER[Browser User] --> ST[Streamlit :8501]
+    USER[Browser User] --> RP[Reverse proxy / future HTTPS]
+    RP --> ST[Streamlit :8501]
     ST --> API[FastAPI :8000]
     API --> OLL[Ollama]
     API --> VOL1[(Chroma volume)]
@@ -226,12 +227,15 @@ flowchart LR
 
 Container/network behavior:
 
-- Streamlit is published on host port `8501`
+- Streamlit is published only on host loopback at `127.0.0.1:8501`
 - FastAPI is published only on host loopback at `127.0.0.1:8000`
 - Streamlit reaches FastAPI internally at `http://api:8000`
 - FastAPI reaches Ollama internally at `http://ollama:11434`
 - Ollama is not published directly to the host by the Compose file
 - `ollama-init` pulls `phi3:mini` into the persistent Ollama volume
+- Ollama is pinned to `0.34.1`, limited to one parallel request/loaded model, and uses a bounded request queue
+- API/Ollama/Streamlit containers use memory caps and Docker JSON-log rotation
+- Chroma and Hugging Face telemetry are disabled in the Docker runtime
 - Chroma, registry metadata, Ollama model data, and Hugging Face model downloads survive container recreation
 
 The local Docker stack has passed end-to-end validation for service health, document upload/indexing, grounded QA with citations, exact abstention, browser-refresh session continuity, persistent Chroma/registry data, and API-container recreation.
@@ -247,9 +251,9 @@ The successful local Docker validation proves packaging, service connectivity, p
 It does **not** prove:
 
 - large-scale multi-user capacity
-- public-internet security hardening
+- reverse-proxy/HTTPS and host-firewall hardening
 - production-grade backup/recovery
-- rate-limit behavior
+- request/rate-limit behavior
 - long-running resource stability
 - cloud-provider availability characteristics
 
@@ -301,4 +305,4 @@ The workload is a deterministic retrieval-and-answer pipeline. Additional orches
 | Ollama unavailable | health check and typed generation errors |
 | Scanned/image-only PDF | unsupported; documented limitation |
 | Over-citation | known quality limitation |
-| Public traffic abuse | rate/resource/storage controls still pending |
+| Public traffic abuse | upload/question/document/chunk limits, 24-hour cleanup, memory caps, and log rotation implemented; reverse-proxy rate limiting still pending |
