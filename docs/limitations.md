@@ -8,9 +8,9 @@
 
 Scanned pages (pages without a text layer) are rendered and read with Tesseract, limited to `MAX_OCR_PAGES` pages per document. Tesseract is installed in the Docker image; a local run without Tesseract on PATH rejects scanned PDFs with a clear message. Tables, forms and multi-column layouts are flattened to plain text, and handwriting is not supported.
 
-### Answerability threshold over-abstains on paraphrased questions
+### Some answerable questions still end in abstention
 
-The public benchmark shows that the rank-1 cross-encoder threshold of `0` refuses 58% of answerable questions when they are phrased naturally. Users can see "not enough information" for questions their documents do answer. Retrieval itself is strong (Hit@5 = 1.0).
+With the phase-23 configuration (retrieval gate `-10.5` plus sentence-level grounding check `3.3`), the public benchmark answers 69.5% of paraphrased answerable questions correctly. Most of the rest end in the safe abstention, not in a wrong answer. Users can still see "not enough information" for questions the documents do answer, especially for paraphrases far from the document's wording.
 
 ### Session isolation is not authentication
 
@@ -20,7 +20,7 @@ This does not provide accounts, passwords, OAuth, account recovery, durable cros
 
 ### Dataset-specific answerability calibration
 
-The rank-1 cross-encoder threshold of `0` is supported by the current 30-case evaluation dataset and should be recalibrated when the domain, reranker, chunking, or retrieval behavior changes materially.
+The retrieval gate (`-10.5`) and grounding threshold (`3.3`) were selected on 105 questions (75 public, 30 private). The evaluation includes only 28 unanswerable questions, so "0 false answers" means "none observed in 28", not a guarantee. Long answers that combine several facts can score low against any single sentence and be withheld. Re-run phase 23 when the domain, LLM, reranker or chunking changes materially.
 
 ### Over-citation
 

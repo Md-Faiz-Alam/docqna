@@ -56,7 +56,8 @@ It is intentionally more than a basic “chat with PDF” demo: the project comp
 | Reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2` |
 | Reranker candidates | 20 |
 | Final context | Top 5 chunks |
-| Answerability threshold | Rank-1 CE score `>= 0` |
+| Answerability: retrieval gate | Rank-1 CE score `>= -10.5` (skips clearly off-topic questions) |
+| Answerability: grounding check | Best CE(answer, cited-source sentence) `>= 3.3`, otherwise abstain |
 | LLM | Ollama `phi3:mini` |
 | Generation | temperature `0`, `num_predict=320` |
 
@@ -128,13 +129,26 @@ The 30-case set above uses a private document, so CI cannot run it. A second, **
 
 | Hit@1 | Hit@3 | Hit@5 | MRR | Answerable passing the gate | Unanswerable correctly refused |
 |---:|---:|---:|---:|---:|---:|
-| 0.746 | 0.983 | 1.000 | 0.863 | **0.424** | 0.875 |
+| 0.746 | 0.983 | 1.000 | 0.863 | 1.000 | 0.312 |
 
 ```bash
 python -m docqna.evaluation.public_benchmark --check
 ```
 
-**Known issue the benchmark exposed:** retrieval generalises well, but the production answerability threshold (cross-encoder score `>= 0`) was calibrated on one private document. On naturally phrased questions it refuses 58% of answerable questions. See [`docs/evaluation.md`](docs/evaluation.md#12-public-benchmark-and-the-answerability-gap).
+The last two columns measure only the first, cheap retrieval gate. Most unanswerable questions are stopped by the grounding check *after* generation, which needs the LLM and is measured separately.
+
+### Answerability recalibration (phase 23)
+
+The benchmark showed that the original single threshold (cross-encoder score `>= 0`, tuned on one private document) refused 58% of naturally phrased answerable questions. Simply lowering it was not safe: with the gate off, `phi3:mini` answered 10 of 16 unanswerable questions, citing unrelated passages ("France won the 2018 World Cup [1]"). The fix has two stages. A loose retrieval gate (`-10.5`) skips clearly off-topic questions before the LLM runs. After generation, a **grounding check** scores the answer against each sentence of the sources it cites, using the same cross-encoder, and abstains unless one supports it. Both thresholds were chosen from an end-to-end run with the LLM on both datasets (105 questions), using a trust-first rule:
+
+| | Public: correct | Public: false answers | Private: correct | Private: false answers |
+|---|---:|---:|---:|---:|
+| Before (gate `>= 0`) | 37.3% | 6.2% | 100% | 0% |
+| **After (gate `>= -10.5` + sentence-level grounding `>= 3.3`)** | **69.5%** | **0%** | 94.4% | **0%** |
+
+With the new configuration, none of the 28 unanswerable questions got an invented answer. The trade-off is one private answer, a long multi-claim answer that is correct but weakly matched to any single sentence.
+
+Reproduce with [`experiments/run_phase23_answerability_recalibration.py`](experiments/run_phase23_answerability_recalibration.py). Details are in [`docs/evaluation.md`](docs/evaluation.md#13-answerability-recalibration-with-the-llm-in-the-loop).
 
 See [`docs/evaluation.md`](docs/evaluation.md).
 
@@ -427,7 +441,7 @@ See [`SECURITY.md`](SECURITY.md).
 ## Known limitations
 
 - scanned PDFs are read with Tesseract OCR (installed in the Docker image; locally only when Tesseract is on PATH); tables and multi-column layouts are extracted as plain text
-- the cross-encoder answerability threshold over-abstains on paraphrased questions (see the public benchmark)
+- about 40% of answerable, naturally phrased questions still end in abstention; the thresholds are calibrated on 105 questions and should be re-run for a very different domain
 - anonymous session isolation is not user authentication or durable cross-device identity
 - `phi3:mini` can sometimes over-cite retrieved evidence
 - the answerability threshold is calibrated on the project evaluation dataset

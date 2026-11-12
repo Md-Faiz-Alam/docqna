@@ -34,6 +34,11 @@ RAG_STAGE_LATENCY = Histogram(
 
 BM25_INDEX_BUILDS = Counter("docqna_bm25_index_builds_total", "Per-session BM25 index (re)builds.")
 
+GROUNDING_REJECTIONS = Counter(
+    "docqna_grounding_rejections_total",
+    "Generated answers replaced by abstention because cited sources did not support them.",
+)
+
 FEEDBACK = Counter("docqna_feedback_total", "Answer feedback by rating.", ["rating"])
 
 RATE_LIMITED = Counter(

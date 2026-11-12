@@ -18,6 +18,7 @@ from docqna.indexing import ChromaVectorStore, DocumentIndexService
 from docqna.ingestion import DocumentIngestionService, DocumentRegistry
 from docqna.ingestion.models import DocumentChunk
 from docqna.rag import RAGPipeline
+from docqna.rag.grounding import GroundingVerifier
 from docqna.retrieval import CrossEncoderReranker, DenseRetriever, RetrievalConfidenceGate
 from docqna.retrieval.session_index import ChunkLoader, SessionScopedHybridRetriever
 from docqna.settings import Settings, get_settings
@@ -149,10 +150,17 @@ def build_rag_pipeline(
         model=cross_encoder_model,
     )
 
+    grounding_verifier = (
+        GroundingVerifier(scorer=reranker.model, min_score=settings.grounding_min_score)
+        if settings.grounding_check_enabled
+        else None
+    )
+
     return RAGPipeline(
         retriever=reranker,
         llm=llm,
         confidence_gate=RetrievalConfidenceGate(min_top_score=settings.answerability_min_score),
+        grounding_verifier=grounding_verifier,
     )
 
 

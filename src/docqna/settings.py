@@ -63,7 +63,11 @@ class Settings(BaseSettings):
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     reranker_device: str = "cpu"
     reranker_candidate_pool_size: int = 20
-    answerability_min_score: float = 0.0
+    # Phase 23 (end-to-end, LLM in the loop): a loose retrieval gate that only
+    # skips clearly off-topic questions, plus a post-generation grounding check.
+    answerability_min_score: float = -10.5
+    grounding_check_enabled: bool = True
+    grounding_min_score: float = 3.3
     max_cached_session_indexes: int = 256
 
     # Logging

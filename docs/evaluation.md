@@ -166,11 +166,40 @@ These are operational validation checks, not additional benchmark cases. They do
 |---|---:|
 | Hit@1 / Hit@3 / Hit@5 | 0.746 / 0.983 / 1.000 |
 | MRR | 0.863 |
-| Answerable questions passing the gate | 0.424 |
-| Unanswerable questions correctly abstained | 0.875 |
+| Answerable questions passing the gate (at the original `0`) | 0.424 |
+| Unanswerable questions correctly abstained (at the original `0`) | 0.875 |
 
 **Finding.** Retrieval generalises to a new domain and to paraphrased questions. The answerability threshold does not. The cross-encoder's rank-1 scores for answerable paraphrases range from about -10 to +8. Unanswerable questions mostly score below -8, but some reach +3.5, so no single threshold separates the two well: at `0`, 58% of answerable questions are refused. The original threshold was tuned on the 30-case private set, whose questions were closer to the document's wording.
 
-**Next step (not yet applied).** Recalibrate answerability end to end with the LLM in the loop: lower the retrieval gate and rely on the model's own abstention plus citation validation. Measure both answer correctness and false answers on unanswerable questions before changing the production default.
+This was fixed in phase 23 (next section). CI runs the benchmark and fails if any metric drops below `data/evaluation/public/thresholds.json`. These thresholds are regression floors set just below the values under the current gate (`-10.5`): Hit@1 0.746, Hit@5 1.0, MRR 0.863, answerable gate pass 1.0, unanswerable gate abstain 0.312. The gate-only abstain rate is now low by design, because unanswerable questions are mostly stopped by the grounding check after generation. That check needs the LLM, so it is measured by phase 23 rather than in CI.
 
-CI runs the benchmark and fails if any metric drops below `data/evaluation/public/thresholds.json`. The thresholds are regression floors set just below today's values.
+## 13. Answerability recalibration with the LLM in the loop
+
+`experiments/run_phase23_answerability_recalibration.py` answers all 105 questions once with the retrieval gate **disabled** (75 public, 30 private; `phi3:mini`, temperature 0). For each question it records the rank-1 cross-encoder score, whether the model answered, and whether the answer is correct. An answer counts as correct if a cited source contains the labelled evidence, or if the answer states the labelled fact; the private set requires at least half of the expected answer terms. Any gate threshold can then be simulated offline.
+
+**The LLM is not a safe second line of defence on its own.** With no gate, `phi3:mini` answered 10 of 16 unanswerable public questions and attached citations to unrelated passages. Examples: "France won the 2018 World Cup [1]", "the dress code is business casual [1]", "the engineering team uses Python and Java [1]". A retrieval gate alone cannot separate the cases either. Lowering it from `0` to `-4` raises correct public answers from 37% to 64%, but false answers go from 6% to 31%.
+
+**Grounding check.** `ground` scores each generated answer, with citation markers removed, against the sources it cites, using the reranker's cross-encoder. Correct answers that restate their source score high; invented answers citing unrelated passages score very low.
+
+The first version scored the answer against each **whole chunk**, which penalised correct answers. For example, "60 euros per day, excluding alcohol [2]" scored -3.05 against its 200-word mixed-topic chunk, but 9.22 against the sentence that states it. Grounding is therefore **sentence-level**: the best score over the cited sources' sentences and adjacent sentence pairs.
+
+`analyze` searches (gate `T`, grounding `G`) pairs:
+
+1. constraints: false answers on unanswerable questions no higher than the old configuration on either set, and private correct answers at least 0.94;
+2. then fewest false answers, then most public correct answers, then most private correct answers;
+3. prefer the higher `T` (fewer LLM calls), and take `G` at the middle of the tied range (widest margin).
+
+An earlier version of this rule maximised public correct answers first. It selected `G = 2.2`: 71.2% correct with 1/16 false answers on the public set. Because a configuration with **no** false answers costs only one correct answer, the rule was changed to put trust first. This choice was made after seeing the data and is reported here for transparency.
+
+The rule selects `T = -10.5`, `G = 3.3` (tied range 2.5–4.0, well clear of the highest-scoring invented answer at 2.45):
+
+| Configuration | Public correct | Public correctly cited | Public wrong answers | Public false answers | Private correct | Private false answers |
+|---|---:|---:|---:|---:|---:|---:|
+| Old: gate `>= 0` | 0.373 | 0.356 | 0.034 | 0.062 | 1.000 | 0.000 |
+| Gate `>= -4`, no grounding | 0.644 | 0.542 | 0.051 | 0.312 | 1.000 | 0.000 |
+| Gate `>= -9`, chunk-level grounding `>= 0.7` | 0.593 | 0.593 | 0.034 | 0.062 | 1.000 | 0.000 |
+| **New: gate `>= -10.5`, sentence-level grounding `>= 3.3`** | **0.695** | **0.678** | **0.017** | **0.000** | **0.944** | **0.000** |
+
+Keeping the private set at 100% would require `G <= -2.1`. That is because of one correct but long, multi-claim answer (`quality_001`). Such a low threshold readmits invented answers and drops public correct answers back to about 36%.
+
+**Caveats.** The thresholds were selected and reported on the same 105 questions, so the numbers are optimistic. Only 28 unanswerable questions exist across both sets, so "0 false answers" means none observed in 28. The recorded answers come from one model (`phi3:mini`); a different LLM needs a new run. All raw per-case results and the sweep are in `data/evaluation/results/phase23_recalibration/`.

@@ -80,13 +80,15 @@ flowchart TD
     B --> RRF
     RRF --> CE[Cross-Encoder reranking]
     CE --> TOP[Top evidence]
-    TOP --> CONF{Rank-1 CE score >= 0?}
+    TOP --> CONF{Rank-1 CE score >= -10.5?}
     CONF -->|No| ABS[Exact safe abstention]
     CONF -->|Yes| PROMPT[Grounded prompt]
     PROMPT --> LLM[Ollama phi3:mini]
     LLM --> SAN[Output sanitization]
     SAN --> CIT[Citation normalization + validation]
-    CIT --> RESP[Answer + sources]
+    CIT --> GRD{Best CE answer vs cited-source sentence >= 3.3?}
+    GRD -->|No| ABS
+    GRD -->|Yes| RESP[Answer + sources]
 ```
 
 The exact abstention response is:
@@ -112,7 +114,8 @@ The provided documents do not contain enough information to answer the question.
 | Cross-encoder | `cross-encoder/ms-marco-MiniLM-L-6-v2` |
 | Reranker candidate count | 20 |
 | Final top-k | 5 |
-| Answerability threshold | 0 |
+| Retrieval gate (rank-1 CE score) | -10.5 |
+| Grounding check (best CE answer vs cited-source sentence) | 3.3 |
 | LLM | `phi3:mini` |
 | LLM temperature | 0 |
 | Max generated tokens | 320 |

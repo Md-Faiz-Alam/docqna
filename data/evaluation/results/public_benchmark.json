@@ -5,8 +5,8 @@
   "hit_at_3": 0.9830508474576272,
   "hit_at_5": 1.0,
   "mrr": 0.862994350282486,
-  "answerable_pass_rate": 0.423728813559322,
-  "unanswerable_abstain_rate": 0.875,
+  "answerable_pass_rate": 1.0,
+  "unanswerable_abstain_rate": 0.3125,
   "cases": [
     {
       "case_id": "hb_01",
@@ -20,7 +20,7 @@
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -2.748234272003174,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_03",
@@ -34,21 +34,21 @@
       "should_answer": true,
       "first_relevant_rank": 4,
       "top_score": -1.816237449645996,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_05",
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -4.810856819152832,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_06",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -5.516497611999512,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_07",
@@ -69,56 +69,56 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -6.682989120483398,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_10",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -9.341894149780273,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_11",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -0.9963173866271973,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_12",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -0.19473859667778015,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_13",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -4.649503707885742,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_14",
       "should_answer": true,
       "first_relevant_rank": 3,
       "top_score": -1.0301203727722168,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_15",
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -4.083865642547607,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "hb_16",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.8694766759872437,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_01",
@@ -132,21 +132,21 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -6.5630388259887695,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_03",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -8.141822814941406,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_04",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -5.146845817565918,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_05",
@@ -160,21 +160,21 @@
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -3.3809728622436523,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_07",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.854893684387207,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_08",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -10.346738815307617,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_09",
@@ -188,7 +188,7 @@
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -6.307670593261719,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_11",
@@ -216,14 +216,14 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.8765008449554443,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sec_15",
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -4.035490989685059,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_01",
@@ -237,42 +237,42 @@
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -4.6564130783081055,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_03",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.2910149097442627,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_04",
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -4.0915679931640625,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_05",
       "should_answer": true,
       "first_relevant_rank": 3,
       "top_score": -0.0902118980884552,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_06",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -5.127079963684082,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_07",
       "should_answer": true,
       "first_relevant_rank": 2,
       "top_score": -3.6433584690093994,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "cb_08",
@@ -328,7 +328,7 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -8.775734901428223,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_01",
@@ -356,21 +356,21 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.5063931941986084,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_05",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -3.8315765857696533,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_06",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -1.907649040222168,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_07",
@@ -391,7 +391,7 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -3.244727611541748,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_10",
@@ -412,28 +412,28 @@
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -0.378571480512619,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "sla_13",
       "should_answer": true,
       "first_relevant_rank": 1,
       "top_score": -3.2902071475982666,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_01",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -0.2766581177711487,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_02",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -8.606441497802734,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_03",
@@ -454,7 +454,7 @@
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -9.697284698486328,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_06",
@@ -468,42 +468,42 @@
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -0.4785807132720947,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_08",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -1.0484497547149658,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_09",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -3.044356107711792,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_10",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -0.1974136233329773,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_11",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -0.5516170859336853,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_12",
       "should_answer": false,
       "first_relevant_rank": null,
       "top_score": -2.1944870948791504,
-      "gate_passed": false
+      "gate_passed": true
     },
     {
       "case_id": "un_13",

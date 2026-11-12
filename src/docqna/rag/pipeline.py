@@ -14,7 +14,8 @@ from time import perf_counter
 from docqna.exceptions import GenerationError
 from docqna.filters import MetadataFilters, normalize_metadata_filters
 from docqna.generation.providers.base import BaseLLMProvider
-from docqna.observability import record_rag_timings
+from docqna.observability import GROUNDING_REJECTIONS, record_rag_timings
+from docqna.rag.grounding import GroundingVerifier
 from docqna.rag.models import CitationSource, RAGResponse
 from docqna.rag.prompt import (
     ABSTENTION_ANSWER,
@@ -109,10 +110,12 @@ class RAGPipeline:
         retriever: BaseRetriever,
         llm: BaseLLMProvider,
         confidence_gate: RetrievalConfidenceGate | None = None,
+        grounding_verifier: GroundingVerifier | None = None,
     ) -> None:
         self.retriever = retriever
         self.llm = llm
         self.confidence_gate = confidence_gate
+        self.grounding_verifier = grounding_verifier
 
     # ------------------------------------------------------------------
     # Answer post-processing (pure functions, unit-tested directly)
@@ -224,6 +227,28 @@ class RAGPipeline:
 
     def _generate_clean(self, prompt: str) -> str:
         return self._clean(self.llm.generate(prompt))
+
+    def _check_grounding(
+        self, results: list[RetrievalResult], generated: tuple[str, list[int]] | None
+    ) -> tuple[str, list[int]] | None:
+        """Abstain when no cited source actually supports the answer text."""
+
+        if generated is None or self.grounding_verifier is None:
+            return generated
+
+        answer, citation_ids = generated
+        cited_texts = [results[cid - 1].text for cid in citation_ids if 1 <= cid <= len(results)]
+        decision = self.grounding_verifier.evaluate(answer, cited_texts)
+        if decision.is_grounded:
+            return generated
+
+        GROUNDING_REJECTIONS.inc()
+        logger.warning(
+            "grounding_check_failed score=%s min_score=%.2f action=abstain",
+            "none" if decision.score is None else f"{decision.score:.2f}",
+            self.grounding_verifier.min_score,
+        )
+        return None
 
     def _finalize_answer(
         self, query: str, results: list[RetrievalResult], answer: str
@@ -396,7 +421,9 @@ class RAGPipeline:
         if not self._should_abstain(results):
             timer.start_generation()
             answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
-            generated = self._finalize_answer(query, results, answer)
+            generated = self._check_grounding(
+                results, self._finalize_answer(query, results, answer)
+            )
 
         return self._respond(
             query=query,
@@ -435,7 +462,9 @@ class RAGPipeline:
             ):
                 parts.append(delta)
                 yield delta
-            generated = self._finalize_answer(query, results, self._clean("".join(parts)))
+            generated = self._check_grounding(
+                results, self._finalize_answer(query, results, self._clean("".join(parts)))
+            )
 
         yield self._respond(
             query=query,

@@ -28,10 +28,16 @@ SESSION_ID = "integration-session-" + "b" * 32
 
 
 class EchoFirstSourceLLM(BaseLLMProvider):
-    """Deterministic LLM that answers from source [1] with a citation."""
+    """Deterministic LLM that answers by quoting source [1], with a citation.
+
+    Quoting keeps the answer grounded, so it passes the grounding check
+    exactly when the retrieved source is genuinely about the question.
+    """
 
     def generate(self, prompt: str, system_prompt: str | None = None) -> str:
-        return "The answer is supported by the first source [1]."
+        source = prompt.split("SOURCE [1]\n", 1)[1].split("\n", 2)[1]
+        first_sentences = ". ".join(source.split(". ")[:2]).rstrip(".")
+        return f"{first_sentences} [1]."
 
     def health_check(self) -> bool:
         return True

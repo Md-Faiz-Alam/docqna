@@ -72,3 +72,5 @@ data/evaluation/work/
 # ---------------------------------------------------------
 
 .streamlit/secrets.toml
+# Per-case LLM answers derived from the private sample document
+data/evaluation/results/phase23_recalibration/private_cases.jsonl
