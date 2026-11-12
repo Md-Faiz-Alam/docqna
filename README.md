@@ -122,6 +122,20 @@ Final analysis artifacts are stored under:
 data/evaluation/results/phase22g_final_analysis/
 ```
 
+### Public benchmark (runs in CI)
+
+The 30-case set above uses a private document, so CI cannot run it. A second, **public** benchmark lives in [`data/evaluation/public/`](data/evaluation/public/). It contains four realistic documents for a fictional company (HR handbook, IT security policy, product warranty and cloud SLA) and 75 labelled cases: 59 paraphrased answerable questions and 16 plausible questions the documents do not answer. CI indexes it with the production retrieval stack and fails the build if quality drops below [`thresholds.json`](data/evaluation/public/thresholds.json):
+
+| Hit@1 | Hit@3 | Hit@5 | MRR | Answerable passing the gate | Unanswerable correctly refused |
+|---:|---:|---:|---:|---:|---:|
+| 0.746 | 0.983 | 1.000 | 0.863 | **0.424** | 0.875 |
+
+```bash
+python -m docqna.evaluation.public_benchmark --check
+```
+
+**Known issue the benchmark exposed:** retrieval generalises well, but the production answerability threshold (cross-encoder score `>= 0`) was calibrated on one private document. On naturally phrased questions it refuses 58% of answerable questions. See [`docs/evaluation.md`](docs/evaluation.md#12-public-benchmark-and-the-answerability-gap).
+
 See [`docs/evaluation.md`](docs/evaluation.md).
 
 ---
@@ -286,6 +300,7 @@ GET    /ready                     readiness: vector store, registry, LLM (503 if
 GET    /metrics                   Prometheus metrics
 POST   /qa                        answer with verified citations (JSON)
 POST   /qa/stream                 same, streamed as server-sent events
+POST   /feedback                  thumbs up/down on an answer
 POST   /documents                 upload and index a document
 GET    /documents                 list the session's documents
 DELETE /documents/{document_id}   delete a document (all versions)
@@ -294,6 +309,10 @@ DELETE /documents/{document_id}   delete a document (all versions)
 Document and QA operations require the anonymous session header enforced by the backend. Interactive API docs are at `/docs`.
 
 **Streaming (`/qa/stream`).** The response is `text/event-stream`. It sends `token` events (`{"text": ...}`) while the model generates, then exactly one `final` event (the same body as `/qa`) or one `error` event (`{"error", "detail"}`). Citations are validated, and repaired if needed, after generation finishes. The `final` answer is authoritative and replaces the streamed draft. It may be a corrected answer or the abstention.
+
+**Conversation memory.** `/qa` and `/qa/stream` accept an optional `history` of up to 12 earlier turns (`{"role": "user"|"assistant", "content": ...}`, oldest first). When history is present, the question is first rewritten into a standalone question ("And for flights?" becomes "Which flight class is allowed for business travel?"). That rewritten question drives retrieval and the answer, and it is returned as `standalone_question`. If the rewrite fails, the original question is used.
+
+**Feedback.** `POST /feedback` stores a rating with the question and answer text, kept for `FEEDBACK_RETENTION_DAYS` (default 30). `python scripts/export_feedback.py --out drafts.json` exports down-voted answers as draft evaluation cases for a person to label.
 
 **Rate limits.** By default each session (or client IP) gets 20 questions and 10 uploads per minute per API process. Over the limit, requests get `429` with `Retry-After`. Change this with `RATE_LIMIT_QA_PER_MINUTE` and `RATE_LIMIT_UPLOADS_PER_MINUTE`; `0` disables a limit. If you run several API instances, also rate-limit at the reverse proxy.
 
@@ -407,7 +426,8 @@ See [`SECURITY.md`](SECURITY.md).
 
 ## Known limitations
 
-- scanned/image-only PDFs are not supported because OCR is not implemented
+- scanned PDFs are read with Tesseract OCR (installed in the Docker image; locally only when Tesseract is on PATH); tables and multi-column layouts are extracted as plain text
+- the cross-encoder answerability threshold over-abstains on paraphrased questions (see the public benchmark)
 - anonymous session isolation is not user authentication or durable cross-device identity
 - `phi3:mini` can sometimes over-cite retrieved evidence
 - the answerability threshold is calibrated on the project evaluation dataset
@@ -452,6 +472,10 @@ Completed:
 - SQLite (WAL) document registry with one-time import of the old JSON registry
 - streaming answers (`/qa/stream`, server-sent events) in the API and UI
 - per-session request rate limiting, `/ready` readiness check, Prometheus `/metrics`
+- OCR fallback for scanned PDF pages (Tesseract, page-limited)
+- multi-turn chat: follow-up questions are rewritten into standalone questions using recent turns
+- thumbs up/down answer feedback stored in SQLite, exportable as draft evaluation cases
+- public 75-case benchmark with a CI retrieval-quality gate
 
 Next:
 

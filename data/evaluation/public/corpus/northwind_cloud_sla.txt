@@ -1,0 +1,34 @@
+Northwind Cloud Platform: Service Level Agreement
+Effective for all Business and Enterprise subscriptions
+
+1. Definitions
+
+"Monthly Uptime Percentage" means the total minutes in a calendar month minus the minutes of Downtime, divided by the total minutes in that month. "Downtime" means a period of at least five consecutive minutes during which the platform API returns server errors for more than five percent of requests. Scheduled maintenance announced in advance is not counted as Downtime.
+
+2. Availability Commitment
+
+Northwind Cloud commits to a Monthly Uptime Percentage of at least 99.9 percent for Business subscriptions and 99.95 percent for Enterprise subscriptions. Availability is measured by an independent monitoring service from three regions, and monthly reports are available in the customer console.
+
+3. Service Credits
+
+If the availability commitment is missed, the customer is eligible for a service credit calculated on the monthly fee for the affected service. For Business subscriptions, uptime below 99.9 percent earns a 10 percent credit, below 99.0 percent a 25 percent credit, and below 95.0 percent a 50 percent credit. Enterprise subscriptions earn the same credits with the first threshold at 99.95 percent. Credits must be requested through a support ticket within 30 days after the end of the affected month and are applied to the next invoice. Service credits are the sole remedy for missed availability and cannot be exchanged for cash.
+
+4. Support Severity and Response Times
+
+Support requests are classified by the customer when they are opened and may be reclassified by Northwind support. Priority 1 means the production service is down or unusable for all users. Priority 2 means a major feature is impaired without a workaround. Priority 3 means a minor issue or a question. For Business subscriptions the first response targets are one hour for Priority 1, four business hours for Priority 2 and two business days for Priority 3. Enterprise subscriptions receive a 15-minute first response for Priority 1, available around the clock, and a named technical account manager.
+
+5. Escalation
+
+If a Priority 1 issue is not resolved within four hours, the customer may escalate to the duty engineering manager through the escalation number in the console. Enterprise customers may additionally escalate to their technical account manager at any time. Root cause analysis reports are published within five business days after every Priority 1 incident.
+
+6. Scheduled Maintenance
+
+Routine maintenance takes place on Sundays between 01:00 and 05:00 UTC. Customers are notified at least seven days in advance through the status page and by email. Emergency maintenance to fix critical security vulnerabilities may be performed with 24 hours' notice. Maintenance is limited to eight hours per calendar month in total.
+
+7. Data Durability and Location
+
+Customer data is stored in the region selected at sign-up and is not moved to another region without the customer's consent. Object storage is designed for 99.999999999 percent durability. Customers can export all of their data at any time in standard formats. After a subscription ends, data remains available for export for 30 days and is then permanently deleted within a further 30 days.
+
+8. Exclusions
+
+The commitments in this agreement do not apply to outages caused by the customer's own software or misconfiguration, by features labelled as preview or beta, by attacks against the customer's account resulting from leaked credentials, or by events outside Northwind Cloud's reasonable control such as natural disasters or widespread internet failures.

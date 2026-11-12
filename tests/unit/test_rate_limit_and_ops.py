@@ -33,7 +33,9 @@ def test_sliding_window_allows_limit_then_blocks_until_window_passes() -> None:
 
 
 class AbstainingPipeline:
-    def ask_with_citations(self, query, top_k=5, metadata_filters=None) -> RAGResponse:
+    def ask_with_citations(
+        self, query, top_k=5, metadata_filters=None, history=None
+    ) -> RAGResponse:
         return RAGResponse(answer=ABSTENTION_ANSWER, sources=[], cited_source_ids=[])
 
 

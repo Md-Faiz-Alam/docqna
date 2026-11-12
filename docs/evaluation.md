@@ -155,3 +155,22 @@ The containerized stack was validated separately through functional end-to-end c
 - QA after API-container recreation without re-upload
 
 These are operational validation checks, not additional benchmark cases. They do not extend or replace the 30-case evaluation dataset.
+
+## 12. Public benchmark and the answerability gap
+
+`data/evaluation/public/` holds a public benchmark that CI can run: four fictional company documents (HR handbook, IT security policy, product warranty and cloud SLA) and 75 cases. 59 answerable questions are paraphrased so that they do not share wording with the evidence, and 16 unanswerable questions are plausible but not covered by any document. A retrieved chunk counts as relevant if it comes from the labelled document and contains one of the labelled verbatim evidence phrases. A unit test checks that every phrase really exists.
+
+`python -m docqna.evaluation.public_benchmark` indexes the corpus with the production retrieval stack (fixed chunking, MiniLM, dense + per-session BM25, RRF, cross-encoder) and scores retrieval and the confidence gate, without an LLM:
+
+| Metric | Value |
+|---|---:|
+| Hit@1 / Hit@3 / Hit@5 | 0.746 / 0.983 / 1.000 |
+| MRR | 0.863 |
+| Answerable questions passing the gate | 0.424 |
+| Unanswerable questions correctly abstained | 0.875 |
+
+**Finding.** Retrieval generalises to a new domain and to paraphrased questions. The answerability threshold does not. The cross-encoder's rank-1 scores for answerable paraphrases range from about -10 to +8. Unanswerable questions mostly score below -8, but some reach +3.5, so no single threshold separates the two well: at `0`, 58% of answerable questions are refused. The original threshold was tuned on the 30-case private set, whose questions were closer to the document's wording.
+
+**Next step (not yet applied).** Recalibrate answerability end to end with the LLM in the loop: lower the retrieval gate and rely on the model's own abstention plus citation validation. Measure both answer correctness and false answers on unanswerable questions before changing the production default.
+
+CI runs the benchmark and fails if any metric drops below `data/evaluation/public/thresholds.json`. The thresholds are regression floors set just below today's values.

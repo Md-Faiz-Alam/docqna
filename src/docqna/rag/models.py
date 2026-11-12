@@ -28,3 +28,6 @@ class RAGResponse(BaseModel):
     sources: list[CitationSource] = Field(default_factory=list)
 
     cited_source_ids: list[int] = Field(default_factory=list)
+
+    # Set when a follow-up was rewritten using conversation history.
+    standalone_question: str | None = None

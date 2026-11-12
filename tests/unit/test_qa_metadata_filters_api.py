@@ -27,6 +27,7 @@ class FakeResponse:
     answer = "Filtered answer [1]"
     cited_source_ids = [1]
     sources = [FakeSource()]
+    standalone_question = None
 
 
 class FakePipeline:
@@ -34,7 +35,11 @@ class FakePipeline:
         self.last_metadata_filters: dict[str, str | int] | None = None
 
     def ask_with_citations(
-        self, query: str, top_k: int = 5, metadata_filters: (dict[str, str | int] | None) = None
+        self,
+        query: str,
+        top_k: int = 5,
+        metadata_filters: (dict[str, str | int] | None) = None,
+        history=None,
     ) -> FakeResponse:
         self.last_metadata_filters = metadata_filters
 

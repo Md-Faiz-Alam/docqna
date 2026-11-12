@@ -7,10 +7,11 @@ answer that points at sources it did not receive.
 
 import logging
 import re
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from time import perf_counter
 
+from docqna.exceptions import GenerationError
 from docqna.filters import MetadataFilters, normalize_metadata_filters
 from docqna.generation.providers.base import BaseLLMProvider
 from docqna.observability import record_rag_timings
@@ -19,6 +20,7 @@ from docqna.rag.prompt import (
     ABSTENTION_ANSWER,
     build_citation_repair_prompt,
     build_cited_rag_prompt,
+    build_condense_question_prompt,
 )
 from docqna.retrieval.base import BaseRetriever
 from docqna.retrieval.confidence import RetrievalConfidenceGate
@@ -26,7 +28,13 @@ from docqna.retrieval.models import RetrievalResult
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["ABSTENTION_ANSWER", "RAGPipeline"]
+__all__ = ["ABSTENTION_ANSWER", "ChatHistory", "RAGPipeline"]
+
+# Earlier conversation turns as (role, text), oldest first; role is "user" or "assistant".
+ChatHistory = Sequence[tuple[str, str]]
+
+# Quotes and backticks small models sometimes wrap a rewritten question in.
+_REWRITE_STRIP_CHARS = "\"'` "
 
 # (pattern, replacement) pairs that rewrite model citation variants to "[n]".
 _CITATION_REWRITES: tuple[tuple[re.Pattern[str], str], ...] = tuple(
@@ -69,11 +77,15 @@ _CITATION_ID = re.compile(r"\[(\d+)\]")
 @dataclass
 class _Timer:
     started: float = field(default_factory=perf_counter)
+    rewrite_ms: float = 0.0
     retrieval_ms: float = 0.0
     generation_started: float | None = None
 
+    def mark_rewrite_done(self) -> None:
+        self.rewrite_ms = (perf_counter() - self.started) * 1000.0
+
     def mark_retrieval_done(self) -> None:
-        self.retrieval_ms = (perf_counter() - self.started) * 1000.0
+        self.retrieval_ms = (perf_counter() - self.started) * 1000.0 - self.rewrite_ms
 
     def start_generation(self) -> None:
         self.generation_started = perf_counter()
@@ -266,12 +278,13 @@ class RAGPipeline:
         record_rag_timings(retrieval_ms=timer.retrieval_ms, generation_ms=timer.generation_ms)
         logger.info(
             "rag_complete mode=cited abstained=%s query_chars=%d top_k=%d results=%d "
-            "filter_keys=%s retrieval_ms=%.2f generation_ms=%.2f total_ms=%.2f",
+            "filter_keys=%s rewrite_ms=%.2f retrieval_ms=%.2f generation_ms=%.2f total_ms=%.2f",
             abstained,
             len(query),
             top_k,
             result_count,
             ",".join(sorted(metadata_filters)) if metadata_filters else "-",
+            timer.rewrite_ms,
             timer.retrieval_ms,
             timer.generation_ms,
             timer.total_ms,
@@ -281,11 +294,45 @@ class RAGPipeline:
     # Public API
     # ------------------------------------------------------------------
 
+    def _condense_question(self, query: str, history: ChatHistory | None) -> str:
+        """Rewrite a follow-up into a standalone question using recent turns.
+
+        Falls back to the original question if rewriting fails or produces
+        something implausible, so memory can only help retrieval, never block it.
+        """
+
+        if not history:
+            return query
+
+        try:
+            raw = self.llm.generate(build_condense_question_prompt(query, list(history)))
+        except GenerationError:
+            logger.warning("question_rewrite_failed action=use_original")
+            return query
+
+        lines = [line.strip() for line in raw.strip().splitlines() if line.strip()]
+        candidate = lines[0] if lines else ""
+        for label in ("STANDALONE QUESTION:", "QUESTION:"):
+            if candidate.upper().startswith(label):
+                candidate = candidate[len(label) :].strip()
+        candidate = candidate.strip(_REWRITE_STRIP_CHARS)
+
+        if not candidate or len(candidate) > max(3 * len(query), len(query) + 300):
+            logger.warning("question_rewrite_rejected action=use_original")
+            return query
+        return candidate
+
     def _prepare(
-        self, query: str, top_k: int, metadata_filters: MetadataFilters | None
+        self,
+        query: str,
+        top_k: int,
+        metadata_filters: MetadataFilters | None,
+        history: ChatHistory | None,
     ) -> tuple[str, MetadataFilters | None, list[RetrievalResult], _Timer]:
         timer = _Timer()
         query = self._validate_request(query, top_k)
+        query = self._condense_question(query, history)
+        timer.mark_rewrite_done()
         metadata_filters = normalize_metadata_filters(metadata_filters)
         results = self._retrieve(query=query, top_k=top_k, metadata_filters=metadata_filters)
         timer.mark_retrieval_done()
@@ -300,6 +347,7 @@ class RAGPipeline:
         results: list[RetrievalResult],
         timer: _Timer,
         generated: tuple[str, list[int]] | None,
+        rewritten: bool,
     ) -> RAGResponse:
         self._log_completion(
             query=query,
@@ -310,20 +358,39 @@ class RAGPipeline:
             timer=timer,
         )
 
+        standalone_question = query if rewritten else None
         if generated is None:
-            return RAGResponse(answer=ABSTENTION_ANSWER, sources=[], cited_source_ids=[])
+            return RAGResponse(
+                answer=ABSTENTION_ANSWER,
+                sources=[],
+                cited_source_ids=[],
+                standalone_question=standalone_question,
+            )
 
         answer, citation_ids = generated
         return RAGResponse(
-            answer=answer, sources=self._build_sources(results), cited_source_ids=citation_ids
+            answer=answer,
+            sources=self._build_sources(results),
+            cited_source_ids=citation_ids,
+            standalone_question=standalone_question,
         )
 
     def ask_with_citations(
-        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
+        self,
+        query: str,
+        top_k: int = 5,
+        metadata_filters: MetadataFilters | None = None,
+        history: ChatHistory | None = None,
     ) -> RAGResponse:
-        """Answer `query` from retrieved evidence, or abstain."""
+        """Answer `query` from retrieved evidence, or abstain.
 
-        query, metadata_filters, results, timer = self._prepare(query, top_k, metadata_filters)
+        `history` holds earlier (role, text) turns, oldest first; when given,
+        a follow-up question is rewritten into a standalone one first.
+        """
+
+        query, metadata_filters, results, timer = self._prepare(
+            query, top_k, metadata_filters, history
+        )
 
         generated: tuple[str, list[int]] | None = None
         if not self._should_abstain(results):
@@ -338,10 +405,15 @@ class RAGPipeline:
             results=results,
             timer=timer,
             generated=generated,
+            rewritten=bool(history),
         )
 
     def stream_with_citations(
-        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
+        self,
+        query: str,
+        top_k: int = 5,
+        metadata_filters: MetadataFilters | None = None,
+        history: ChatHistory | None = None,
     ) -> Iterator[str | RAGResponse]:
         """Yield draft answer text as it is generated, then the final RAGResponse.
 
@@ -350,7 +422,9 @@ class RAGPipeline:
         be a corrected answer or the abstention).
         """
 
-        query, metadata_filters, results, timer = self._prepare(query, top_k, metadata_filters)
+        query, metadata_filters, results, timer = self._prepare(
+            query, top_k, metadata_filters, history
+        )
 
         generated: tuple[str, list[int]] | None = None
         if not self._should_abstain(results):
@@ -370,4 +444,5 @@ class RAGPipeline:
             results=results,
             timer=timer,
             generated=generated,
+            rewritten=bool(history),
         )

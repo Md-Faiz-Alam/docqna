@@ -71,7 +71,9 @@ Chunks/document:              1,000
 Anonymous document retention: 24 hours
 ```
 
-Image-only/scanned PDFs are not OCR-processed and are documented as unsupported.
+Scanned PDF pages are OCR-processed with Tesseract, with a per-document page limit (`MAX_OCR_PAGES`) to bound CPU use.
+
+Answer feedback (`POST /feedback`) stores the question, the answer and an optional comment together with the anonymous session ID, so that weak answers can be reviewed. It is deleted after `FEEDBACK_RETENTION_DAYS` (default 30). Operators who must not keep question text should set a short retention period.
 
 ---
 

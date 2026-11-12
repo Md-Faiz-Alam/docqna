@@ -18,6 +18,9 @@ dependencies = [
     "python-dotenv==1.2.3",
     "ollama==0.6.2",
     "pypdf==6.19.0",
+    "pypdfium2==5.15.0",
+    "pytesseract==0.3.13",
+    "pillow==12.3.0",
     "python-docx==1.2.0",
     "sentence-transformers==6.1.0",
     "chromadb==1.5.9",
@@ -112,5 +115,5 @@ no_implicit_optional = true
 check_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = ["chromadb.*", "sentence_transformers.*", "ollama.*", "docx.*", "pypdf.*"]
+module = ["chromadb.*", "sentence_transformers.*", "ollama.*", "docx.*", "pypdf.*", "pypdfium2.*", "pytesseract.*"]
 ignore_missing_imports = true

@@ -68,10 +68,21 @@ class QAMetadataFilters(BaseModel):
         return filters
 
 
+class ChatTurn(BaseModel):
+    """One earlier turn of the conversation, sent by the client."""
+
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=4000)
+
+
 class QARequest(BaseModel):
     """Question-answering API request."""
 
     question: str
+
+    # Optional recent conversation, oldest first. When present, a follow-up
+    # question ("what about flights?") is rewritten into a standalone one.
+    history: list[ChatTurn] = Field(default_factory=list, max_length=12)
 
     # Production retrieval configuration is frozen at top_k=5.
     # Reject client attempts to run an unevaluated retrieval depth.
@@ -124,6 +135,9 @@ class QAResponse(BaseModel):
     cited_source_ids: list[int] = Field(default_factory=list)
 
     sources: list[CitationResponse] = Field(default_factory=list)
+
+    # The rewritten standalone question, when conversation history was used.
+    standalone_question: str | None = None
 
 
 class DocumentResponse(BaseModel):

@@ -1,0 +1,38 @@
+Northwind Labs Information Security Policy
+Owner: Chief Information Security Officer. Review cycle: annual.
+
+1. Purpose and Scope
+
+This policy defines the minimum security controls for all Northwind Labs systems, devices and data. It applies to employees, contractors and any third party who is granted access to company systems. Exceptions require written approval from the Chief Information Security Officer and expire after six months.
+
+2. Passwords and Multi-Factor Authentication
+
+Passwords for company accounts must contain at least 14 characters. Passphrases made of several unrelated words are encouraged. Passwords must not be reused across services and must be stored only in the approved company password manager. Multi-factor authentication is mandatory for email, the VPN, the source code platform and every system that holds confidential data. Hardware security keys are required for administrators; other staff may use the authenticator app. SMS codes are not accepted as a second factor. Passwords are not rotated on a fixed schedule; they must be changed immediately if a compromise is suspected.
+
+3. Data Classification
+
+Company information is classified into four levels: Public, Internal, Confidential and Restricted. Restricted data includes customer personal data, payment information and cryptographic keys. Restricted data may only be stored in the approved data platform in the EU region, must be encrypted at rest, and must never be sent by email or chat. Confidential documents shared outside the company require a non-disclosure agreement and must be shared through expiring links rather than attachments.
+
+4. Device Security
+
+All laptops must use full-disk encryption and the endpoint protection agent managed by IT. Operating system security updates must be installed within 14 days of release, and within 72 hours for updates that IT marks as critical. Screens must lock automatically after five minutes of inactivity. Personal devices may access company email through the managed mobile app only; they may not connect to internal systems or store company files. USB storage devices are blocked by default and can be enabled for a maximum of seven days on request.
+
+5. Access Management
+
+Access is granted on the principle of least privilege and must be requested through the access portal with manager approval. Managers review the access rights of their team every quarter. Accounts of people leaving the company are disabled on their last working day by 18:00. Shared accounts are prohibited, except for documented service accounts whose credentials are held in the secrets vault and rotated every 90 days.
+
+6. Incident Severity Levels
+
+Security incidents are classified by severity. Severity 1 covers confirmed breaches of Restricted data or ransomware; the incident commander must be paged immediately and the executive team informed within two hours. Severity 2 covers a compromised employee account or malware on a single device and must be contained within 24 hours. Severity 3 covers policy violations without evidence of compromise. Where personal data is affected, the data protection officer decides within 48 hours whether the supervisory authority must be notified, so that the 72-hour regulatory deadline can be met.
+
+7. Backups and Recovery
+
+Production databases are backed up every six hours, and backups are retained for 35 days. A copy of every backup is stored in a second EU region and is immutable for 14 days, so that ransomware cannot delete it. Restore tests are performed every quarter for each critical system, and the results are recorded. The recovery point objective for critical systems is six hours and the recovery time objective is eight hours.
+
+8. Vendor and Third-Party Access
+
+New vendors that will process Confidential or Restricted data must complete the security questionnaire and sign a data processing agreement before receiving any data. Vendor access to internal systems is granted through individual named accounts with multi-factor authentication, limited to 30 days and renewable. Vendor sessions on production systems are recorded.
+
+9. Security Awareness
+
+All staff complete security awareness training during their first week and refresh it every year. Quarterly phishing simulations are run across the company; employees who click a simulated phishing link are assigned a short follow-up module rather than being disciplined.

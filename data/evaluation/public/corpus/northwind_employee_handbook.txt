@@ -1,0 +1,42 @@
+Northwind Labs Employee Handbook
+Version 4.2, applies to all employees in the European Union offices
+
+1. Working Hours and Time Recording
+
+The standard working week at Northwind Labs is 38 hours, normally spread over five days. Core collaboration hours are 10:00 to 15:00 local time; outside these hours employees may arrange their schedule freely, provided their team agrees. Hours are recorded weekly in the time portal by Friday 18:00. Overtime must be approved in advance by the line manager and is compensated as time off in lieu at a rate of one hour per hour worked, or 1.5 hours per hour worked on public holidays. Time off in lieu must be taken within three months, otherwise it lapses.
+
+2. Annual Leave
+
+Full-time employees accrue 24 days of paid annual leave per calendar year. Leave accrues monthly at a rate of two days per completed month of service. Up to five unused days may be carried over into the next calendar year; any remaining balance above five days expires on 31 March of the following year. Requests for leave longer than ten consecutive working days must be submitted to the line manager at least four weeks in advance. Part-time employees receive leave in proportion to their contracted hours.
+
+3. Sick Leave
+
+Employees who are unable to work because of illness must notify their line manager before 09:30 on the first day of absence. A medical certificate is required from the third consecutive day of sickness. Sick days do not reduce the annual leave balance, and illness that occurs during annual leave can be converted back into leave days when a certificate is provided.
+
+4. Remote Work
+
+Employees may work remotely for up to three days per week after completing their probation period. Remote work requires a secure home network and use of the company VPN for all access to internal systems. Teams must keep Tuesday as a shared in-office collaboration day unless the department head approves an exception in writing. Working from another country is allowed for a maximum of 20 working days per calendar year and must be registered with HR at least two weeks before departure, because of tax and insurance rules.
+
+5. Home Office Equipment
+
+After probation, every employee may order one ergonomic chair, one external monitor and one keyboard and mouse set from the approved catalogue. In addition, a one-off home office allowance of 300 euros is paid with the first salary after probation. Equipment remains company property and must be returned within ten working days after the employment ends.
+
+6. Expense Reimbursement
+
+Business travel expenses are reimbursed when they are submitted through the finance portal within 30 days of the trip. Receipts are mandatory for any single expense above 25 euros. Economy class is the default for flights shorter than six hours; premium economy may be booked for longer flights. Rail is preferred over flying for journeys under four hours. Meal expenses are capped at 60 euros per day while travelling, excluding alcohol, which is never reimbursed. Hotel bookings must use the corporate travel platform, with a nightly limit of 180 euros in most cities and 250 euros in London, Paris and Zurich.
+
+7. Learning and Development
+
+Each employee receives an annual learning budget of 1,500 euros that can be spent on courses, certifications, conference tickets and technical books. Unused learning budget does not carry over. Certification exam fees are covered twice per certification if the first attempt is unsuccessful. In addition, every employee has five paid learning days per year, which must be booked in the time portal like annual leave.
+
+8. Performance Reviews
+
+Performance reviews take place twice a year, in March and September. Each review combines a self-assessment, feedback from at least two peers chosen together with the manager, and a conversation about goals for the next six months. Salary adjustments are decided once a year after the March review and take effect from 1 April.
+
+9. Reporting Security Incidents
+
+Any suspected security incident, including a lost laptop or a phishing email that was clicked, must be reported to the security team within one hour by emailing the incident desk and calling the on-call number. Employees must not attempt to investigate or clean an infected device on their own. The security team will issue a replacement device within two working days when hardware is confiscated for forensic analysis.
+
+10. Leaving the Company
+
+The notice period is one month during probation and three months afterwards, unless the employment contract states otherwise. Remaining annual leave should be taken during the notice period; if this is not possible, unused days are paid out with the final salary. Exit interviews are optional and are conducted by HR, not by the line manager.

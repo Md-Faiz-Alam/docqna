@@ -11,6 +11,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Tesseract OCR for scanned PDF pages.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
+
 # CPU-only PyTorch: the default wheel bundles CUDA and is several GB larger.
 RUN python -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
 
@@ -34,4 +39,6 @@ USER docqna
 
 EXPOSE 8000
 
-CMD ["uvicorn", "docqna.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# The app logs every request itself (with request IDs); uvicorn's access log
+# would duplicate each line.
+CMD ["uvicorn", "docqna.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]

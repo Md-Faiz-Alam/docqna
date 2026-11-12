@@ -4,9 +4,13 @@
 
 ## Current limitations
 
-### No OCR
+### OCR is basic
 
-Image-only or scanned PDFs are not supported. The current PDF path expects extractable text.
+Scanned pages (pages without a text layer) are rendered and read with Tesseract, limited to `MAX_OCR_PAGES` pages per document. Tesseract is installed in the Docker image; a local run without Tesseract on PATH rejects scanned PDFs with a clear message. Tables, forms and multi-column layouts are flattened to plain text, and handwriting is not supported.
+
+### Answerability threshold over-abstains on paraphrased questions
+
+The public benchmark shows that the rank-1 cross-encoder threshold of `0` refuses 58% of answerable questions when they are phrased naturally. Users can see "not enough information" for questions their documents do answer. Retrieval itself is strong (Hit@5 = 1.0).
 
 ### Session isolation is not authentication
 

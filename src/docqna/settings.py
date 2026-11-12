@@ -34,6 +34,15 @@ class Settings(BaseSettings):
     # Per session (or client IP), per process. 0 disables a limit.
     rate_limit_qa_per_minute: int = 20
     rate_limit_uploads_per_minute: int = 10
+    rate_limit_feedback_per_minute: int = 30
+
+    # Answer feedback (question/answer text is kept to build evaluation cases)
+    feedback_retention_days: int = 30
+
+    # OCR for scanned PDF pages (needs the Tesseract binary; installed in Docker)
+    ocr_enabled: bool = True
+    ocr_languages: str = "eng"
+    max_ocr_pages: int = 50
 
     # LLM
     llm_provider: str = "ollama"

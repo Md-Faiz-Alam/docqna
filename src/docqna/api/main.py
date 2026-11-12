@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from docqna.api.errors import register_exception_handlers
 from docqna.api.middleware import request_observability
 from docqna.api.rate_limit import RateLimitRule, SlidingWindowLimiter, make_rate_limit_middleware
-from docqna.api.routes import documents, qa, system
+from docqna.api.routes import documents, feedback, qa, system
 from docqna.api.session import SESSION_HEADER_NAME, require_session_id
 from docqna.constants import APP_NAME, APP_VERSION
 from docqna.logging_config import configure_logging
@@ -71,6 +71,12 @@ def create_app() -> FastAPI:
                     path_prefix="/documents",
                     limit=settings.rate_limit_uploads_per_minute,
                 ),
+                RateLimitRule(
+                    bucket="feedback",
+                    methods=frozenset({"POST"}),
+                    path_prefix="/feedback",
+                    limit=settings.rate_limit_feedback_per_minute,
+                ),
             ],
             limiter=application.state.rate_limiter,
         )
@@ -81,6 +87,7 @@ def create_app() -> FastAPI:
     application.include_router(system.router)
     application.include_router(qa.router)
     application.include_router(documents.router)
+    application.include_router(feedback.router)
     return application
 
 

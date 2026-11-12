@@ -91,7 +91,7 @@ class FakeStreamingPipeline:
     def __init__(self, fail: bool = False) -> None:
         self.fail = fail
 
-    def stream_with_citations(self, query, top_k=5, metadata_filters=None):
+    def stream_with_citations(self, query, top_k=5, metadata_filters=None, history=None):
         yield "Draft "
         if self.fail:
             raise GenerationError("Ollama generation failed.")

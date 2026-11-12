@@ -1,0 +1,34 @@
+CloudBox S2 Home Storage: Warranty, Returns and Support Terms
+Manufacturer: Northwind Devices B.V.
+
+1. Product Overview
+
+The CloudBox S2 is a two-bay network storage device for homes and small offices. It ships with two 4 TB drives configured as a mirror, a power adapter and an Ethernet cable. The device is managed through the CloudBox app or a web browser on the local network.
+
+2. Limited Hardware Warranty
+
+The CloudBox S2 enclosure is covered by a limited hardware warranty of three years from the date of purchase. Drives that are supplied with the device are covered for two years. The power adapter is covered for one year. The warranty covers defects in materials and workmanship under normal use. To claim warranty service, the customer must provide the device serial number and a proof of purchase showing the date and the seller.
+
+3. What the Warranty Does Not Cover
+
+The warranty does not cover damage caused by drops, liquid, lightning or power surges, opening the enclosure other than the drive bays, or the use of drives that are not on the compatibility list. Cosmetic wear such as scratches is not covered. Data stored on the device is never covered: Northwind Devices is not responsible for lost data and does not perform data recovery under the warranty. Customers are strongly advised to keep a second backup of important files, for example with the built-in cloud backup feature.
+
+4. Returns and Refunds
+
+Products bought directly from the Northwind Devices online store can be returned within 30 days of delivery for a full refund, provided the device is undamaged and all accessories are included. Opened drives that have been formatted are still eligible. The customer pays return shipping unless the device is faulty. Refunds are issued to the original payment method within 14 days after the returned device has been inspected. Products bought from other retailers must be returned to that retailer under its own policy.
+
+5. Warranty Claim Process (RMA)
+
+To start a warranty claim, open a return merchandise authorisation request in the support portal. Support first runs a remote diagnosis with the customer. If the fault is confirmed, a prepaid shipping label is emailed within two working days. Customers in the European Union receive a replacement unit within ten working days of the faulty device arriving at the repair centre. For the first year of the warranty, an advance replacement service is available: the replacement is shipped first, and the customer returns the faulty unit within 14 days in the same packaging, otherwise a fee of 120 euros is charged. Drives are not returned with a replaced unit; customers should remove their drives before shipping if they wish to keep them.
+
+6. Firmware and Software Updates
+
+Security updates for the CloudBox S2 firmware are provided for at least five years after the product was last sold, and feature updates for at least three years. Updates install automatically between 02:00 and 05:00 local time unless automatic updates are switched off in the settings. Installing unofficial firmware voids the software support but does not, by itself, void the hardware warranty.
+
+7. Technical Support
+
+Basic support is free during the warranty period through the support portal and email, with a response target of two working days. Phone support is available on weekdays from 09:00 to 17:00 Central European Time for customers with a CloudBox Care plan. A CloudBox Care plan costs 39 euros per year and also adds accidental damage protection for one incident per year, with a service fee of 49 euros per claim.
+
+8. Privacy
+
+The CloudBox S2 sends anonymous usage statistics only if the customer opts in during setup. Remote access through the CloudBox relay service is end-to-end encrypted, and Northwind Devices cannot read files stored on the device.

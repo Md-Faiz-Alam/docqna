@@ -56,6 +56,10 @@ def _prepare(
     return pipeline, metadata_filters
 
 
+def _history(request: QARequest) -> list[tuple[str, str]] | None:
+    return [(turn.role, turn.content) for turn in request.history] or None
+
+
 def _to_qa_response(response: RAGResponse, *, top_k: int, filter_keys: str) -> QAResponse:
     abstained = not response.sources and not response.cited_source_ids
     cited_ids = set(response.cited_source_ids)
@@ -79,6 +83,7 @@ def _to_qa_response(response: RAGResponse, *, top_k: int, filter_keys: str) -> Q
         abstained=abstained,
         cited_source_ids=response.cited_source_ids,
         sources=sources,
+        standalone_question=response.standalone_question,
     )
 
 
@@ -93,7 +98,10 @@ def ask_question(
 
     pipeline, metadata_filters = _prepare(request, session_id, service_provider, pipeline_provider)
     response = pipeline.ask_with_citations(
-        query=request.question, top_k=request.top_k, metadata_filters=metadata_filters
+        query=request.question,
+        top_k=request.top_k,
+        metadata_filters=metadata_filters,
+        history=_history(request),
     )
     return _to_qa_response(
         response, top_k=request.top_k, filter_keys=",".join(sorted(metadata_filters))
@@ -135,7 +143,10 @@ def ask_question_stream(
     def events() -> Iterator[str]:
         try:
             for item in pipeline.stream_with_citations(
-                query=request.question, top_k=request.top_k, metadata_filters=metadata_filters
+                query=request.question,
+                top_k=request.top_k,
+                metadata_filters=metadata_filters,
+                history=_history(request),
             ):
                 if isinstance(item, str):
                     yield _sse("token", {"text": item})

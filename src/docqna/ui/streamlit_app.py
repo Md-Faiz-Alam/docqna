@@ -214,18 +214,42 @@ def delete_document(api_url: str, document_id: str, session_id: str) -> tuple[bo
         return (False, f"Document deletion failed: {exc}")
 
 
-def build_qa_payload(*, question: str, top_k: int, document_id: str | None) -> dict[str, Any]:
+HISTORY_TURNS_SENT = 6
+
+
+def recent_history(messages: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Last few chat turns, oldest first, in the API's history format."""
+
+    turns = [
+        {"role": str(m["role"]), "content": str(m["content"])[:4000]}
+        for m in messages
+        if m.get("role") in {"user", "assistant"} and str(m.get("content", "")).strip()
+    ]
+    return turns[-HISTORY_TURNS_SENT:]
+
+
+def build_qa_payload(
+    *,
+    question: str,
+    top_k: int,
+    document_id: str | None,
+    history: list[dict[str, str]] | None = None,
+) -> dict[str, Any]:
     """
     Build the /qa request.
 
     A document_id restricts retrieval to one selected document.
     None means search across all active indexed documents.
+    History lets the API resolve follow-up questions.
     """
 
     payload: dict[str, Any] = {"question": question, "top_k": top_k}
 
     if document_id is not None:
         payload["filters"] = {"document_id": document_id}
+
+    if history:
+        payload["history"] = history
 
     return payload
 
@@ -290,11 +314,12 @@ def ask_api_stream(
     session_id: str,
     document_id: str | None,
     on_token: Callable[[str], None],
+    history: list[dict[str, str]] | None = None,
 ) -> tuple[dict[str, Any] | None, str | None]:
     """Stream a QA request: call on_token per draft chunk, return the final response."""
 
     payload = json.dumps(
-        build_qa_payload(question=question, top_k=top_k, document_id=document_id)
+        build_qa_payload(question=question, top_k=top_k, document_id=document_id, history=history)
     ).encode("utf-8")
 
     request = Request(
@@ -461,10 +486,66 @@ def _initialize_session_state() -> None:
         st.session_state.document_scope = None
 
 
-def _render_chat_history() -> None:
+def send_feedback(api_url: str, session_id: str, payload: dict[str, Any]) -> str | None:
+    """POST answer feedback; returns an error message or None."""
+
+    request = Request(
+        url=f"{api_url}/feedback",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json", SESSION_HEADER_NAME: session_id},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=15):
+            return None
+    except HTTPError as exc:
+        return _http_error_detail(exc)
+    except URLError as exc:
+        return f"Could not connect to backend: {exc.reason}"
+
+
+def feedback_payload(messages: list[dict[str, Any]], index: int, rating: str) -> dict[str, Any]:
+    """Build the /feedback body for the assistant message at `index`."""
+
+    answer = messages[index]
+    question = next(
+        (str(m["content"]) for m in reversed(messages[:index]) if m.get("role") == "user"), ""
+    )
+    return {
+        "rating": rating,
+        "question": question[:4000] or "(unknown)",
+        "answer": str(answer["content"])[:8000],
+        "abstained": bool(answer.get("abstained", False)),
+        "cited_source_ids": list(answer.get("cited_source_ids") or [])[:20],
+    }
+
+
+def _on_feedback(index: int, api_url: str, session_id: str) -> None:
+    value = st.session_state.get(f"feedback_{index}")
+    if value is None:
+        return
+    messages = st.session_state.messages
+    rating = "up" if value == 1 else "down"
+    if messages[index].get("feedback") == rating:
+        return
+    error = send_feedback(api_url, session_id, feedback_payload(messages, index, rating))
+    if error is None:
+        messages[index]["feedback"] = rating
+        st.toast("Thanks for the feedback!")
+    else:
+        st.toast(f"Feedback not saved: {error}")
+
+
+def render_feedback(index: int, api_url: str, session_id: str) -> None:
+    st.feedback(
+        "thumbs", key=f"feedback_{index}", on_change=_on_feedback, args=(index, api_url, session_id)
+    )
+
+
+def _render_chat_history(api_url: str, session_id: str) -> None:
     """Render conversation history."""
 
-    for message in st.session_state.messages:
+    for index, message in enumerate(st.session_state.messages):
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -482,6 +563,8 @@ def _render_chat_history() -> None:
 
                     if isinstance(sources, list):
                         render_sources(sources)
+
+                render_feedback(index, api_url, session_id)
 
 
 def main() -> None:
@@ -676,7 +759,7 @@ def main() -> None:
     # Conversation
     # -----------------------------------------------------
 
-    _render_chat_history()
+    _render_chat_history(api_url, session_id)
 
     chat_disabled = (
         not is_healthy
@@ -691,6 +774,7 @@ def main() -> None:
     )
 
     if question:
+        history = recent_history(st.session_state.messages)
         st.session_state.messages.append({"role": "user", "content": question})
 
         with st.chat_message("user"):
@@ -714,6 +798,7 @@ def main() -> None:
                         selected_document_id if search_mode == "Selected document" else None
                     ),
                     on_token=show_draft,
+                    history=history,
                 )
 
             # The final, citation-validated answer replaces the streamed draft.
@@ -737,6 +822,10 @@ def main() -> None:
                 if not isinstance(sources, list):
                     sources = []
 
+                standalone = response.get("standalone_question")
+                if standalone and standalone.strip() != question.strip():
+                    st.caption(f"Interpreted as: {standalone}")
+
                 st.markdown(answer)
 
                 if abstained:
@@ -759,6 +848,7 @@ def main() -> None:
                         "sources": sources,
                     }
                 )
+                render_feedback(len(st.session_state.messages) - 1, api_url, session_id)
 
 
 if __name__ == "__main__":

@@ -127,3 +127,38 @@ def build_citation_repair_prompt(
         f"{query}\n\n"
         "CORRECTED FINAL ANSWER:\n"
     )
+
+
+# Conversation memory: how many trailing turns, and how much of each, feed
+# the follow-up rewriter. Older turns rarely change what a follow-up means.
+MAX_HISTORY_TURNS = 6
+MAX_HISTORY_TURN_CHARS = 600
+
+
+def build_condense_question_prompt(question: str, history: list[tuple[str, str]]) -> str:
+    """Prompt that rewrites a follow-up into a standalone search question.
+
+    `history` is a list of (role, text) pairs, oldest first, with role in
+    {"user", "assistant"}.
+    """
+
+    if not question.strip():
+        raise ValueError("Question cannot be empty.")
+
+    turns = []
+    for role, text in history[-MAX_HISTORY_TURNS:]:
+        speaker = "User" if role == "user" else "Assistant"
+        snippet = " ".join(text.split())[:MAX_HISTORY_TURN_CHARS]
+        turns.append(f"{speaker}: {snippet}")
+
+    return (
+        "Rewrite the follow-up question so it can be understood without the "
+        "conversation. Resolve pronouns and references (it, they, that policy, "
+        "the second one) using the conversation. Keep the user's meaning and "
+        "language. Do not answer the question. If it is already standalone, "
+        "return it unchanged.\n"
+        "Return only the rewritten question on one line.\n\n"
+        "CONVERSATION:\n"
+        + "\n".join(turns)
+        + f"\n\nFOLLOW-UP QUESTION:\n{question.strip()}\n\nSTANDALONE QUESTION:"
+    )
