@@ -1,0 +1,21 @@
+Northwind Labs Employee Handbook
+
+Section 1: Annual Leave
+
+Full-time employees accrue 24 days of paid annual leave per calendar year. Leave accrues monthly at a rate of two days per completed month of service. Up to five unused days may be carried over into the next calendar year; any remaining balance above five days expires on 31 March of the following year. Requests for leave longer than ten consecutive working days must be submitted to the line manager at least four weeks in advance.
+
+Section 2: Remote Work
+
+Employees may work remotely for up to three days per week after completing their probation period. Remote work requires a secure home network and use of the company VPN for all access to internal systems. Teams must keep Tuesday as a shared in-office collaboration day unless the department head approves an exception in writing.
+
+Section 3: Expense Reimbursement
+
+Business travel expenses are reimbursed when they are submitted through the finance portal within 30 days of the trip. Receipts are mandatory for any single expense above 25 euros. Economy class is the default for flights shorter than six hours. Meal expenses are capped at 60 euros per day while travelling, excluding alcohol, which is never reimbursed.
+
+Section 4: Security Incidents
+
+Any suspected security incident, including a lost laptop or a phishing email that was clicked, must be reported to the security team within one hour by emailing the incident desk and calling the on-call number. Employees must not attempt to investigate or clean an infected device on their own. The security team will issue a replacement device within two working days when hardware is confiscated for forensic analysis.
+
+Section 5: Learning Budget
+
+Each employee receives an annual learning budget of 1,500 euros that can be spent on courses, certifications, conference tickets, and technical books. Unused learning budget does not carry over. Certification exam fees are covered twice per certification if the first attempt is unsuccessful.

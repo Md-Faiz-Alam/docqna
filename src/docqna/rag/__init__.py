@@ -1,17 +1,11 @@
-from docqna.rag.models import (
-    CitationSource,
-    RAGResponse,
-)
+from docqna.rag.models import CitationSource, RAGResponse
 from docqna.rag.pipeline import RAGPipeline
-from docqna.rag.prompt import (
-    build_cited_rag_prompt,
-    build_rag_prompt,
-)
+from docqna.rag.prompt import ABSTENTION_ANSWER, build_cited_rag_prompt
 
 __all__ = [
+    "ABSTENTION_ANSWER",
     "CitationSource",
-    "RAGResponse",
     "RAGPipeline",
-    "build_rag_prompt",
+    "RAGResponse",
     "build_cited_rag_prompt",
 ]

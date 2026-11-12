@@ -5,14 +5,9 @@ from contextvars import ContextVar, Token
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-from docqna.constants import LOG_DIR
 from docqna.settings import get_settings
 
-
-_REQUEST_ID: ContextVar[str] = ContextVar(
-    "docqna_request_id",
-    default="-",
-)
+_REQUEST_ID: ContextVar[str] = ContextVar("docqna_request_id", default="-")
 
 _CONFIGURED = False
 
@@ -20,29 +15,18 @@ _CONFIGURED = False
 class RequestIdFilter(logging.Filter):
     """Attach the current request ID to every DocQ&A log record."""
 
-    def filter(
-        self,
-        record: logging.LogRecord,
-    ) -> bool:
-        setattr(
-            record,
-            "request_id",
-            _REQUEST_ID.get(),
-        )
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.request_id = _REQUEST_ID.get()
         return True
 
 
-def set_request_id(
-    request_id: str,
-) -> Token[str]:
+def set_request_id(request_id: str) -> Token[str]:
     """Set the request ID for the current execution context."""
 
     return _REQUEST_ID.set(request_id)
 
 
-def reset_request_id(
-    token: Token[str],
-) -> None:
+def reset_request_id(token: Token[str]) -> None:
     """Restore the previous request ID context."""
 
     _REQUEST_ID.reset(token)
@@ -54,11 +38,7 @@ def get_request_id() -> str:
     return _REQUEST_ID.get()
 
 
-def configure_logging(
-    *,
-    force: bool = False,
-    log_dir: str | Path | None = None,
-) -> logging.Logger:
+def configure_logging(*, force: bool = False, log_dir: str | Path | None = None) -> logging.Logger:
     """
     Configure DocQ&A application logging.
 
@@ -81,11 +61,7 @@ def configure_logging(
     settings = get_settings()
 
     level_name = settings.log_level.strip().upper()
-    level = getattr(
-        logging,
-        level_name,
-        logging.INFO,
-    )
+    level = getattr(logging, level_name, logging.INFO)
 
     logger.setLevel(level)
     logger.propagate = False
@@ -93,10 +69,7 @@ def configure_logging(
     request_filter = RequestIdFilter()
 
     formatter = logging.Formatter(
-        (
-            "%(asctime)s | %(levelname)s | %(name)s | "
-            "request_id=%(request_id)s | %(message)s"
-        )
+        "%(asctime)s | %(levelname)s | %(name)s | request_id=%(request_id)s | %(message)s"
     )
 
     console_handler = logging.StreamHandler()
@@ -106,29 +79,14 @@ def configure_logging(
     logger.addHandler(console_handler)
 
     if settings.log_to_file:
-        target_dir = (
-            Path(log_dir)
-            if log_dir is not None
-            else LOG_DIR
-        )
+        target_dir = Path(log_dir) if log_dir is not None else settings.log_dir
 
-        target_dir.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+        target_dir.mkdir(parents=True, exist_ok=True)
 
         file_handler = RotatingFileHandler(
-            filename=(
-                target_dir / "docqna.log"
-            ),
-            maxBytes=max(
-                1024,
-                settings.log_max_bytes,
-            ),
-            backupCount=max(
-                1,
-                settings.log_backup_count,
-            ),
+            filename=(target_dir / "docqna.log"),
+            maxBytes=max(1024, settings.log_max_bytes),
+            backupCount=max(1, settings.log_backup_count),
             encoding="utf-8",
         )
 
@@ -139,16 +97,11 @@ def configure_logging(
 
     _CONFIGURED = True
 
-    if not isinstance(
-        getattr(logging, level_name, None),
-        int,
-    ):
-        logger.warning(
-            "invalid_log_level configured=%s fallback=INFO",
-            settings.log_level,
-        )
+    if not isinstance(getattr(logging, level_name, None), int):
+        logger.warning("invalid_log_level configured=%s fallback=INFO", settings.log_level)
 
     return logger
+
 
 def shutdown_logging() -> None:
     """
@@ -160,17 +113,10 @@ def shutdown_logging() -> None:
 
     global _CONFIGURED
 
-    logger = logging.getLogger(
-        "docqna"
-    )
+    logger = logging.getLogger("docqna")
 
-    for handler in list(
-        logger.handlers
-    ):
+    for handler in list(logger.handlers):
         handler.close()
-        logger.removeHandler(
-            handler
-        )
+        logger.removeHandler(handler)
 
     _CONFIGURED = False
-

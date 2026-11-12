@@ -53,10 +53,11 @@ desktop.ini
 
 logs/*.log
 
-data/raw/*
-data/processed/*
 data/indexes/
-data/metadata/*
+data/metadata/
+
+# Local source documents (may be private or copyrighted)
+data/samples/
 
 
 # ---------------------------------------------------------
@@ -67,28 +68,7 @@ data/evaluation/work/
 
 
 # ---------------------------------------------------------
-# Local development files
-# ---------------------------------------------------------
-
-current_project_structure.txt
-
-
-# ---------------------------------------------------------
 # Streamlit secrets
 # ---------------------------------------------------------
 
 .streamlit/secrets.toml
-
-
-# ---------------------------------------------------------
-# Keep placeholder files
-# ---------------------------------------------------------
-
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!data/metadata/.gitkeep
-
-# Local/sample source documents
-data/samples/*
-!data/samples/.gitkeep
-!data/samples/README.md

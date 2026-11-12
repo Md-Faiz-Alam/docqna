@@ -10,11 +10,7 @@ class BaseVectorStore(ABC):
     """Base interface for persistent vector stores."""
 
     @abstractmethod
-    def add_chunks(
-        self,
-        chunks: list[DocumentChunk],
-        embeddings: list[list[float]],
-    ) -> None:
+    def add_chunks(self, chunks: list[DocumentChunk], embeddings: list[list[float]]) -> None:
         """Store chunks and their embeddings."""
         raise NotImplementedError
 

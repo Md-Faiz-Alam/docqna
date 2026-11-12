@@ -146,50 +146,30 @@ This is **session isolation, not authentication**. A different browser profile o
 
 ```text
 docqna/
-├── .dockerignore
-├── .env.example
-├── .gitattributes
-├── .gitignore
-├── README.md
-├── SECURITY.md
+├── src/docqna/              # the application package
+│   ├── api/                 # FastAPI app: routes/, errors, middleware, session, DI
+│   ├── ingestion/           # loaders, preprocessing, chunking, document registry
+│   ├── embeddings/          # embedding model adapters
+│   ├── indexing/            # Chroma vector store + document index service
+│   ├── retrieval/           # dense, BM25, RRF hybrid, cross-encoder, confidence gate
+│   ├── generation/          # LLM providers (Ollama)
+│   ├── rag/                 # prompts + cited RAG pipeline
+│   ├── evaluation/          # metrics, runners, reporting
+│   ├── ui/                  # Streamlit client
+│   └── settings.py          # all runtime configuration (env / .env)
+├── tests/
+│   ├── unit/                # fast, hermetic (fakes only) — run in CI
+│   ├── integration/         # real models / Ollama — `pytest -m integration`
+│   ├── experiments/         # tests for experiment-runner logic
+│   └── fixtures/            # self-contained test documents
+├── experiments/             # phase-22 evaluation runners (see experiments/README.md)
+├── data/evaluation/         # labelled dataset + committed experiment results
+├── scripts/                 # operational / diagnostic scripts
+├── docker/                  # Dockerfiles (API, UI)
+├── docs/                    # architecture, evaluation, limitations
+├── .github/workflows/ci.yml # lint, types, tests + coverage gate, image builds
 ├── docker-compose.yml
-├── Dockerfile.api
-├── Dockerfile.streamlit
-├── pyproject.toml
-├── requirements.txt
-├── requirements-dev.txt
-│
-├── src/
-│   └── docqna/
-│       ├── api/
-│       ├── embeddings/
-│       ├── evaluation/
-│       ├── generation/
-│       ├── indexing/
-│       ├── ingestion/
-│       ├── rag/
-│       ├── retrieval/
-│       ├── ui/
-│       ├── constants.py
-│       ├── exceptions.py
-│       ├── filters.py
-│       ├── logging_config.py
-│       └── settings.py
-│
-├── data/
-│   └── evaluation/
-│       ├── baseline_questions.json
-│       ├── evaluation_dataset_v2.json
-│       ├── unanswerable_questions.json
-│       └── results/
-│
-├── docs/
-│   ├── architecture.md
-│   ├── evaluation.md
-│   └── limitations.md
-│
-├── run_*.py
-└── test_*.py
+└── pyproject.toml           # single source of dependencies and tool config
 ```
 
 Generated runtime indexes, document metadata, logs, local sample documents, secrets, and virtual environments are intentionally excluded from Git.
@@ -233,18 +213,14 @@ Linux/macOS:
 source .venv/bin/activate
 ```
 
-Install runtime dependencies and the local package:
+Install the package with UI and development tooling:
 
 ```bash
-pip install -r requirements.txt
-pip install -e . --no-deps
+pip install -e ".[dev]"
+pre-commit install
 ```
 
-Development/testing dependencies:
-
-```bash
-pip install -r requirements-dev.txt
-```
+Runtime only (API): `pip install .` — add `[ui]` for the Streamlit client.
 
 ---
 
@@ -359,6 +335,12 @@ docker compose down
 
 Do **not** use `docker compose down -v` unless you intentionally want to delete the named volumes and their persisted data.
 
+The API and UI containers run as a non-root user (`uid 10001`). Volumes created by older root-based images keep root ownership. To reuse them, fix ownership once:
+
+```bash
+docker compose run --rm --user root api chown -R 10001:10001 /app/data /app/.cache/huggingface
+```
+
 The first document upload or first QA request can be slower because the embedding and cross-encoder models may need to download into the persistent Hugging Face cache.
 
 ---
@@ -381,23 +363,25 @@ These checks validate local packaging and persistence. They do not represent a l
 
 ## Tests
 
-Run the full test suite:
+Unit tests are hermetic: they use fakes, download no models, and need no Ollama. They run in about 3 seconds:
 
 ```bash
-python -m pytest -q
+pytest
 ```
 
-Critical reliability checks:
+Integration tests build a temporary index from `tests/fixtures/` using the real embedding and cross-encoder models. The Ollama answer test is skipped when Ollama is not reachable:
 
 ```bash
-python -m pytest -q test_rag_prompt_hardening.py test_rag_reliability_hardening.py test_session_isolation.py
+pytest -m integration
 ```
 
-Product UI/session checks used during deployment hardening can also be run directly when present:
+Quality gates (also enforced in CI):
 
 ```bash
-python test_streamlit_product_ui.py
-python test_session_isolation.py
+ruff check src tests experiments scripts
+ruff format --check src tests experiments scripts
+mypy
+pytest --cov --cov-fail-under=75
 ```
 
 ---

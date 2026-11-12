@@ -5,10 +5,7 @@ from docx import Document
 
 from docqna.exceptions import DocumentLoadError
 from docqna.ingestion.loaders.base import BaseDocumentLoader
-from docqna.ingestion.models import (
-    DocumentSegment,
-    LoadedDocument,
-)
+from docqna.ingestion.models import DocumentSegment, LoadedDocument
 
 
 class DocxLoader(BaseDocumentLoader):
@@ -22,9 +19,7 @@ class DocxLoader(BaseDocumentLoader):
         try:
             document = Document(str(file_path))
         except Exception as exc:
-            raise DocumentLoadError(
-                f"Could not open DOCX document: {file_path}"
-            ) from exc
+            raise DocumentLoadError(f"Could not open DOCX document: {file_path}") from exc
 
         segments: list[DocumentSegment] = []
 
@@ -36,16 +31,9 @@ class DocxLoader(BaseDocumentLoader):
             if not text:
                 continue
 
-            style_name = (
-                paragraph.style.name
-                if paragraph.style is not None
-                else None
-            )
+            style_name = paragraph.style.name if paragraph.style is not None else None
 
-            if (
-                style_name
-                and style_name.lower().startswith("heading")
-            ):
+            if style_name and style_name.lower().startswith("heading"):
                 current_section = text
 
             segments.append(
@@ -53,16 +41,12 @@ class DocxLoader(BaseDocumentLoader):
                     text=text,
                     segment_index=len(segments),
                     section=current_section,
-                    metadata={
-                        "style": style_name,
-                    },
+                    metadata={"style": style_name},
                 )
             )
 
         if not segments:
-            raise DocumentLoadError(
-                f"DOCX document contains no usable text: {file_path}"
-            )
+            raise DocumentLoadError(f"DOCX document contains no usable text: {file_path}")
 
         core_properties = document.core_properties
 

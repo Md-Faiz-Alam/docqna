@@ -1,10 +1,7 @@
 import re
 import unicodedata
 
-from docqna.ingestion.models import (
-    DocumentSegment,
-    LoadedDocument,
-)
+from docqna.ingestion.models import DocumentSegment, LoadedDocument
 
 
 class TextNormalizer:
@@ -37,10 +34,7 @@ class TextNormalizer:
 
         return "\n".join(normalized_lines).strip()
 
-    def normalize_document(
-        self,
-        document: LoadedDocument,
-    ) -> LoadedDocument:
+    def normalize_document(self, document: LoadedDocument) -> LoadedDocument:
         """Normalize every segment in a document."""
 
         segments: list[DocumentSegment] = []
@@ -48,16 +42,6 @@ class TextNormalizer:
         for segment in document.segments:
             normalized_text = self.normalize_text(segment.text)
 
-            segments.append(
-                segment.model_copy(
-                    update={
-                        "text": normalized_text,
-                    }
-                )
-            )
+            segments.append(segment.model_copy(update={"text": normalized_text}))
 
-        return document.model_copy(
-            update={
-                "segments": segments,
-            }
-        )
+        return document.model_copy(update={"segments": segments})

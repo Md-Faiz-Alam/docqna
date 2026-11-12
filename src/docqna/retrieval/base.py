@@ -9,10 +9,7 @@ class BaseRetriever(ABC):
 
     @abstractmethod
     def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        metadata_filters: MetadataFilters | None = None,
+        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
     ) -> list[RetrievalResult]:
         """Retrieve the most relevant chunks for a query."""
         raise NotImplementedError

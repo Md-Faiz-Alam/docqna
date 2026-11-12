@@ -10,234 +10,109 @@ from uuid import uuid4
 
 import streamlit as st
 
-
-DEFAULT_API_URL = os.getenv(
-    "DOCQNA_API_URL",
-    "http://127.0.0.1:8000",
-).rstrip("/")
+DEFAULT_API_URL = os.getenv("DOCQNA_API_URL", "http://127.0.0.1:8000").rstrip("/")
 SUPPORTED_UPLOAD_TYPES = ("pdf", "docx", "txt")
 PRODUCTION_TOP_K = 5
-MAX_QUESTION_CHARS = int(
-    os.getenv("DOCQNA_MAX_QUESTION_CHARS", "2000")
-)
+MAX_QUESTION_CHARS = int(os.getenv("DOCQNA_MAX_QUESTION_CHARS", "2000"))
 SESSION_HEADER_NAME = "X-DocQNA-Session-ID"
 SESSION_COOKIE_NAME = "docqna_session_id"
-_SESSION_ID_PATTERN = re.compile(
-    r"^[A-Za-z0-9_-]{32,128}$"
-)
+_SESSION_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{32,128}$")
 
 
-def _decode_json_bytes(
-    payload: bytes,
-) -> dict[str, Any]:
+def _decode_json_bytes(payload: bytes) -> dict[str, Any]:
     """Decode an API JSON object."""
 
-    data = json.loads(
-        payload.decode("utf-8")
-    )
+    data = json.loads(payload.decode("utf-8"))
 
-    if not isinstance(
-        data,
-        dict,
-    ):
-        raise ValueError(
-            "Backend response was not a JSON object."
-        )
+    if not isinstance(data, dict):
+        raise ValueError("Backend response was not a JSON object.")
 
     return data
 
 
-def _http_error_detail(
-    exc: HTTPError,
-) -> str:
+def _http_error_detail(exc: HTTPError) -> str:
     """Extract a useful FastAPI error detail."""
 
     try:
-        payload = _decode_json_bytes(
-            exc.read()
-        )
+        payload = _decode_json_bytes(exc.read())
 
     except Exception:
-        return (
-            f"Backend returned HTTP {exc.code}."
-        )
+        return f"Backend returned HTTP {exc.code}."
 
-    detail = payload.get(
-        "detail"
-    )
+    detail = payload.get("detail")
 
     if detail is None:
-        detail = payload.get(
-            "error"
-        )
+        detail = payload.get("error")
 
-    if isinstance(
-        detail,
-        list,
-    ):
-        return json.dumps(
-            detail,
-            ensure_ascii=False,
-        )
+    if isinstance(detail, list):
+        return json.dumps(detail, ensure_ascii=False)
 
     if detail is None:
-        return (
-            f"Backend returned HTTP {exc.code}."
-        )
+        return f"Backend returned HTTP {exc.code}."
 
-    return str(
-        detail
-    )
+    return str(detail)
 
 
-def get_api_health(
-    api_url: str,
-) -> tuple[
-    bool,
-    dict[str, Any] | None,
-    str | None,
-]:
+def get_api_health(api_url: str) -> tuple[bool, dict[str, Any] | None, str | None]:
     """Check whether the DocQ&A FastAPI backend is reachable."""
 
-    request = Request(
-        url=f"{api_url}/health",
-        headers={
-            "Accept": "application/json",
-        },
-        method="GET",
-    )
+    request = Request(url=f"{api_url}/health", headers={"Accept": "application/json"}, method="GET")
 
     try:
-        with urlopen(
-            request,
-            timeout=5,
-        ) as response:
-            data = _decode_json_bytes(
-                response.read()
-            )
+        with urlopen(request, timeout=5) as response:
+            data = _decode_json_bytes(response.read())
 
-            return (
-                response.status == 200,
-                data,
-                None,
-            )
+            return (response.status == 200, data, None)
 
     except HTTPError as exc:
-        return (
-            False,
-            None,
-            _http_error_detail(
-                exc
-            ),
-        )
+        return (False, None, _http_error_detail(exc))
 
     except URLError as exc:
-        return (
-            False,
-            None,
-            "Could not connect to backend: "
-            f"{exc.reason}",
-        )
+        return (False, None, f"Could not connect to backend: {exc.reason}")
 
     except Exception as exc:
-        return (
-            False,
-            None,
-            f"Unexpected backend error: {exc}",
-        )
+        return (False, None, f"Unexpected backend error: {exc}")
 
 
-def list_documents(
-    api_url: str,
-    session_id: str,
-) -> tuple[
-    list[dict[str, Any]],
-    str | None,
-]:
+def list_documents(api_url: str, session_id: str) -> tuple[list[dict[str, Any]], str | None]:
     """Fetch active indexed documents from FastAPI."""
 
     request = Request(
         url=f"{api_url}/documents",
-        headers={
-            "Accept": "application/json",
-            SESSION_HEADER_NAME: session_id,
-        },
+        headers={"Accept": "application/json", SESSION_HEADER_NAME: session_id},
         method="GET",
     )
 
     try:
-        with urlopen(
-            request,
-            timeout=30,
-        ) as response:
-            data = _decode_json_bytes(
-                response.read()
-            )
+        with urlopen(request, timeout=30) as response:
+            data = _decode_json_bytes(response.read())
 
     except HTTPError as exc:
-        return (
-            [],
-            _http_error_detail(
-                exc
-            ),
-        )
+        return ([], _http_error_detail(exc))
 
     except URLError as exc:
-        return (
-            [],
-            "Could not connect to backend: "
-            f"{exc.reason}",
-        )
+        return ([], f"Could not connect to backend: {exc.reason}")
 
     except Exception as exc:
-        return (
-            [],
-            f"Could not load documents: {exc}",
-        )
+        return ([], f"Could not load documents: {exc}")
 
-    documents = data.get(
-        "documents",
-        [],
-    )
+    documents = data.get("documents", [])
 
-    if not isinstance(
-        documents,
-        list,
-    ):
-        return (
-            [],
-            "Backend returned an invalid document list.",
-        )
+    if not isinstance(documents, list):
+        return ([], "Backend returned an invalid document list.")
 
-    normalized: list[
-        dict[str, Any]
-    ] = []
+    normalized: list[dict[str, Any]] = []
 
     for document in documents:
-        if isinstance(
-            document,
-            dict,
-        ):
-            normalized.append(
-                document
-            )
+        if isinstance(document, dict):
+            normalized.append(document)
 
-    return (
-        normalized,
-        None,
-    )
+    return (normalized, None)
 
 
 def build_multipart_file_payload(
-    *,
-    filename: str,
-    content: bytes,
-    content_type: str,
-    boundary: str | None = None,
-) -> tuple[
-    bytes,
-    str,
-]:
+    *, filename: str, content: bytes, content_type: str, boundary: str | None = None
+) -> tuple[bytes, str]:
     """
     Build a multipart/form-data request body for one uploaded file.
 
@@ -245,27 +120,14 @@ def build_multipart_file_payload(
     The Streamlit UI sends multiple selected files sequentially.
     """
 
-    boundary = (
-        boundary
-        or f"----DocQNA{uuid4().hex}"
-    )
+    boundary = boundary or f"----DocQNA{uuid4().hex}"
 
-    safe_filename = (
-        Path(filename).name
-        .replace("\r", "")
-        .replace("\n", "")
-        .replace('"', "")
-    )
+    safe_filename = Path(filename).name.replace("\r", "").replace("\n", "").replace('"', "")
 
     if not safe_filename:
-        raise ValueError(
-            "Uploaded file must have a filename."
-        )
+        raise ValueError("Uploaded file must have a filename.")
 
-    safe_content_type = (
-        content_type.strip()
-        or "application/octet-stream"
-    )
+    safe_content_type = content_type.strip() or "application/octet-stream"
 
     prefix = (
         f"--{boundary}\r\n"
@@ -273,79 +135,32 @@ def build_multipart_file_payload(
         f'name="file"; filename="{safe_filename}"\r\n'
         f"Content-Type: {safe_content_type}\r\n"
         "\r\n"
-    ).encode(
-        "utf-8"
-    )
+    ).encode()
 
-    suffix = (
-        f"\r\n--{boundary}--\r\n"
-    ).encode(
-        "utf-8"
-    )
+    suffix = (f"\r\n--{boundary}--\r\n").encode()
 
-    return (
-        prefix
-        + content
-        + suffix,
-        (
-            "multipart/form-data; "
-            f"boundary={boundary}"
-        ),
-    )
+    return (prefix + content + suffix, (f"multipart/form-data; boundary={boundary}"))
 
 
 def upload_document(
-    api_url: str,
-    *,
-    session_id: str,
-    filename: str,
-    content: bytes,
-    content_type: str | None,
-) -> tuple[
-    dict[str, Any] | None,
-    str | None,
-]:
+    api_url: str, *, session_id: str, filename: str, content: bytes, content_type: str | None
+) -> tuple[dict[str, Any] | None, str | None]:
     """Upload and index one document through FastAPI."""
 
-    extension = (
-        Path(filename).suffix
-        .lower()
-        .lstrip(".")
-    )
+    extension = Path(filename).suffix.lower().lstrip(".")
 
-    if extension not in (
-        SUPPORTED_UPLOAD_TYPES
-    ):
-        return (
-            None,
-            (
-                "Unsupported file type. "
-                "Use PDF, DOCX, or TXT."
-            ),
-        )
+    if extension not in (SUPPORTED_UPLOAD_TYPES):
+        return (None, ("Unsupported file type. Use PDF, DOCX, or TXT."))
 
     if not content:
-        return (
-            None,
-            "Uploaded file is empty.",
-        )
+        return (None, "Uploaded file is empty.")
 
     resolved_content_type = (
-        content_type
-        or mimetypes.guess_type(
-            filename
-        )[0]
-        or "application/octet-stream"
+        content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
     )
 
-    body, multipart_content_type = (
-        build_multipart_file_payload(
-            filename=filename,
-            content=content,
-            content_type=(
-                resolved_content_type
-            ),
-        )
+    body, multipart_content_type = build_multipart_file_payload(
+        filename=filename, content=content, content_type=(resolved_content_type)
     )
 
     request = Request(
@@ -353,117 +168,52 @@ def upload_document(
         data=body,
         headers={
             "Accept": "application/json",
-            "Content-Type": (
-                multipart_content_type
-            ),
+            "Content-Type": (multipart_content_type),
             SESSION_HEADER_NAME: session_id,
         },
         method="POST",
     )
 
     try:
-        with urlopen(
-            request,
-            timeout=600,
-        ) as response:
-            return (
-                _decode_json_bytes(
-                    response.read()
-                ),
-                None,
-            )
+        with urlopen(request, timeout=600) as response:
+            return (_decode_json_bytes(response.read()), None)
 
     except HTTPError as exc:
-        return (
-            None,
-            _http_error_detail(
-                exc
-            ),
-        )
+        return (None, _http_error_detail(exc))
 
     except URLError as exc:
-        return (
-            None,
-            "Could not connect to backend: "
-            f"{exc.reason}",
-        )
+        return (None, f"Could not connect to backend: {exc.reason}")
 
     except Exception as exc:
-        return (
-            None,
-            f"Document upload failed: {exc}",
-        )
+        return (None, f"Document upload failed: {exc}")
 
 
-def delete_document(
-    api_url: str,
-    document_id: str,
-    session_id: str,
-) -> tuple[
-    bool,
-    str | None,
-]:
+def delete_document(api_url: str, document_id: str, session_id: str) -> tuple[bool, str | None]:
     """Delete one logical document from the active index."""
 
     request = Request(
-        url=(
-            f"{api_url}/documents/"
-            f"{document_id}"
-        ),
-        headers={
-            "Accept": "application/json",
-            SESSION_HEADER_NAME: session_id,
-        },
+        url=(f"{api_url}/documents/{document_id}"),
+        headers={"Accept": "application/json", SESSION_HEADER_NAME: session_id},
         method="DELETE",
     )
 
     try:
-        with urlopen(
-            request,
-            timeout=120,
-        ) as response:
-            data = _decode_json_bytes(
-                response.read()
-            )
+        with urlopen(request, timeout=120) as response:
+            data = _decode_json_bytes(response.read())
 
-            return (
-                bool(
-                    data.get(
-                        "deleted",
-                        False,
-                    )
-                ),
-                None,
-            )
+            return (bool(data.get("deleted", False)), None)
 
     except HTTPError as exc:
-        return (
-            False,
-            _http_error_detail(
-                exc
-            ),
-        )
+        return (False, _http_error_detail(exc))
 
     except URLError as exc:
-        return (
-            False,
-            "Could not connect to backend: "
-            f"{exc.reason}",
-        )
+        return (False, f"Could not connect to backend: {exc.reason}")
 
     except Exception as exc:
-        return (
-            False,
-            f"Document deletion failed: {exc}",
-        )
+        return (False, f"Document deletion failed: {exc}")
 
 
-def build_qa_payload(
-    *,
-    question: str,
-    top_k: int,
-    document_id: str | None,
-) -> dict[str, Any]:
+def build_qa_payload(*, question: str, top_k: int, document_id: str | None) -> dict[str, Any]:
     """
     Build the /qa request.
 
@@ -471,248 +221,116 @@ def build_qa_payload(
     None means search across all active indexed documents.
     """
 
-    payload: dict[
-        str,
-        Any,
-    ] = {
-        "question": question,
-        "top_k": top_k,
-    }
+    payload: dict[str, Any] = {"question": question, "top_k": top_k}
 
     if document_id is not None:
-        payload[
-            "filters"
-        ] = {
-            "document_id": document_id,
-        }
+        payload["filters"] = {"document_id": document_id}
 
     return payload
 
 
 def ask_api(
-    api_url: str,
-    question: str,
-    top_k: int,
-    *,
-    session_id: str,
-    document_id: str | None,
-) -> tuple[
-    dict[str, Any] | None,
-    str | None,
-]:
+    api_url: str, question: str, top_k: int, *, session_id: str, document_id: str | None
+) -> tuple[dict[str, Any] | None, str | None]:
     """Send a grounded QA request to FastAPI."""
 
     payload = json.dumps(
-        build_qa_payload(
-            question=question,
-            top_k=top_k,
-            document_id=document_id,
-        )
-    ).encode(
-        "utf-8"
-    )
+        build_qa_payload(question=question, top_k=top_k, document_id=document_id)
+    ).encode("utf-8")
 
     request = Request(
         url=f"{api_url}/qa",
         data=payload,
         headers={
             "Accept": "application/json",
-            "Content-Type": (
-                "application/json"
-            ),
+            "Content-Type": ("application/json"),
             SESSION_HEADER_NAME: session_id,
         },
         method="POST",
     )
 
     try:
-        with urlopen(
-            request,
-            timeout=300,
-        ) as response:
-            return (
-                _decode_json_bytes(
-                    response.read()
-                ),
-                None,
-            )
+        with urlopen(request, timeout=300) as response:
+            return (_decode_json_bytes(response.read()), None)
 
     except HTTPError as exc:
-        return (
-            None,
-            _http_error_detail(
-                exc
-            ),
-        )
+        return (None, _http_error_detail(exc))
 
     except URLError as exc:
-        return (
-            None,
-            "Could not connect to backend: "
-            f"{exc.reason}",
-        )
+        return (None, f"Could not connect to backend: {exc.reason}")
 
     except Exception as exc:
-        return (
-            None,
-            f"Unexpected request error: {exc}",
-        )
+        return (None, f"Unexpected request error: {exc}")
 
 
-def format_document_label(
-    document: dict[str, Any],
-) -> str:
+def format_document_label(document: dict[str, Any]) -> str:
     """Return a concise human-readable document label."""
 
-    filename = str(
-        document.get(
-            "filename",
-            "Unknown document",
-        )
-    )
+    filename = str(document.get("filename", "Unknown document"))
 
-    version = document.get(
-        "version"
-    )
+    version = document.get("version")
 
-    file_type = str(
-        document.get(
-            "file_type",
-            "",
-        )
-    ).upper()
+    file_type = str(document.get("file_type", "")).upper()
 
-    if version is None:
-        version_text = ""
-    else:
-        version_text = (
-            f" · v{version}"
-        )
+    version_text = "" if version is None else f" · v{version}"
 
-    type_text = (
-        f" · {file_type}"
-        if file_type
-        else ""
-    )
+    type_text = f" · {file_type}" if file_type else ""
 
-    return (
-        f"{filename}"
-        f"{version_text}"
-        f"{type_text}"
-    )
+    return f"{filename}{version_text}{type_text}"
 
 
-def render_sources(
-    sources: list[
-        dict[str, Any]
-    ],
-) -> None:
+def render_sources(sources: list[dict[str, Any]]) -> None:
     """Render cited document sources below an answer."""
 
     if not sources:
         return
 
-    with st.expander(
-        f"Sources ({len(sources)})",
-        expanded=False,
-    ):
+    with st.expander(f"Sources ({len(sources)})", expanded=False):
         for source in sources:
-            citation_id = source.get(
-                "citation_id",
-                "?",
-            )
+            citation_id = source.get("citation_id", "?")
 
-            filename = source.get(
-                "filename",
-                "Unknown document",
-            )
+            filename = source.get("filename", "Unknown document")
 
-            page_start = source.get(
-                "page_start"
-            )
+            page_start = source.get("page_start")
 
-            page_end = source.get(
-                "page_end"
-            )
+            page_end = source.get("page_end")
 
-            section = source.get(
-                "section"
-            )
+            section = source.get("section")
 
-            text = str(
-                source.get(
-                    "text",
-                    "",
-                )
-            )
+            text = str(source.get("text", ""))
 
-            st.markdown(
-                f"### [{citation_id}] {filename}"
-            )
+            st.markdown(f"### [{citation_id}] {filename}")
 
-            metadata_parts: list[
-                str
-            ] = []
+            metadata_parts: list[str] = []
 
             if page_start is not None:
-                if (
-                    page_end is not None
-                    and page_end
-                    != page_start
-                ):
-                    metadata_parts.append(
-                        (
-                            f"Pages {page_start}"
-                            f"–{page_end}"
-                        )
-                    )
+                if page_end is not None and page_end != page_start:
+                    metadata_parts.append(f"Pages {page_start}–{page_end}")
                 else:
-                    metadata_parts.append(
-                        f"Page {page_start}"
-                    )
+                    metadata_parts.append(f"Page {page_start}")
 
             if section:
-                metadata_parts.append(
-                    f"Section: {section}"
-                )
+                metadata_parts.append(f"Section: {section}")
 
             if metadata_parts:
-                st.caption(
-                    " · ".join(
-                        metadata_parts
-                    )
-                )
+                st.caption(" · ".join(metadata_parts))
 
             if text:
-                st.markdown(
-                    "> "
-                    + text.replace(
-                        "\n",
-                        "\n> ",
-                    )
-                )
+                st.markdown("> " + text.replace("\n", "\n> "))
 
             st.divider()
 
 
-def _valid_session_id(
-    value: str | None,
-) -> bool:
+def _valid_session_id(value: str | None) -> bool:
     """Return whether a browser session ID is safe to reuse."""
 
     if value is None:
         return False
 
-    return bool(
-        _SESSION_ID_PATTERN.fullmatch(
-            value.strip()
-        )
-    )
+    return bool(_SESSION_ID_PATTERN.fullmatch(value.strip()))
 
 
-def _persist_session_cookie(
-    session_id: str,
-) -> None:
+def _persist_session_cookie(session_id: str) -> None:
     """
     Persist the anonymous session namespace in the browser.
 
@@ -721,12 +339,8 @@ def _persist_session_cookie(
     automatically when the app is served over HTTPS.
     """
 
-    cookie_name = json.dumps(
-        SESSION_COOKIE_NAME
-    )
-    cookie_value = json.dumps(
-        session_id
-    )
+    cookie_name = json.dumps(SESSION_COOKIE_NAME)
+    cookie_value = json.dumps(session_id)
 
     st.html(
         f"""
@@ -757,91 +371,39 @@ def _persist_session_cookie(
 def _initialize_session_state() -> None:
     """Initialize Streamlit state and stable browser session identity."""
 
-    browser_session_id = (
-        st.context.cookies.get(
-            SESSION_COOKIE_NAME
-        )
-    )
+    browser_session_id = st.context.cookies.get(SESSION_COOKIE_NAME)
 
-    if (
-        "session_id"
-        not in st.session_state
-    ):
-        if (
-            isinstance(
-                browser_session_id,
-                str,
-            )
-            and _valid_session_id(
-                browser_session_id
-            )
-        ):
-            st.session_state.session_id = (
-                browser_session_id.strip()
-            )
+    if "session_id" not in st.session_state:
+        if isinstance(browser_session_id, str) and _valid_session_id(browser_session_id):
+            st.session_state.session_id = browser_session_id.strip()
 
         else:
-            st.session_state.session_id = (
-                uuid4().hex
-            )
+            st.session_state.session_id = uuid4().hex
 
-    if (
-        "session_cookie_initialized"
-        not in st.session_state
-    ):
-        session_id = str(
-            st.session_state.session_id
-        )
+    if "session_cookie_initialized" not in st.session_state:
+        session_id = str(st.session_state.session_id)
 
-        if (
-            not isinstance(
-                browser_session_id,
-                str,
-            )
-            or browser_session_id.strip()
-            != session_id
-        ):
-            _persist_session_cookie(
-                session_id
-            )
+        if not isinstance(browser_session_id, str) or browser_session_id.strip() != session_id:
+            _persist_session_cookie(session_id)
 
-        st.session_state.session_cookie_initialized = (
-            True
-        )
+        st.session_state.session_cookie_initialized = True
 
-    if (
-        "messages"
-        not in st.session_state
-    ):
+    if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    if (
-        "document_scope"
-        not in st.session_state
-    ):
+    if "document_scope" not in st.session_state:
         st.session_state.document_scope = None
 
 
 def _render_chat_history() -> None:
     """Render conversation history."""
 
-    for message in (
-        st.session_state.messages
-    ):
-        with st.chat_message(
-            message["role"]
-        ):
-            st.markdown(
-                message["content"]
-            )
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-            if (
-                message["role"]
-                == "assistant"
-            ):
-                if message.get(
-                    "abstained"
-                ):
+            if message["role"] == "assistant":
+                if message.get("abstained"):
                     st.caption(
                         "The answer was rejected because "
                         "the selected indexed documents "
@@ -850,43 +412,24 @@ def _render_chat_history() -> None:
                     )
 
                 else:
-                    sources = message.get(
-                        "sources",
-                        [],
-                    )
+                    sources = message.get("sources", [])
 
-                    if isinstance(
-                        sources,
-                        list,
-                    ):
-                        render_sources(
-                            sources
-                        )
+                    if isinstance(sources, list):
+                        render_sources(sources)
 
 
 def main() -> None:
     """Run the DocQ&A Streamlit application."""
 
-    st.set_page_config(
-        page_title="DocQ&A",
-        page_icon="📚",
-        layout="centered",
-    )
+    st.set_page_config(page_title="DocQ&A", page_icon="📚", layout="centered")
 
     _initialize_session_state()
 
-    session_id = str(
-        st.session_state.session_id
-    )
+    session_id = str(st.session_state.session_id)
 
-    st.title(
-        "📚 DocQ&A"
-    )
+    st.title("📚 DocQ&A")
 
-    st.caption(
-        "Upload PDF, DOCX, or TXT files and ask "
-        "questions grounded in their contents."
-    )
+    st.caption("Upload PDF, DOCX, or TXT files and ask questions grounded in their contents.")
 
     # -----------------------------------------------------
     # Backend
@@ -896,314 +439,137 @@ def main() -> None:
 
     top_k = PRODUCTION_TOP_K
 
-    st.sidebar.caption(
-        "Retrieval depth: production top-k = 5"
-    )
+    st.sidebar.caption("Retrieval depth: production top-k = 5")
 
-    (
-        is_healthy,
-        health_data,
-        health_error,
-    ) = get_api_health(
-        api_url
-    )
+    (is_healthy, health_data, health_error) = get_api_health(api_url)
 
-    if (
-        is_healthy
-        and health_data is not None
-    ):
-        st.sidebar.success(
-            "API connected"
-        )
+    if is_healthy and health_data is not None:
+        st.sidebar.success("API connected")
 
-        st.sidebar.caption(
-            (
-                f"{health_data.get('app', 'DocQ&A')} "
-                f"v{health_data.get('version', '?')}"
-            )
-        )
+        st.sidebar.caption(f"{health_data.get('app', 'DocQ&A')} v{health_data.get('version', '?')}")
 
     else:
-        st.sidebar.error(
-            "API unavailable"
-        )
+        st.sidebar.error("API unavailable")
 
         if health_error:
-            st.sidebar.caption(
-                health_error
-            )
+            st.sidebar.caption(health_error)
 
     # -----------------------------------------------------
     # Document management
     # -----------------------------------------------------
 
     st.sidebar.divider()
-    st.sidebar.header(
-        "Documents"
-    )
+    st.sidebar.header("Documents")
 
-    documents: list[
-        dict[str, Any]
-    ] = []
+    documents: list[dict[str, Any]] = []
 
-    document_error: (
-        str | None
-    ) = None
+    document_error: str | None = None
 
     if is_healthy:
-        (
-            documents,
-            document_error,
-        ) = list_documents(
-            api_url,
-            session_id,
-        )
+        (documents, document_error) = list_documents(api_url, session_id)
 
     if document_error:
-        st.sidebar.error(
-            document_error
-        )
+        st.sidebar.error(document_error)
 
-    uploaded_files = (
-        st.sidebar.file_uploader(
-            "Upload documents",
-            type=list(
-                SUPPORTED_UPLOAD_TYPES
-            ),
-            accept_multiple_files=True,
-            disabled=not is_healthy,
-            help=(
-                "Select one or several PDF, DOCX, "
-                "or TXT files. Files are indexed "
-                "sequentially."
-            ),
-        )
+    uploaded_files = st.sidebar.file_uploader(
+        "Upload documents",
+        type=list(SUPPORTED_UPLOAD_TYPES),
+        accept_multiple_files=True,
+        disabled=not is_healthy,
+        help=("Select one or several PDF, DOCX, or TXT files. Files are indexed sequentially."),
     )
 
     if st.sidebar.button(
-        "Upload & index",
-        disabled=(
-            not is_healthy
-            or not uploaded_files
-        ),
-        use_container_width=True,
+        "Upload & index", disabled=(not is_healthy or not uploaded_files), use_container_width=True
     ):
         successful = 0
         failed = 0
 
-        progress = st.sidebar.progress(
-            0
-        )
+        progress = st.sidebar.progress(0)
 
-        for index, uploaded_file in enumerate(
-            uploaded_files,
-            start=1,
-        ):
-            with st.spinner(
-                (
-                    "Indexing "
-                    f"{uploaded_file.name}..."
-                )
-            ):
-                response, error = (
-                    upload_document(
-                        api_url,
-                        session_id=session_id,
-                        filename=(
-                            uploaded_file.name
-                        ),
-                        content=(
-                            uploaded_file.getvalue()
-                        ),
-                        content_type=getattr(
-                            uploaded_file,
-                            "type",
-                            None,
-                        ),
-                    )
+        for index, uploaded_file in enumerate(uploaded_files, start=1):
+            with st.spinner(f"Indexing {uploaded_file.name}..."):
+                response, error = upload_document(
+                    api_url,
+                    session_id=session_id,
+                    filename=(uploaded_file.name),
+                    content=(uploaded_file.getvalue()),
+                    content_type=getattr(uploaded_file, "type", None),
                 )
 
             if error is not None:
                 failed += 1
-                st.sidebar.error(
-                    (
-                        f"{uploaded_file.name}: "
-                        f"{error}"
-                    )
-                )
+                st.sidebar.error(f"{uploaded_file.name}: {error}")
 
             elif response is not None:
                 successful += 1
 
-                chunk_count = (
-                    response.get(
-                        "chunk_count",
-                        "?",
-                    )
-                )
+                chunk_count = response.get("chunk_count", "?")
 
-                st.sidebar.success(
-                    (
-                        f"{uploaded_file.name}: "
-                        f"indexed "
-                        f"({chunk_count} chunks)"
-                    )
-                )
+                st.sidebar.success(f"{uploaded_file.name}: indexed ({chunk_count} chunks)")
 
-            progress.progress(
-                int(
-                    (
-                        index
-                        / len(
-                            uploaded_files
-                        )
-                    )
-                    * 100
-                )
-            )
+            progress.progress(int((index / len(uploaded_files)) * 100))
 
-        st.sidebar.caption(
-            (
-                f"Upload complete: "
-                f"{successful} succeeded, "
-                f"{failed} failed."
-            )
-        )
+        st.sidebar.caption(f"Upload complete: {successful} succeeded, {failed} failed.")
 
-        (
-            documents,
-            document_error,
-        ) = list_documents(
-            api_url,
-            session_id,
-        )
+        (documents, document_error) = list_documents(api_url, session_id)
 
         if document_error:
-            st.sidebar.error(
-                document_error
-            )
+            st.sidebar.error(document_error)
 
-    st.sidebar.caption(
-        (
-            f"Indexed documents: "
-            f"{len(documents)}"
-        )
+    st.sidebar.caption(f"Indexed documents: {len(documents)}")
+
+    selected_document_id: str | None = None
+
+    selected_document: dict[str, Any] | None = None
+
+    search_mode = st.sidebar.radio(
+        "Search scope",
+        options=["Selected document", "All documents"],
+        disabled=(not is_healthy or not documents),
     )
 
-    selected_document_id: (
-        str | None
-    ) = None
-
-    selected_document: (
-        dict[str, Any] | None
-    ) = None
-
-    search_mode = (
-        st.sidebar.radio(
-            "Search scope",
-            options=[
-                "Selected document",
-                "All documents",
-            ],
-            disabled=(
-                not is_healthy
-                or not documents
-            ),
-        )
-    )
-
-    if (
-        documents
-        and search_mode
-        == "Selected document"
-    ):
+    if documents and search_mode == "Selected document":
         document_by_id = {
-            str(
-                document.get(
-                    "document_id",
-                    "",
-                )
-            ): document
+            str(document.get("document_id", "")): document
             for document in documents
-            if document.get(
-                "document_id"
-            )
+            if document.get("document_id")
         }
 
-        document_ids = list(
-            document_by_id
+        document_ids = list(document_by_id)
+
+        selected_document_id = st.sidebar.selectbox(
+            "Active document",
+            options=document_ids,
+            format_func=lambda doc_id: (format_document_label(document_by_id[doc_id])),
         )
 
-        selected_document_id = (
-            st.sidebar.selectbox(
-                "Active document",
-                options=document_ids,
-                format_func=lambda doc_id: (
-                    format_document_label(
-                        document_by_id[
-                            doc_id
-                        ]
-                    )
-                ),
-            )
-        )
-
-        if (
-            selected_document_id
-            is not None
-        ):
-            selected_document = (
-                document_by_id[
-                    selected_document_id
-                ]
-            )
+        if selected_document_id is not None:
+            selected_document = document_by_id[selected_document_id]
 
     # -----------------------------------------------------
     # Delete selected document
     # -----------------------------------------------------
 
-    if (
-        is_healthy
-        and selected_document_id
-        is not None
-        and selected_document
-        is not None
-    ):
+    if is_healthy and selected_document_id is not None and selected_document is not None:
         st.sidebar.divider()
 
-        confirm_delete = (
-            st.sidebar.checkbox(
-                (
-                    "Confirm delete "
-                    f"{selected_document.get('filename', '')}"
-                )
-            )
+        confirm_delete = st.sidebar.checkbox(
+            f"Confirm delete {selected_document.get('filename', '')}"
         )
 
         if st.sidebar.button(
-            "Delete selected document",
-            disabled=not confirm_delete,
-            use_container_width=True,
+            "Delete selected document", disabled=not confirm_delete, use_container_width=True
         ):
-            deleted, error = (
-                delete_document(
-                    api_url,
-                    selected_document_id,
-                    session_id,
-                )
-            )
+            deleted, error = delete_document(api_url, selected_document_id, session_id)
 
             if error is not None:
-                st.sidebar.error(
-                    error
-                )
+                st.sidebar.error(error)
 
             elif deleted:
                 st.session_state.messages = []
                 st.session_state.document_scope = None
-                st.sidebar.success(
-                    "Document deleted."
-                )
+                st.sidebar.success("Document deleted.")
                 st.rerun()
 
     # -----------------------------------------------------
@@ -1211,31 +577,16 @@ def main() -> None:
     # -----------------------------------------------------
 
     if search_mode == "All documents":
-        scope_key = (
-            "all_documents"
-            if documents
-            else "no_documents"
-        )
+        scope_key = "all_documents" if documents else "no_documents"
 
     else:
-        scope_key = (
-            selected_document_id
-            or "no_document_selected"
-        )
+        scope_key = selected_document_id or "no_document_selected"
 
-    if (
-        st.session_state.document_scope
-        != scope_key
-    ):
+    if st.session_state.document_scope != scope_key:
         st.session_state.messages = []
-        st.session_state.document_scope = (
-            scope_key
-        )
+        st.session_state.document_scope = scope_key
 
-    if st.sidebar.button(
-        "Clear conversation",
-        use_container_width=True,
-    ):
+    if st.sidebar.button("Clear conversation", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
 
@@ -1244,35 +595,16 @@ def main() -> None:
     # -----------------------------------------------------
 
     if not is_healthy:
-        st.warning(
-            "The DocQ&A backend is unavailable. "
-            "Start FastAPI and refresh the page."
-        )
+        st.warning("The DocQ&A backend is unavailable. Start FastAPI and refresh the page.")
 
     elif not documents:
-        st.info(
-            "Upload at least one PDF, DOCX, or TXT "
-            "document to start asking questions."
-        )
+        st.info("Upload at least one PDF, DOCX, or TXT document to start asking questions.")
 
-    elif (
-        search_mode
-        == "All documents"
-    ):
-        st.info(
-            (
-                "Search scope: all "
-                f"{len(documents)} indexed documents."
-            )
-        )
+    elif search_mode == "All documents":
+        st.info(f"Search scope: all {len(documents)} indexed documents.")
 
     elif selected_document is not None:
-        st.info(
-            (
-                "Search scope: "
-                f"{format_document_label(selected_document)}"
-            )
-        )
+        st.info(f"Search scope: {format_document_label(selected_document)}")
 
     # -----------------------------------------------------
     # Conversation
@@ -1283,12 +615,7 @@ def main() -> None:
     chat_disabled = (
         not is_healthy
         or not documents
-        or (
-            search_mode
-            == "Selected document"
-            and selected_document_id
-            is None
-        )
+        or (search_mode == "Selected document" and selected_document_id is None)
     )
 
     question = st.chat_input(
@@ -1298,89 +625,42 @@ def main() -> None:
     )
 
     if question:
-        st.session_state.messages.append(
-            {
-                "role": "user",
-                "content": question,
-            }
-        )
+        st.session_state.messages.append({"role": "user", "content": question})
 
-        with st.chat_message(
-            "user"
-        ):
-            st.markdown(
-                question
-            )
+        with st.chat_message("user"):
+            st.markdown(question)
 
-        with st.chat_message(
-            "assistant"
-        ):
-            with st.spinner(
-                (
-                    "Searching documents and "
-                    "generating answer..."
-                )
-            ):
+        with st.chat_message("assistant"):
+            with st.spinner("Searching documents and generating answer..."):
                 response, error = ask_api(
                     api_url=api_url,
                     question=question,
                     top_k=top_k,
                     session_id=session_id,
                     document_id=(
-                        selected_document_id
-                        if search_mode
-                        == "Selected document"
-                        else None
+                        selected_document_id if search_mode == "Selected document" else None
                     ),
                 )
 
             if error is not None:
-                st.error(
-                    error
-                )
+                st.error(error)
 
             elif response is not None:
-                answer = str(
-                    response.get(
-                        "answer",
-                        "No answer returned.",
-                    )
-                )
+                answer = str(response.get("answer", "No answer returned."))
 
-                abstained = bool(
-                    response.get(
-                        "abstained",
-                        False,
-                    )
-                )
+                abstained = bool(response.get("abstained", False))
 
-                cited_source_ids = (
-                    response.get(
-                        "cited_source_ids",
-                        [],
-                    )
-                )
+                cited_source_ids = response.get("cited_source_ids", [])
 
-                sources = response.get(
-                    "sources",
-                    [],
-                )
+                sources = response.get("sources", [])
 
-                if not isinstance(
-                    cited_source_ids,
-                    list,
-                ):
+                if not isinstance(cited_source_ids, list):
                     cited_source_ids = []
 
-                if not isinstance(
-                    sources,
-                    list,
-                ):
+                if not isinstance(sources, list):
                     sources = []
 
-                st.markdown(
-                    answer
-                )
+                st.markdown(answer)
 
                 if abstained:
                     st.caption(
@@ -1391,18 +671,14 @@ def main() -> None:
                     )
 
                 else:
-                    render_sources(
-                        sources
-                    )
+                    render_sources(sources)
 
                 st.session_state.messages.append(
                     {
                         "role": "assistant",
                         "content": answer,
                         "abstained": abstained,
-                        "cited_source_ids": (
-                            cited_source_ids
-                        ),
+                        "cited_source_ids": (cited_source_ids),
                         "sources": sources,
                     }
                 )

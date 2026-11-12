@@ -5,35 +5,111 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "docqna"
 version = "0.1.0"
-description = "Production-oriented document question answering system using hybrid RAG."
+description = "Evaluation-first document question answering with hybrid retrieval, reranking, verified citations, and safe abstention."
 readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "MIT" }
 
+# Single source of truth for dependencies. Versions are pinned for
+# reproducible evaluation results and Docker builds.
 dependencies = [
     "pydantic==2.13.5",
     "pydantic-settings==2.15.0",
     "python-dotenv==1.2.3",
-
     "ollama==0.6.2",
-
     "pypdf==6.19.0",
     "python-docx==1.2.0",
-
     "sentence-transformers==6.1.0",
     "chromadb==1.5.9",
-
     "fastapi==0.141.1",
     "uvicorn[standard]==0.53.0",
     "python-multipart==0.0.32",
-
-    "streamlit==1.64.0",
 ]
 
 [project.optional-dependencies]
+ui = ["streamlit==1.64.0"]
 dev = [
+    "docqna[ui]",
+    "httpx==0.28.1",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
+    "ruff==0.14.5",
+    "mypy==1.18.2",
+    "pre-commit==4.3.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra -m 'not integration'"
+markers = [
+    "integration: needs downloaded models, Ollama, or local sample documents (run with -m integration)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:starlette.*",
+    "ignore:Using `httpx` with `starlette.testclient`:Warning",
+]
+
+[tool.coverage.run]
+source = ["docqna"]
+omit = ["src/docqna/ui/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+# ---------------------------------------------------------------------------
+# Lint / format / types
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "experiments", "scripts"]
+
+[tool.ruff.format]
+# Collapse the one-argument-per-line style where it fits on a line.
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "RUF", "T20"]
+ignore = [
+    "E501",   # formatter owns line length
+    "RUF001", # allow typographic characters in docs/prompts
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"experiments/*" = ["T20"]
+"scripts/*" = ["T20"]
+# Evaluation runners report progress to the console by design.
+"src/docqna/evaluation/*" = ["T20"]
+"tests/*" = ["B011", "RUF012"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Header"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["docqna", "experiments"]
+split-on-trailing-comma = false
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src/docqna"]
+exclude = ["src/docqna/ui/"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["chromadb.*", "sentence_transformers.*", "ollama.*", "docx.*", "pypdf.*"]
+ignore_missing_imports = true

@@ -4,10 +4,7 @@ from pypdf import PdfReader
 
 from docqna.exceptions import DocumentLoadError
 from docqna.ingestion.loaders.base import BaseDocumentLoader
-from docqna.ingestion.models import (
-    DocumentSegment,
-    LoadedDocument,
-)
+from docqna.ingestion.models import DocumentSegment, LoadedDocument
 
 
 class PdfLoader(BaseDocumentLoader):
@@ -21,22 +18,16 @@ class PdfLoader(BaseDocumentLoader):
         try:
             reader = PdfReader(str(file_path))
         except Exception as exc:
-            raise DocumentLoadError(
-                f"Could not open PDF: {file_path}"
-            ) from exc
+            raise DocumentLoadError(f"Could not open PDF: {file_path}") from exc
 
         if reader.is_encrypted:
             try:
                 decrypt_result = reader.decrypt("")
             except Exception as exc:
-                raise DocumentLoadError(
-                    f"Could not decrypt PDF: {file_path}"
-                ) from exc
+                raise DocumentLoadError(f"Could not decrypt PDF: {file_path}") from exc
 
             if decrypt_result == 0:
-                raise DocumentLoadError(
-                    "Password-protected PDFs are not supported."
-                )
+                raise DocumentLoadError("Password-protected PDFs are not supported.")
 
         segments: list[DocumentSegment] = []
 
@@ -47,8 +38,7 @@ class PdfLoader(BaseDocumentLoader):
                 text = page.extract_text() or ""
             except Exception as exc:
                 raise DocumentLoadError(
-                    f"Failed to extract text from page "
-                    f"{page_number} of {file_path.name}."
+                    f"Failed to extract text from page {page_number} of {file_path.name}."
                 ) from exc
 
             text = text.strip()
@@ -61,9 +51,7 @@ class PdfLoader(BaseDocumentLoader):
                     text=text,
                     segment_index=len(segments),
                     page_number=page_number,
-                    metadata={
-                        "source_page_index": page_index,
-                    },
+                    metadata={"source_page_index": page_index},
                 )
             )
 
@@ -78,8 +66,5 @@ class PdfLoader(BaseDocumentLoader):
             filename=file_path.name,
             file_type="pdf",
             segments=segments,
-            metadata={
-                "total_pages": len(reader.pages),
-                "size_bytes": file_path.stat().st_size,
-            },
+            metadata={"total_pages": len(reader.pages), "size_bytes": file_path.stat().st_size},
         )

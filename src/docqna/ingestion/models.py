@@ -1,9 +1,8 @@
+from datetime import datetime
 from pathlib import Path
 from typing import Any
-from datetime import datetime
 
 from pydantic import BaseModel, Field
-
 
 LEGACY_SESSION_ID = "legacy_local_session"
 
@@ -45,11 +44,7 @@ class LoadedDocument(BaseModel):
     @property
     def text(self) -> str:
         """Return all document text joined together."""
-        return "\n\n".join(
-            segment.text
-            for segment in self.segments
-            if segment.text.strip()
-        )
+        return "\n\n".join(segment.text for segment in self.segments if segment.text.strip())
 
     @property
     def segment_count(self) -> int:
@@ -91,22 +86,15 @@ class DocumentRecord(BaseModel):
     # Pre-session-isolation registry records do not contain
     # this field. The default keeps those records readable
     # without exposing them to new anonymous sessions.
-    session_id: str = Field(
-        default=LEGACY_SESSION_ID,
-        min_length=1,
-    )
+    session_id: str = Field(default=LEGACY_SESSION_ID, min_length=1)
 
     filename: str
     file_type: str
 
-    version: int = Field(
-        ge=1,
-    )
+    version: int = Field(ge=1)
 
     content_hash: str
 
-    size_bytes: int = Field(
-        ge=0,
-    )
+    size_bytes: int = Field(ge=0)
 
     registered_at: datetime

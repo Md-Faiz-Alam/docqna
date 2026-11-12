@@ -25,10 +25,6 @@ class RAGResponse(BaseModel):
 
     answer: str
 
-    sources: list[CitationSource] = Field(
-        default_factory=list
-    )
+    sources: list[CitationSource] = Field(default_factory=list)
 
-    cited_source_ids: list[int] = Field(
-        default_factory=list
-    )
+    cited_source_ids: list[int] = Field(default_factory=list)

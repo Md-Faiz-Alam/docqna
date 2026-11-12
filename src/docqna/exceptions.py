@@ -6,6 +6,7 @@ class DocQNAError(Exception):
 # Configuration
 # ---------------------------------------------------------
 
+
 class ConfigurationError(DocQNAError):
     """Raised when application configuration is invalid."""
 
@@ -13,6 +14,7 @@ class ConfigurationError(DocQNAError):
 # ---------------------------------------------------------
 # Document ingestion
 # ---------------------------------------------------------
+
 
 class DocumentError(DocQNAError):
     """Base exception for document-processing errors."""
@@ -37,11 +39,14 @@ class ResourceLimitError(DocumentError):
 class DocumentLoadError(DocumentError):
     """Raised when document contents cannot be loaded."""
 
+
 class ChunkingError(DocumentError):
     """Raised when a document cannot be chunked."""
 
+
 class EmbeddingError(DocQNAError):
     """Raised when embedding generation fails."""
+
 
 class IndexingError(DocQNAError):
     """Raised when vector indexing or storage fails."""
@@ -51,6 +56,7 @@ class IndexingError(DocQNAError):
 # Retrieval
 # ---------------------------------------------------------
 
+
 class RetrievalError(DocQNAError):
     """Raised when retrieval fails."""
 
@@ -59,11 +65,14 @@ class RetrievalError(DocQNAError):
 # Generation
 # ---------------------------------------------------------
 
+
 class GenerationError(DocQNAError):
     """Raised when answer generation fails."""
 
+
 class LLMModelError(GenerationError):
     """Raised when the configured LLM model is unavailable."""
+
 
 class LLMConnectionError(GenerationError):
     """Raised when the configured LLM provider cannot be reached."""
@@ -72,6 +81,7 @@ class LLMConnectionError(GenerationError):
 # ---------------------------------------------------------
 # Citations
 # ---------------------------------------------------------
+
 
 class CitationError(DocQNAError):
     """Raised when citation processing or validation fails."""

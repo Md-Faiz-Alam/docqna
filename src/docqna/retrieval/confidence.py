@@ -36,25 +36,14 @@ class RetrievalConfidenceGate:
     calibrated from evaluation data instead of guessed.
     """
 
-    def __init__(
-        self,
-        min_top_score: float,
-    ) -> None:
-        if not math.isfinite(
-            min_top_score
-        ):
-            raise ValueError(
-                "min_top_score must be a finite number."
-            )
+    def __init__(self, min_top_score: float) -> None:
+        if not math.isfinite(min_top_score):
+            raise ValueError("min_top_score must be a finite number.")
 
-        self.min_top_score = (
-            min_top_score
-        )
+        self.min_top_score = min_top_score
 
     @staticmethod
-    def _get_score(
-        result: RetrievalResult,
-    ) -> float | None:
+    def _get_score(result: RetrievalResult) -> float | None:
         """Return a valid finite retrieval score."""
 
         score = result.score
@@ -62,21 +51,14 @@ class RetrievalConfidenceGate:
         if score is None:
             return None
 
-        score = float(
-            score
-        )
+        score = float(score)
 
-        if not math.isfinite(
-            score
-        ):
+        if not math.isfinite(score):
             return None
 
         return score
 
-    def evaluate(
-        self,
-        results: list[RetrievalResult],
-    ) -> RetrievalConfidenceDecision:
+    def evaluate(self, results: list[RetrievalResult]) -> RetrievalConfidenceDecision:
         """
         Evaluate whether retrieval confidence is high
         enough to allow answer generation.
@@ -93,17 +75,10 @@ class RetrievalConfidenceGate:
             )
 
         ranked_results = sorted(
-            results,
-            key=lambda result: (
-                result.rank,
-                result.chunk_index,
-                result.chunk_id,
-            ),
+            results, key=lambda result: (result.rank, result.chunk_index, result.chunk_id)
         )
 
-        top_score = self._get_score(
-            ranked_results[0]
-        )
+        top_score = self._get_score(ranked_results[0])
 
         if top_score is None:
             return RetrievalConfidenceDecision(
@@ -118,17 +93,12 @@ class RetrievalConfidenceGate:
         second_score: float | None = None
 
         if len(ranked_results) >= 2:
-            second_score = self._get_score(
-                ranked_results[1]
-            )
+            second_score = self._get_score(ranked_results[1])
 
         score_margin: float | None = None
 
         if second_score is not None:
-            score_margin = (
-                top_score
-                - second_score
-            )
+            score_margin = top_score - second_score
 
         if top_score < self.min_top_score:
             return RetrievalConfidenceDecision(

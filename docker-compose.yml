@@ -33,8 +33,9 @@ services:
         condition: service_healthy
     environment:
       OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-phi3:mini}
     entrypoint: ["/bin/sh", "-c"]
-    command: ["ollama pull phi3:mini"]
+    command: ["ollama pull \"$$OLLAMA_MODEL\""]
     restart: "no"
     mem_limit: 512m
     logging: *default-logging
@@ -42,7 +43,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile.api
+      dockerfile: docker/api.Dockerfile
     restart: unless-stopped
     depends_on:
       ollama-init:
@@ -54,7 +55,7 @@ services:
 
       LLM_PROVIDER: ollama
       OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_MODEL: phi3:mini
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-phi3:mini}
 
       EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
       EMBEDDING_DEVICE: cpu
@@ -81,7 +82,7 @@ services:
     volumes:
       - docqna_indexes:/app/data/indexes
       - docqna_metadata:/app/data/metadata
-      - huggingface_cache:/root/.cache/huggingface
+      - huggingface_cache:/app/.cache/huggingface
 
     expose:
       - "8000"
@@ -107,7 +108,7 @@ services:
   streamlit:
     build:
       context: .
-      dockerfile: Dockerfile.streamlit
+      dockerfile: docker/streamlit.Dockerfile
     restart: unless-stopped
     depends_on:
       api:

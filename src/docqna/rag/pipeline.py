@@ -1,37 +1,94 @@
+"""Cited RAG pipeline: retrieve -> gate -> generate -> validate/repair citations.
+
+Any answer whose citations cannot be validated (after one repair attempt)
+is replaced by the canonical abstention, so the API never returns an
+answer that points at sources it did not receive.
+"""
+
 import logging
 import re
+from dataclasses import dataclass, field
 from time import perf_counter
 
-from docqna.filters import (
-    MetadataFilters,
-    normalize_metadata_filters,
-)
+from docqna.filters import MetadataFilters, normalize_metadata_filters
 from docqna.generation.providers.base import BaseLLMProvider
-from docqna.rag.models import (
-    CitationSource,
-    RAGResponse,
-)
+from docqna.rag.models import CitationSource, RAGResponse
 from docqna.rag.prompt import (
+    ABSTENTION_ANSWER,
     build_citation_repair_prompt,
     build_cited_rag_prompt,
-    build_rag_prompt,
 )
 from docqna.retrieval.base import BaseRetriever
 from docqna.retrieval.confidence import RetrievalConfidenceGate
 from docqna.retrieval.models import RetrievalResult
 
-
 logger = logging.getLogger(__name__)
 
+__all__ = ["ABSTENTION_ANSWER", "RAGPipeline"]
 
-ABSTENTION_ANSWER = (
-    "The provided documents do not contain enough "
-    "information to answer the question."
+# (pattern, replacement) pairs that rewrite model citation variants to "[n]".
+_CITATION_REWRITES: tuple[tuple[re.Pattern[str], str], ...] = tuple(
+    (re.compile(pattern, re.IGNORECASE), r"[\1]")
+    for pattern in (
+        # [Source [3], Pages 23-24] -> [3]
+        r"\[\s*Source\s*\[(\d+)\]\s*(?:,\s*Pages?\s*[^\]]+)?\]",
+        # [Source 3, Pages 23-24] -> [3]
+        r"\[\s*Source\s+(\d+)\s*(?:,\s*Pages?\s*[^\]]+)?\]",
+        # Source [3] -> [3]
+        r"\bSource\s*\[(\d+)\]",
+        # (Source 3) / (Source: 3) -> [3]
+        r"\(\s*Source\s*:?\s*(\d+)\s*\)",
+        # [Citation 3] / [Citation: 3] -> [3]
+        r"\[\s*Citation\s*:?\s*(\d+)\s*\]",
+        # Source 3 -> [3]
+        r"\bSource\s*:?\s*(\d+)\b",
+    )
 )
+
+_LEADING_LABELS = ("FINAL ANSWER:", "CORRECTED FINAL ANSWER:", "ANSWER:")
+
+# Prompt sections that must never appear in a user-facing answer.
+_INTERNAL_MARKERS = (
+    "\nINSTRUCTIONS:",
+    "\nGROUNDING AND CITATION RULES:",
+    "\nSTRICT GROUNDING RULES:",
+    "\nDOCUMENT SOURCES:",
+    "\nUSER QUESTION:",
+    "\nCITATION REPAIR TASK:",
+    "\nPREVIOUS CANDIDATE ANSWER:",
+    "\nFINAL ANSWER:",
+    "\nCORRECTED FINAL ANSWER:",
+    "\nANSWER:",
+)
+
+_CITATION_ID = re.compile(r"\[(\d+)\]")
+
+
+@dataclass
+class _Timer:
+    started: float = field(default_factory=perf_counter)
+    retrieval_ms: float = 0.0
+    generation_started: float | None = None
+
+    def mark_retrieval_done(self) -> None:
+        self.retrieval_ms = (perf_counter() - self.started) * 1000.0
+
+    def start_generation(self) -> None:
+        self.generation_started = perf_counter()
+
+    @property
+    def generation_ms(self) -> float:
+        if self.generation_started is None:
+            return 0.0
+        return (perf_counter() - self.generation_started) * 1000.0
+
+    @property
+    def total_ms(self) -> float:
+        return (perf_counter() - self.started) * 1000.0
 
 
 class RAGPipeline:
-    """Retrieval-augmented generation pipeline."""
+    """Retrieval-augmented generation with verified citations."""
 
     def __init__(
         self,
@@ -43,755 +100,213 @@ class RAGPipeline:
         self.llm = llm
         self.confidence_gate = confidence_gate
 
-    @staticmethod
-    def _validate_request(
-        query: str,
-        top_k: int,
-    ) -> str:
-        """Validate and normalize a RAG request."""
-
-        query = query.strip()
-
-        if not query:
-            raise ValueError(
-                "Query cannot be empty."
-            )
-
-        if top_k <= 0:
-            raise ValueError(
-                "top_k must be greater than 0."
-            )
-
-        return query
+    # ------------------------------------------------------------------
+    # Answer post-processing (pure functions, unit-tested directly)
+    # ------------------------------------------------------------------
 
     @staticmethod
-    def _normalize_citations(
-        answer: str,
-    ) -> str:
-        """
-        Normalize common model-generated citation formats
-        into canonical forms such as [1], [2], and [3].
-        """
+    def _normalize_citations(answer: str) -> str:
+        """Rewrite common model citation formats into canonical `[n]`."""
 
-        # Example:
-        # [Source [3], Pages 23-24] -> [3]
-        answer = re.sub(
-            r"\[\s*Source\s*\[(\d+)\]"
-            r"\s*(?:,\s*Pages?\s*[^\]]+)?\]",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
-        # Example:
-        # [Source 3, Pages 23-24] -> [3]
-        answer = re.sub(
-            r"\[\s*Source\s+(\d+)"
-            r"\s*(?:,\s*Pages?\s*[^\]]+)?\]",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
-        # Example:
-        # Source [3] -> [3]
-        answer = re.sub(
-            r"\bSource\s*\[(\d+)\]",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
-        # Example:
-        # (Source 3) or (Source: 3) -> [3]
-        answer = re.sub(
-            r"\(\s*Source\s*:?\s*(\d+)\s*\)",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
-        # Example:
-        # [Citation 3] or [Citation: 3] -> [3]
-        answer = re.sub(
-            r"\[\s*Citation\s*:?\s*(\d+)\s*\]",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
-        # Example:
-        # Source 3 -> [3]
-        answer = re.sub(
-            r"\bSource\s*:?\s*(\d+)\b",
-            r"[\1]",
-            answer,
-            flags=re.IGNORECASE,
-        )
-
+        for pattern, replacement in _CITATION_REWRITES:
+            answer = pattern.sub(replacement, answer)
         return answer
 
     @staticmethod
-    def _sanitize_generated_answer(
-        answer: str,
-    ) -> str:
-        """
-        Remove accidental prompt/instruction leakage from an LLM answer.
-
-        The function does not alter normal answer content. It strips a
-        leading answer label and truncates output if an internal prompt
-        section is echoed after the real answer.
-        """
+    def _sanitize_generated_answer(answer: str) -> str:
+        """Strip a leading answer label and truncate echoed prompt sections."""
 
         answer = answer.strip()
 
-        leading_labels = (
-            "FINAL ANSWER:",
-            "CORRECTED FINAL ANSWER:",
-            "ANSWER:",
-        )
-
-        for label in leading_labels:
-            if answer.upper().startswith(
-                label
-            ):
-                answer = answer[
-                    len(label):
-                ].lstrip()
+        for label in _LEADING_LABELS:
+            if answer.upper().startswith(label):
+                answer = answer[len(label) :].lstrip()
                 break
 
-        internal_markers = (
-            "\nINSTRUCTIONS:",
-            "\nGROUNDING AND CITATION RULES:",
-            "\nSTRICT GROUNDING RULES:",
-            "\nDOCUMENT SOURCES:",
-            "\nUSER QUESTION:",
-            "\nCITATION REPAIR TASK:",
-            "\nPREVIOUS CANDIDATE ANSWER:",
-            "\nFINAL ANSWER:",
-            "\nCORRECTED FINAL ANSWER:",
-            "\nANSWER:",
-        )
-
         upper_answer = answer.upper()
-
         positions = [
-            upper_answer.find(
-                marker
-            )
-            for marker in internal_markers
-            if upper_answer.find(
-                marker
-            ) > 0
+            position for marker in _INTERNAL_MARKERS if (position := upper_answer.find(marker)) > 0
         ]
-
         if positions:
-            answer = answer[
-                :min(positions)
-            ].rstrip()
+            answer = answer[: min(positions)].rstrip()
 
         return answer
 
     @staticmethod
-    def _extract_citation_ids(
-        answer: str,
-    ) -> list[int]:
-        """Extract citation numbers such as [1] and [2]."""
+    def _extract_citation_ids(answer: str) -> list[int]:
+        """Return unique citation numbers in order of first appearance."""
 
-        matches = re.findall(
-            r"\[(\d+)\]",
-            answer,
-        )
-
-        citation_ids: list[int] = []
-        seen: set[int] = set()
-
-        for match in matches:
-            citation_id = int(match)
-
-            if citation_id not in seen:
-                citation_ids.append(
-                    citation_id
-                )
-                seen.add(
-                    citation_id
-                )
-
-        return citation_ids
+        return list(dict.fromkeys(int(match) for match in _CITATION_ID.findall(answer)))
 
     @staticmethod
-    def _is_abstention_answer(
-        answer: str,
-    ) -> bool:
-        """Return True for the canonical abstention response."""
-
-        return (
-            answer.strip()
-            == ABSTENTION_ANSWER
-        )
+    def _is_abstention_answer(answer: str) -> bool:
+        return answer.strip() == ABSTENTION_ANSWER
 
     @classmethod
-    def _validate_citations(
-        cls,
-        *,
-        answer: str,
-        result_count: int,
-    ) -> tuple[
-        list[int],
-        str | None,
-    ]:
-        """
-        Validate citation presence and citation-ID range.
+    def _validate_citations(cls, *, answer: str, result_count: int) -> tuple[list[int], str | None]:
+        """Return (citation_ids, error_code); error_code is None when valid."""
 
-        Returns the unique citation IDs plus an error code.
-        The method does not raise because citation-format
-        failures are recoverable at runtime.
-        """
-
-        citation_ids = (
-            cls._extract_citation_ids(
-                answer
-            )
-        )
-
+        citation_ids = cls._extract_citation_ids(answer)
         if not citation_ids:
-            return (
-                [],
-                "missing_citations",
-            )
+            return [], "missing_citations"
 
-        valid_ids = set(
-            range(
-                1,
-                result_count + 1,
-            )
-        )
+        invalid_ids = [cid for cid in citation_ids if not 1 <= cid <= result_count]
+        if invalid_ids:
+            return citation_ids, "invalid_citation_ids:" + ",".join(map(str, invalid_ids))
 
-        invalid_ids = [
-            citation_id
-            for citation_id in citation_ids
-            if citation_id not in valid_ids
+        return citation_ids, None
+
+    @staticmethod
+    def _build_sources(results: list[RetrievalResult]) -> list[CitationSource]:
+        return [
+            CitationSource(
+                citation_id=citation_id,
+                chunk_id=result.chunk_id,
+                rank=result.rank,
+                filename=result.filename,
+                file_type=result.file_type,
+                page_start=result.page_start,
+                page_end=result.page_end,
+                section=result.section,
+                distance=result.distance,
+                text=result.text,
+            )
+            for citation_id, result in enumerate(results, start=1)
         ]
 
-        if invalid_ids:
-            return (
-                citation_ids,
-                (
-                    "invalid_citation_ids:"
-                    + ",".join(
-                        str(
-                            citation_id
-                        )
-                        for citation_id
-                        in invalid_ids
-                    )
-                ),
-            )
-
-        return (
-            citation_ids,
-            None,
-        )
+    # ------------------------------------------------------------------
+    # Pipeline steps
+    # ------------------------------------------------------------------
 
     @staticmethod
-    def _build_strict_cited_prompt(
-        *,
-        query: str,
-        results: list[RetrievalResult],
-    ) -> str:
-        """
-        Build the cited prompt with grounding rules placed before
-        the final answer marker.
-        """
+    def _validate_request(query: str, top_k: int) -> str:
+        query = query.strip()
+        if not query:
+            raise ValueError("Query cannot be empty.")
+        if top_k <= 0:
+            raise ValueError("top_k must be greater than 0.")
+        return query
 
-        return build_cited_rag_prompt(
-            query=query,
-            results=results,
-        )
-
-    @classmethod
-    def _build_citation_repair_prompt(
-        cls,
-        *,
-        query: str,
-        results: list[RetrievalResult],
-        candidate_answer: str,
-    ) -> str:
-        """Build one constrained citation-repair prompt."""
-
-        return build_citation_repair_prompt(
-            query=query,
-            results=results,
-            candidate_answer=candidate_answer,
-        )
-
-    @staticmethod
-    def _abstention_response(
-    ) -> RAGResponse:
-        """Build the canonical cited-mode abstention response."""
-
-        return RAGResponse(
-            answer=ABSTENTION_ANSWER,
-            sources=[],
-            cited_source_ids=[],
-        )
-
-    @staticmethod
-    def _build_sources(
-        results: list[RetrievalResult],
-    ) -> list[CitationSource]:
-        """Convert retrieval results into citation sources."""
-
-        sources: list[CitationSource] = []
-
-        for citation_id, result in enumerate(
-            results,
-            start=1,
-        ):
-            sources.append(
-                CitationSource(
-                    citation_id=citation_id,
-                    chunk_id=result.chunk_id,
-                    rank=result.rank,
-                    filename=result.filename,
-                    file_type=result.file_type,
-                    page_start=result.page_start,
-                    page_end=result.page_end,
-                    section=result.section,
-                    distance=result.distance,
-                    text=result.text,
-                )
-            )
-
-        return sources
-
-    def _should_abstain(
-        self,
-        results: list[RetrievalResult],
-    ) -> bool:
-        """
-        Return True when retrieval evidence is not strong
-        enough to support answer generation.
-
-        If no confidence gate is configured, existing
-        Phase 9/10 behavior is preserved.
-        """
+    def _should_abstain(self, results: list[RetrievalResult]) -> bool:
+        """True when retrieval evidence is too weak to support generation."""
 
         if not results:
             return True
-
         if self.confidence_gate is None:
             return False
-
-        decision = self.confidence_gate.evaluate(
-            results
-        )
-
-        return not decision.is_confident
+        return not self.confidence_gate.evaluate(results).is_confident
 
     def _retrieve(
-        self,
-        *,
-        query: str,
-        top_k: int,
-        metadata_filters: MetadataFilters | None,
-    ) -> tuple[list[RetrievalResult], float]:
-        """
-        Retrieve evidence and return results plus elapsed
-        retrieval time in milliseconds.
-        """
-
-        started = perf_counter()
-
+        self, *, query: str, top_k: int, metadata_filters: MetadataFilters | None
+    ) -> list[RetrievalResult]:
         if metadata_filters:
-            results = self.retriever.retrieve(
-                query=query,
-                top_k=top_k,
-                metadata_filters=metadata_filters,
+            return self.retriever.retrieve(
+                query=query, top_k=top_k, metadata_filters=metadata_filters
             )
+        return self.retriever.retrieve(query=query, top_k=top_k)
 
-        else:
-            results = self.retriever.retrieve(
-                query=query,
-                top_k=top_k,
-            )
+    def _generate_clean(self, prompt: str) -> str:
+        answer = self.llm.generate(prompt).strip()
+        return self._normalize_citations(self._sanitize_generated_answer(answer))
 
-        elapsed_ms = (
-            perf_counter() - started
-        ) * 1000.0
+    def _generate_cited_answer(
+        self, query: str, results: list[RetrievalResult]
+    ) -> tuple[str, list[int]] | None:
+        """Generate an answer with valid citations, or None to abstain."""
 
-        return results, elapsed_ms
+        answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
+        if self._is_abstention_answer(answer):
+            return None
+
+        citation_ids, error = self._validate_citations(answer=answer, result_count=len(results))
+        if error is None:
+            return answer, citation_ids
+
+        logger.warning(
+            "citation_validation_failed stage=initial reason=%s query_chars=%d results=%d",
+            error,
+            len(query),
+            len(results),
+        )
+
+        answer = self._generate_clean(
+            build_citation_repair_prompt(query=query, results=results, candidate_answer=answer)
+        )
+        if self._is_abstention_answer(answer):
+            return None
+
+        citation_ids, error = self._validate_citations(answer=answer, result_count=len(results))
+        if error is None:
+            return answer, citation_ids
+
+        logger.warning(
+            "citation_validation_failed stage=repair reason=%s query_chars=%d results=%d "
+            "action=abstain",
+            error,
+            len(query),
+            len(results),
+        )
+        return None
 
     @staticmethod
     def _log_completion(
         *,
-        mode: str,
         query: str,
         top_k: int,
         metadata_filters: MetadataFilters | None,
         result_count: int,
         abstained: bool,
-        retrieval_ms: float,
-        generation_ms: float,
-        total_ms: float,
+        timer: _Timer,
     ) -> None:
-        """
-        Log RAG timing without logging the query text or
-        retrieved document contents.
-        """
-
-        filter_keys = (
-            ",".join(
-                sorted(metadata_filters)
-            )
-            if metadata_filters
-            else "-"
-        )
+        """Log timings without the query text or retrieved content."""
 
         logger.info(
-            (
-                "rag_complete mode=%s abstained=%s "
-                "query_chars=%d top_k=%d results=%d "
-                "filter_keys=%s retrieval_ms=%.2f "
-                "generation_ms=%.2f total_ms=%.2f"
-            ),
-            mode,
+            "rag_complete mode=cited abstained=%s query_chars=%d top_k=%d results=%d "
+            "filter_keys=%s retrieval_ms=%.2f generation_ms=%.2f total_ms=%.2f",
             abstained,
             len(query),
             top_k,
             result_count,
-            filter_keys,
-            retrieval_ms,
-            generation_ms,
-            total_ms,
+            ",".join(sorted(metadata_filters)) if metadata_filters else "-",
+            timer.retrieval_ms,
+            timer.generation_ms,
+            timer.total_ms,
         )
 
-    def ask(
-        self,
-        query: str,
-        top_k: int = 5,
-        metadata_filters: MetadataFilters | None = None,
-    ) -> str:
-        """
-        Retrieve relevant chunks and generate a basic answer.
-
-        This preserves the Phase 9 interface.
-        """
-
-        total_started = perf_counter()
-
-        query = self._validate_request(
-            query=query,
-            top_k=top_k,
-        )
-
-        metadata_filters = normalize_metadata_filters(
-            metadata_filters
-        )
-
-        results, retrieval_ms = self._retrieve(
-            query=query,
-            top_k=top_k,
-            metadata_filters=metadata_filters,
-        )
-
-        if self._should_abstain(
-            results
-        ):
-            total_ms = (
-                perf_counter() - total_started
-            ) * 1000.0
-
-            self._log_completion(
-                mode="basic",
-                query=query,
-                top_k=top_k,
-                metadata_filters=metadata_filters,
-                result_count=len(results),
-                abstained=True,
-                retrieval_ms=retrieval_ms,
-                generation_ms=0.0,
-                total_ms=total_ms,
-            )
-
-            return ABSTENTION_ANSWER
-
-        prompt = build_rag_prompt(
-            query=query,
-            results=results,
-        )
-
-        generation_started = perf_counter()
-
-        answer = self.llm.generate(
-            prompt
-        )
-
-        generation_ms = (
-            perf_counter() - generation_started
-        ) * 1000.0
-
-        total_ms = (
-            perf_counter() - total_started
-        ) * 1000.0
-
-        self._log_completion(
-            mode="basic",
-            query=query,
-            top_k=top_k,
-            metadata_filters=metadata_filters,
-            result_count=len(results),
-            abstained=False,
-            retrieval_ms=retrieval_ms,
-            generation_ms=generation_ms,
-            total_ms=total_ms,
-        )
-
-        return answer
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
 
     def ask_with_citations(
-        self,
-        query: str,
-        top_k: int = 5,
-        metadata_filters: MetadataFilters | None = None,
+        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
     ) -> RAGResponse:
-        """
-        Retrieve relevant chunks and generate a cited answer.
-        """
+        """Answer `query` from retrieved evidence, or abstain."""
 
-        total_started = perf_counter()
+        timer = _Timer()
+        query = self._validate_request(query, top_k)
+        metadata_filters = normalize_metadata_filters(metadata_filters)
 
-        query = self._validate_request(
-            query=query,
-            top_k=top_k,
-        )
+        results = self._retrieve(query=query, top_k=top_k, metadata_filters=metadata_filters)
+        timer.mark_retrieval_done()
 
-        metadata_filters = normalize_metadata_filters(
-            metadata_filters
-        )
-
-        results, retrieval_ms = self._retrieve(
-            query=query,
-            top_k=top_k,
-            metadata_filters=metadata_filters,
-        )
-
-        if self._should_abstain(
-            results
-        ):
-            total_ms = (
-                perf_counter() - total_started
-            ) * 1000.0
-
-            self._log_completion(
-                mode="cited",
-                query=query,
-                top_k=top_k,
-                metadata_filters=metadata_filters,
-                result_count=len(results),
-                abstained=True,
-                retrieval_ms=retrieval_ms,
-                generation_ms=0.0,
-                total_ms=total_ms,
-            )
-
-            return self._abstention_response()
-
-        prompt = self._build_strict_cited_prompt(
-            query=query,
-            results=results,
-        )
-
-        generation_started = perf_counter()
-
-        answer = self.llm.generate(
-            prompt
-        ).strip()
-
-        answer = self._sanitize_generated_answer(
-            answer
-        )
-
-        answer = self._normalize_citations(
-            answer
-        )
-
-        if self._is_abstention_answer(
-            answer
-        ):
-            generation_ms = (
-                perf_counter()
-                - generation_started
-            ) * 1000.0
-
-            total_ms = (
-                perf_counter()
-                - total_started
-            ) * 1000.0
-
-            self._log_completion(
-                mode="cited",
-                query=query,
-                top_k=top_k,
-                metadata_filters=metadata_filters,
-                result_count=len(results),
-                abstained=True,
-                retrieval_ms=retrieval_ms,
-                generation_ms=generation_ms,
-                total_ms=total_ms,
-            )
-
-            return self._abstention_response()
-
-        (
-            citation_ids,
-            citation_error,
-        ) = self._validate_citations(
-            answer=answer,
-            result_count=len(results),
-        )
-
-        if citation_error is not None:
-            logger.warning(
-                (
-                    "citation_validation_failed "
-                    "stage=initial reason=%s "
-                    "query_chars=%d results=%d"
-                ),
-                citation_error,
-                len(query),
-                len(results),
-            )
-
-            repair_prompt = (
-                self._build_citation_repair_prompt(
-                    query=query,
-                    results=results,
-                    candidate_answer=answer,
-                )
-            )
-
-            repaired_answer = (
-                self.llm.generate(
-                    repair_prompt
-                ).strip()
-            )
-
-            repaired_answer = (
-                self._sanitize_generated_answer(
-                    repaired_answer
-                )
-            )
-
-            answer = (
-                self._normalize_citations(
-                    repaired_answer
-                )
-            )
-
-            if self._is_abstention_answer(
-                answer
-            ):
-                generation_ms = (
-                    perf_counter()
-                    - generation_started
-                ) * 1000.0
-
-                total_ms = (
-                    perf_counter()
-                    - total_started
-                ) * 1000.0
-
-                self._log_completion(
-                    mode="cited",
-                    query=query,
-                    top_k=top_k,
-                    metadata_filters=metadata_filters,
-                    result_count=len(results),
-                    abstained=True,
-                    retrieval_ms=retrieval_ms,
-                    generation_ms=generation_ms,
-                    total_ms=total_ms,
-                )
-
-                return (
-                    self._abstention_response()
-                )
-
-            (
-                citation_ids,
-                citation_error,
-            ) = self._validate_citations(
-                answer=answer,
-                result_count=len(results),
-            )
-
-            if citation_error is not None:
-                logger.warning(
-                    (
-                        "citation_validation_failed "
-                        "stage=repair reason=%s "
-                        "query_chars=%d results=%d "
-                        "action=abstain"
-                    ),
-                    citation_error,
-                    len(query),
-                    len(results),
-                )
-
-                generation_ms = (
-                    perf_counter()
-                    - generation_started
-                ) * 1000.0
-
-                total_ms = (
-                    perf_counter()
-                    - total_started
-                ) * 1000.0
-
-                self._log_completion(
-                    mode="cited",
-                    query=query,
-                    top_k=top_k,
-                    metadata_filters=metadata_filters,
-                    result_count=len(results),
-                    abstained=True,
-                    retrieval_ms=retrieval_ms,
-                    generation_ms=generation_ms,
-                    total_ms=total_ms,
-                )
-
-                return (
-                    self._abstention_response()
-                )
-
-        generation_ms = (
-            perf_counter()
-            - generation_started
-        ) * 1000.0
-
-        sources = self._build_sources(
-            results
-        )
-
-        total_ms = (
-            perf_counter() - total_started
-        ) * 1000.0
+        generated: tuple[str, list[int]] | None = None
+        if not self._should_abstain(results):
+            timer.start_generation()
+            generated = self._generate_cited_answer(query, results)
 
         self._log_completion(
-            mode="cited",
             query=query,
             top_k=top_k,
             metadata_filters=metadata_filters,
             result_count=len(results),
-            abstained=False,
-            retrieval_ms=retrieval_ms,
-            generation_ms=generation_ms,
-            total_ms=total_ms,
+            abstained=generated is None,
+            timer=timer,
         )
 
+        if generated is None:
+            return RAGResponse(answer=ABSTENTION_ANSWER, sources=[], cited_source_ids=[])
+
+        answer, citation_ids = generated
         return RAGResponse(
-            answer=answer,
-            sources=sources,
-            cited_source_ids=citation_ids,
+            answer=answer, sources=self._build_sources(results), cited_source_ids=citation_ids
         )

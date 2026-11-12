@@ -1,142 +1,35 @@
 from docqna.retrieval.models import RetrievalResult
 
-
-def build_rag_prompt(
-    query: str,
-    results: list[RetrievalResult],
-) -> str:
-    """Build a basic grounded RAG prompt."""
-
-    if not query.strip():
-        raise ValueError(
-            "Query cannot be empty."
-        )
-
-    if not results:
-        raise ValueError(
-            "Retrieval results cannot be empty."
-        )
-
-    context_parts: list[str] = []
-
-    for result in results:
-        source_parts = [
-            f"File: {result.filename}",
-        ]
-
-        if result.page_start is not None:
-            if (
-                result.page_end is not None
-                and result.page_end
-                != result.page_start
-            ):
-                source_parts.append(
-                    f"Pages: "
-                    f"{result.page_start}-"
-                    f"{result.page_end}"
-                )
-            else:
-                source_parts.append(
-                    f"Page: {result.page_start}"
-                )
-
-        source = " | ".join(
-            source_parts
-        )
-
-        context_parts.append(
-            f"[Context {result.rank}]\n"
-            f"{source}\n"
-            f"{result.text}"
-        )
-
-    context = "\n\n".join(
-        context_parts
-    )
-
-    return (
-        "You are a document question-answering assistant.\n\n"
-
-        "Answer the user's question using only the provided "
-        "document context.\n"
-        "Do not use outside knowledge.\n"
-
-        "If the context does not contain enough information, "
-        "say that the provided documents do not contain enough "
-        "information to answer the question.\n"
-
-        "Keep the answer clear and concise.\n\n"
-
-        "DOCUMENT CONTEXT:\n\n"
-        f"{context}\n\n"
-
-        "USER QUESTION:\n"
-        f"{query}\n\n"
-
-        "ANSWER:"
-    )
-
-
 ABSTENTION_ANSWER = (
-    "The provided documents do not contain enough "
-    "information to answer the question."
+    "The provided documents do not contain enough information to answer the question."
 )
 
 
-def _build_cited_context(
-    results: list[RetrievalResult],
-) -> str:
+def _build_cited_context(results: list[RetrievalResult]) -> str:
     """Build numbered source blocks for cited RAG prompts."""
 
     context_parts: list[str] = []
 
-    for citation_id, result in enumerate(
-        results,
-        start=1,
-    ):
-        source_parts = [
-            f"File: {result.filename}",
-        ]
+    for citation_id, result in enumerate(results, start=1):
+        source_parts = [f"File: {result.filename}"]
 
         if result.page_start is not None:
-            if (
-                result.page_end is not None
-                and result.page_end
-                != result.page_start
-            ):
-                source_parts.append(
-                    f"Pages: "
-                    f"{result.page_start}-"
-                    f"{result.page_end}"
-                )
+            if result.page_end is not None and result.page_end != result.page_start:
+                source_parts.append(f"Pages: {result.page_start}-{result.page_end}")
             else:
-                source_parts.append(
-                    f"Page: {result.page_start}"
-                )
+                source_parts.append(f"Page: {result.page_start}")
 
         if result.section is not None:
-            source_parts.append(
-                f"Section: {result.section}"
-            )
+            source_parts.append(f"Section: {result.section}")
 
-        source_description = " | ".join(
-            source_parts
-        )
+        source_description = " | ".join(source_parts)
 
-        context_parts.append(
-            f"SOURCE [{citation_id}]\n"
-            f"{source_description}\n"
-            f"{result.text}"
-        )
+        context_parts.append(f"SOURCE [{citation_id}]\n{source_description}\n{result.text}")
 
-    return "\n\n".join(
-        context_parts
-    )
+    return "\n\n".join(context_parts)
 
 
-def _build_grounding_rules(
-    source_count: int,
-) -> str:
+def _build_grounding_rules(source_count: int) -> str:
     """
     Build concise grounding rules that small local models
     can follow reliably.
@@ -166,31 +59,20 @@ def _build_grounding_rules(
     )
 
 
-def build_cited_rag_prompt(
-    query: str,
-    results: list[RetrievalResult],
-) -> str:
+def build_cited_rag_prompt(query: str, results: list[RetrievalResult]) -> str:
     """
     Build a compact cited prompt optimized for small local LLMs.
     """
 
     if not query.strip():
-        raise ValueError(
-            "Query cannot be empty."
-        )
+        raise ValueError("Query cannot be empty.")
 
     if not results:
-        raise ValueError(
-            "Retrieval results cannot be empty."
-        )
+        raise ValueError("Retrieval results cannot be empty.")
 
-    context = _build_cited_context(
-        results
-    )
+    context = _build_cited_context(results)
 
-    rules = _build_grounding_rules(
-        len(results)
-    )
+    rules = _build_grounding_rules(len(results))
 
     return (
         "You are a document question-answering assistant.\n"
@@ -211,9 +93,7 @@ def build_cited_rag_prompt(
 
 
 def build_citation_repair_prompt(
-    query: str,
-    results: list[RetrievalResult],
-    candidate_answer: str,
+    query: str, results: list[RetrievalResult], candidate_answer: str
 ) -> str:
     """
     Build one compact citation-repair prompt.
@@ -225,9 +105,7 @@ def build_citation_repair_prompt(
     if not candidate_answer.strip():
         candidate_answer = "(empty answer)"
 
-    context = _build_cited_context(
-        results
-    )
+    context = _build_cited_context(results)
 
     return (
         "The previous answer failed citation validation because "

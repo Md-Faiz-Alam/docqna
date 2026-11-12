@@ -26,10 +26,6 @@ class RetrievalResult(BaseModel):
     page_end: int | None = None
     section: str | None = None
 
-    source_segment_indices: list[int] = Field(
-        default_factory=list
-    )
+    source_segment_indices: list[int] = Field(default_factory=list)
 
-    sections: list[str] = Field(
-        default_factory=list
-    )
+    sections: list[str] = Field(default_factory=list)

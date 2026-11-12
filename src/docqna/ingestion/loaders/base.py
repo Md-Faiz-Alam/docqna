@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from docqna.exceptions import (
-    DocumentLoadError,
-    UnsupportedFileTypeError,
-)
+from docqna.exceptions import DocumentLoadError, UnsupportedFileTypeError
 from docqna.ingestion.models import LoadedDocument
 
 
@@ -26,19 +23,14 @@ class BaseDocumentLoader(ABC):
         file_path = Path(path)
 
         if not file_path.exists():
-            raise DocumentLoadError(
-                f"Document does not exist: {file_path}"
-            )
+            raise DocumentLoadError(f"Document does not exist: {file_path}")
 
         if not file_path.is_file():
-            raise DocumentLoadError(
-                f"Path is not a file: {file_path}"
-            )
+            raise DocumentLoadError(f"Path is not a file: {file_path}")
 
         if not self.can_load(file_path):
             raise UnsupportedFileTypeError(
-                f"{self.__class__.__name__} does not support "
-                f"'{file_path.suffix}'."
+                f"{self.__class__.__name__} does not support '{file_path.suffix}'."
             )
 
         return file_path

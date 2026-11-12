@@ -1,9 +1,6 @@
 import re
 
-from docqna.ingestion.models import (
-    DocumentSegment,
-    LoadedDocument,
-)
+from docqna.ingestion.models import DocumentSegment, LoadedDocument
 
 
 class StructureDetector:
@@ -55,28 +52,19 @@ class StructureDetector:
             return True
 
         alphabetic_words = [
-            word
-            for word in words
-            if any(character.isalpha() for character in word)
+            word for word in words if any(character.isalpha() for character in word)
         ]
 
         if not alphabetic_words:
             return False
 
-        capitalized = sum(
-            1
-            for word in alphabetic_words
-            if word[0].isupper()
-        )
+        capitalized = sum(1 for word in alphabetic_words if word[0].isupper())
 
         ratio = capitalized / len(alphabetic_words)
 
         return ratio >= 0.7
 
-    def detect(
-        self,
-        document: LoadedDocument,
-    ) -> LoadedDocument:
+    def detect(self, document: LoadedDocument) -> LoadedDocument:
         """Detect and propagate basic section information."""
 
         detected_segments: list[DocumentSegment] = []
@@ -106,16 +94,7 @@ class StructureDetector:
                 section = current_section
 
             detected_segments.append(
-                segment.model_copy(
-                    update={
-                        "section": section,
-                        "metadata": metadata,
-                    }
-                )
+                segment.model_copy(update={"section": section, "metadata": metadata})
             )
 
-        return document.model_copy(
-            update={
-                "segments": detected_segments,
-            }
-        )
+        return document.model_copy(update={"segments": detected_segments})

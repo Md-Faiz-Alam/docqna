@@ -22,11 +22,11 @@ data/
 logs/
 docs/
 
-test_*.py
-run_*.py
-diagnose_*.py
-migrate_*.py
-current_project_structure.txt
+tests/
+experiments/
+scripts/
+docker/
+.pre-commit-config.yaml
 
 .vscode/
 .idea/

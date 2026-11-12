@@ -20,64 +20,41 @@ class QAMetadataFilters(BaseModel):
     document_id: str | None = None
     filename: str | None = None
     file_type: str | None = None
-    document_version: int | None = Field(
-        default=None,
-        ge=1,
-    )
+    document_version: int | None = Field(default=None, ge=1)
 
-    @field_validator(
-        "document_id",
-        "filename",
-    )
+    @field_validator("document_id", "filename")
     @classmethod
-    def validate_optional_text(
-        cls,
-        value: str | None,
-    ) -> str | None:
+    def validate_optional_text(cls, value: str | None) -> str | None:
         if value is None:
             return None
 
         value = value.strip()
 
         if not value:
-            raise ValueError(
-                "Metadata filter values cannot be empty."
-            )
+            raise ValueError("Metadata filter values cannot be empty.")
 
         return value
 
     @field_validator("file_type")
     @classmethod
-    def validate_file_type(
-        cls,
-        value: str | None,
-    ) -> str | None:
+    def validate_file_type(cls, value: str | None) -> str | None:
         if value is None:
             return None
 
         value = value.strip().lower().lstrip(".")
 
         if value not in SUPPORTED_FILE_TYPES:
-            raise ValueError(
-                "Unsupported file_type metadata filter."
-            )
+            raise ValueError("Unsupported file_type metadata filter.")
 
         return value
 
-    def to_retrieval_filters(
-        self,
-    ) -> dict[str, str | int]:
+    def to_retrieval_filters(self) -> dict[str, str | int]:
         """Return only filters explicitly provided by the client."""
 
-        filters: dict[
-            str,
-            str | int,
-        ] = {}
+        filters: dict[str, str | int] = {}
 
         if self.document_id is not None:
-            filters["document_id"] = (
-                self.document_id
-            )
+            filters["document_id"] = self.document_id
 
         if self.filename is not None:
             filters["filename"] = self.filename
@@ -86,9 +63,7 @@ class QAMetadataFilters(BaseModel):
             filters["file_type"] = self.file_type
 
         if self.document_version is not None:
-            filters["document_version"] = (
-                self.document_version
-            )
+            filters["document_version"] = self.document_version
 
         return filters
 
@@ -106,18 +81,13 @@ class QARequest(BaseModel):
 
     @field_validator("question")
     @classmethod
-    def validate_question(
-        cls,
-        value: str,
-    ) -> str:
+    def validate_question(cls, value: str) -> str:
         """Reject empty or whitespace-only questions."""
 
         value = value.strip()
 
         if not value:
-            raise ValueError(
-                "Question cannot be empty."
-            )
+            raise ValueError("Question cannot be empty.")
 
         return value
 
@@ -125,15 +95,11 @@ class QARequest(BaseModel):
 class CitationResponse(BaseModel):
     """Citation information exposed by the API."""
 
-    citation_id: int = Field(
-        ge=1
-    )
+    citation_id: int = Field(ge=1)
 
     chunk_id: str
 
-    rank: int = Field(
-        ge=1
-    )
+    rank: int = Field(ge=1)
 
     filename: str
     file_type: str
@@ -155,13 +121,9 @@ class QAResponse(BaseModel):
 
     abstained: bool
 
-    cited_source_ids: list[int] = Field(
-        default_factory=list
-    )
+    cited_source_ids: list[int] = Field(default_factory=list)
 
-    sources: list[CitationResponse] = Field(
-        default_factory=list
-    )
+    sources: list[CitationResponse] = Field(default_factory=list)
 
 
 class DocumentResponse(BaseModel):
@@ -187,9 +149,7 @@ class DocumentListResponse(BaseModel):
     """Active logical documents currently registered."""
 
     count: int = Field(ge=0)
-    documents: list[DocumentResponse] = Field(
-        default_factory=list
-    )
+    documents: list[DocumentResponse] = Field(default_factory=list)
 
 
 class DocumentDeleteResponse(BaseModel):

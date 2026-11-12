@@ -5,11 +5,7 @@ class BaseLLMProvider(ABC):
     """Base interface for all LLM providers."""
 
     @abstractmethod
-    def generate(
-        self,
-        prompt: str,
-        system_prompt: str | None = None,
-    ) -> str:
+    def generate(self, prompt: str, system_prompt: str | None = None) -> str:
         """
         Generate a text response.
 

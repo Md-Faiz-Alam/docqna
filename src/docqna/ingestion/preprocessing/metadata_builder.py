@@ -1,10 +1,7 @@
 import re
 from typing import Any
 
-from docqna.ingestion.models import (
-    DocumentSegment,
-    LoadedDocument,
-)
+from docqna.ingestion.models import DocumentSegment, LoadedDocument
 
 
 class MetadataBuilder:
@@ -15,14 +12,9 @@ class MetadataBuilder:
     def count_words(self, text: str) -> int:
         """Count approximate words in text."""
 
-        return len(
-            self._WORD_PATTERN.findall(text)
-        )
+        return len(self._WORD_PATTERN.findall(text))
 
-    def build(
-        self,
-        document: LoadedDocument,
-    ) -> LoadedDocument:
+    def build(self, document: LoadedDocument) -> LoadedDocument:
         """Add useful derived metadata."""
 
         enriched_segments: list[DocumentSegment] = []
@@ -50,13 +42,7 @@ class MetadataBuilder:
                 "word_count": word_count,
             }
 
-            enriched_segments.append(
-                segment.model_copy(
-                    update={
-                        "metadata": metadata,
-                    }
-                )
-            )
+            enriched_segments.append(segment.model_copy(update={"metadata": metadata}))
 
         document_metadata: dict[str, Any] = {
             **document.metadata,
@@ -69,8 +55,5 @@ class MetadataBuilder:
             document_metadata["sections"] = sorted(sections)
 
         return document.model_copy(
-            update={
-                "segments": enriched_segments,
-                "metadata": document_metadata,
-            }
+            update={"segments": enriched_segments, "metadata": document_metadata}
         )
