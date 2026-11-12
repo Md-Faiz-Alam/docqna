@@ -69,7 +69,7 @@ def test_dependency_model_cache_survives_pipeline_clear() -> None:
             first = dependencies.get_cross_encoder_model()
             second = dependencies.get_cross_encoder_model()
 
-            dependencies.clear_rag_pipeline_cache()
+            dependencies.invalidate_session_index()
 
             third = dependencies.get_cross_encoder_model()
 

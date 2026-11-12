@@ -281,14 +281,23 @@ The local Streamlit UI uses `http://127.0.0.1:8000` as the API fallback unless `
 ## API surface
 
 ```text
-GET    /health
-POST   /qa
-POST   /documents
-GET    /documents
-DELETE /documents/{document_id}
+GET    /health                    liveness (loads nothing)
+GET    /ready                     readiness: vector store, registry, LLM (503 if any is down)
+GET    /metrics                   Prometheus metrics
+POST   /qa                        answer with verified citations (JSON)
+POST   /qa/stream                 same, streamed as server-sent events
+POST   /documents                 upload and index a document
+GET    /documents                 list the session's documents
+DELETE /documents/{document_id}   delete a document (all versions)
 ```
 
-Document and QA operations require the anonymous session header enforced by the backend.
+Document and QA operations require the anonymous session header enforced by the backend. Interactive API docs are at `/docs`.
+
+**Streaming (`/qa/stream`).** The response is `text/event-stream`. It sends `token` events (`{"text": ...}`) while the model generates, then exactly one `final` event (the same body as `/qa`) or one `error` event (`{"error", "detail"}`). Citations are validated, and repaired if needed, after generation finishes. The `final` answer is authoritative and replaces the streamed draft. It may be a corrected answer or the abstention.
+
+**Rate limits.** By default each session (or client IP) gets 20 questions and 10 uploads per minute per API process. Over the limit, requests get `429` with `Retry-After`. Change this with `RATE_LIMIT_QA_PER_MINUTE` and `RATE_LIMIT_UPLOADS_PER_MINUTE`; `0` disables a limit. If you run several API instances, also rate-limit at the reverse proxy.
+
+**Metrics.** Request count and latency are reported per route template. The QA counters split answered and abstained responses. There are also RAG retrieval and generation latency, BM25 index rebuild, and rate-limit counters. Labels never include document IDs, session IDs, or query text.
 
 ---
 
@@ -404,7 +413,7 @@ See [`SECURITY.md`](SECURITY.md).
 - the answerability threshold is calibrated on the project evaluation dataset
 - CPU-only embedding, reranking, and local generation can introduce noticeable first-use or inference latency
 - the system has not been load-tested as a large multi-user service
-- upload-size, question-size, document/chunk quotas, 24-hour anonymous-document cleanup, Docker memory caps, and log rotation are implemented; request/rate limiting and persistent-volume backup/recovery are still pending
+- upload-size, question-size, document/chunk quotas, 24-hour anonymous-document cleanup, Docker memory caps, and log rotation are implemented; per-process request rate limiting is implemented; persistent-volume backup/recovery is still pending
 - local Docker deployment is validated, but public cloud hosting, reverse-proxy configuration, and HTTPS are still pending
 
 See [`docs/limitations.md`](docs/limitations.md).
@@ -439,12 +448,16 @@ Completed:
 - cross-encoder model reuse across RAG cache invalidation
 - Chroma/Hugging Face telemetry disabled in Docker runtime
 - Docker memory limits, log rotation, localhost-only host bindings, and pinned Ollama runtime
+- per-session BM25 indexes: uploads/deletes rebuild only the affected session, never the whole corpus
+- SQLite (WAL) document registry with one-time import of the old JSON registry
+- streaming answers (`/qa/stream`, server-sent events) in the API and UI
+- per-session request rate limiting, `/ready` readiness check, Prometheus `/metrics`
 
 Next:
 
 - deploy the validated Docker stack to a remote Linux VM/server
 - add reverse proxy and HTTPS for the public URL
-- add reverse-proxy request/rate limiting and host firewall rules appropriate for public traffic
+- add host firewall rules (and reverse-proxy rate limiting if running several API instances)
 - define persistent-volume backup/recovery policy
 - final public demo and portfolio polish
 

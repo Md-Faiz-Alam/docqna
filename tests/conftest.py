@@ -17,6 +17,12 @@ class NullIndexService:
     def purge_expired_documents(self) -> int:
         return 0
 
+    def list_documents(self, session_id: str | None = None) -> list:
+        return []
+
+    def delete_document(self, document_id: str, session_id: str | None = None) -> bool:
+        return False
+
 
 @pytest.fixture
 def session_id() -> str:
@@ -28,6 +34,7 @@ def client(session_id: str) -> Iterator[TestClient]:
     """API client with a valid session header and no model loading."""
 
     app.dependency_overrides[get_document_index_service_provider] = lambda: NullIndexService
+    app.state.rate_limiter.reset()
     try:
         with TestClient(app, headers={SESSION_HEADER_NAME: session_id}) as test_client:
             yield test_client

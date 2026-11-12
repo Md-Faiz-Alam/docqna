@@ -8,6 +8,7 @@ from uuid import uuid4
 from fastapi import Request, Response, status
 
 from docqna.logging_config import reset_request_id, set_request_id
+from docqna.observability import record_http_request
 
 logger = logging.getLogger(__name__)
 
@@ -41,11 +42,19 @@ async def request_observability(
         raise
 
     finally:
+        elapsed = perf_counter() - started
+        route = request.scope.get("route")
+        record_http_request(
+            method=request.method,
+            route=getattr(route, "path", "unmatched"),
+            status=status_code,
+            seconds=elapsed,
+        )
         logger.info(
             "http_request method=%s path=%s status=%d duration_ms=%.2f",
             request.method,
             request.url.path,
             status_code,
-            (perf_counter() - started) * 1000.0,
+            elapsed * 1000.0,
         )
         reset_request_id(token)

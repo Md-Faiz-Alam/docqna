@@ -2,6 +2,7 @@ import json
 import mimetypes
 import os
 import re
+from collections.abc import Callable, Iterable, Iterator
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -252,6 +253,71 @@ def ask_api(
     try:
         with urlopen(request, timeout=300) as response:
             return (_decode_json_bytes(response.read()), None)
+
+    except HTTPError as exc:
+        return (None, _http_error_detail(exc))
+
+    except URLError as exc:
+        return (None, f"Could not connect to backend: {exc.reason}")
+
+    except Exception as exc:
+        return (None, f"Unexpected request error: {exc}")
+
+
+def iter_sse_events(lines: Iterable[bytes]) -> Iterator[tuple[str, dict[str, Any]]]:
+    """Parse a server-sent-events byte stream into (event, data) pairs."""
+
+    event, data_lines = "message", []
+    for raw in lines:
+        line = raw.decode("utf-8").rstrip("\r\n")
+        if not line:
+            if data_lines:
+                yield event, json.loads("\n".join(data_lines))
+            event, data_lines = "message", []
+        elif line.startswith("event:"):
+            event = line[len("event:") :].strip()
+        elif line.startswith("data:"):
+            data_lines.append(line[len("data:") :].strip())
+    if data_lines:
+        yield event, json.loads("\n".join(data_lines))
+
+
+def ask_api_stream(
+    api_url: str,
+    question: str,
+    top_k: int,
+    *,
+    session_id: str,
+    document_id: str | None,
+    on_token: Callable[[str], None],
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Stream a QA request: call on_token per draft chunk, return the final response."""
+
+    payload = json.dumps(
+        build_qa_payload(question=question, top_k=top_k, document_id=document_id)
+    ).encode("utf-8")
+
+    request = Request(
+        url=f"{api_url}/qa/stream",
+        data=payload,
+        headers={
+            "Accept": "text/event-stream",
+            "Content-Type": "application/json",
+            SESSION_HEADER_NAME: session_id,
+        },
+        method="POST",
+    )
+
+    try:
+        with urlopen(request, timeout=300) as response:
+            for event, data in iter_sse_events(response):
+                if event == "token":
+                    on_token(str(data.get("text", "")))
+                elif event == "final":
+                    return (data, None)
+                elif event == "error":
+                    return (None, str(data.get("detail", "The answer could not be generated.")))
+        return (None, "The answer stream ended unexpectedly.")
 
     except HTTPError as exc:
         return (None, _http_error_detail(exc))
@@ -631,8 +697,15 @@ def main() -> None:
             st.markdown(question)
 
         with st.chat_message("assistant"):
+            answer_placeholder = st.empty()
+            draft: list[str] = []
+
+            def show_draft(text: str) -> None:
+                draft.append(text)
+                answer_placeholder.markdown("".join(draft) + " ▌")
+
             with st.spinner("Searching documents and generating answer..."):
-                response, error = ask_api(
+                response, error = ask_api_stream(
                     api_url=api_url,
                     question=question,
                     top_k=top_k,
@@ -640,7 +713,11 @@ def main() -> None:
                     document_id=(
                         selected_document_id if search_mode == "Selected document" else None
                     ),
+                    on_token=show_draft,
                 )
+
+            # The final, citation-validated answer replaces the streamed draft.
+            answer_placeholder.empty()
 
             if error is not None:
                 st.error(error)

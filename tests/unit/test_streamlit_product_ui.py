@@ -43,3 +43,21 @@ def test_streamlit_product_ui() -> None:
     label = format_document_label({"filename": "sample.pdf", "version": 2, "file_type": "pdf"})
 
     assert label == ("sample.pdf · v2 · PDF")
+
+
+def test_sse_parser_reads_token_and_final_events() -> None:
+    from docqna.ui.streamlit_app import iter_sse_events
+
+    stream = [
+        b"event: token\n",
+        b'data: {"text": "Hel"}\n',
+        b"\n",
+        b"event: final\n",
+        b'data: {"answer": "Hello [1].", "abstained": false}\n',
+        b"\n",
+    ]
+
+    assert list(iter_sse_events(stream)) == [
+        ("token", {"text": "Hel"}),
+        ("final", {"answer": "Hello [1].", "abstained": False}),
+    ]

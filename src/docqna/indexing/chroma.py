@@ -197,9 +197,9 @@ class ChromaVectorStore(BaseVectorStore):
 
         return results
 
-    def get_all_chunks(self) -> list[DocumentChunk]:
+    def get_all_chunks(self, session_id: str | None = None) -> list[DocumentChunk]:
         """
-        Reconstruct all stored DocumentChunk objects.
+        Reconstruct stored DocumentChunk objects, optionally for one session.
 
         This allows sparse retrievers such as BM25
         to operate on exactly the same corpus that
@@ -207,7 +207,12 @@ class ChromaVectorStore(BaseVectorStore):
         """
 
         try:
-            results = self.collection.get(include=["documents", "metadatas"])
+            if session_id is None:
+                results = self.collection.get(include=["documents", "metadatas"])
+            else:
+                results = self.collection.get(
+                    where={"session_id": session_id}, include=["documents", "metadatas"]
+                )
 
         except Exception as exc:
             raise IndexingError("Could not load chunks from ChromaDB.") from exc

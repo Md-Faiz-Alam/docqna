@@ -62,7 +62,7 @@ Current behavior:
 - exact duplicates in the same session scope are rejected
 - the same filename with changed content becomes a new version
 - a new filename becomes a new logical document
-- registry persistence uses atomic JSON writes
+- the registry is SQLite in WAL mode; duplicate/version checks and inserts run in one `BEGIN IMMEDIATE` transaction, so concurrent workers cannot lose or duplicate records (an old `documents.json` is imported once)
 - indexed chunks carry document and anonymous-session metadata
 - deleting a document removes its indexed representation for that session
 
@@ -151,6 +151,8 @@ sequenceDiagram
 ```
 
 Isolation is enforced in registry ownership, Chroma metadata, BM25 filtering, QA retrieval, and list/delete operations.
+
+Each session also gets its **own BM25 index**, built only from that session's chunks and kept in a bounded LRU cache (`MAX_CACHED_SESSION_INDEXES`, default 256). An upload or delete invalidates only the caller's index, and retention cleanup invalidates all of them. The models, Chroma client and RAG pipeline are built once per process and never rebuilt on document changes. Before this, any mutation in any session made the next question reload every chunk in the system.
 
 The browser cookie preserves the anonymous namespace across normal page refreshes in the same browser. A different browser profile or incognito session receives a different namespace.
 
@@ -305,4 +307,4 @@ The workload is a deterministic retrieval-and-answer pipeline. Additional orches
 | Ollama unavailable | health check and typed generation errors |
 | Scanned/image-only PDF | unsupported; documented limitation |
 | Over-citation | known quality limitation |
-| Public traffic abuse | upload/question/document/chunk limits, 24-hour cleanup, memory caps, and log rotation implemented; reverse-proxy rate limiting still pending |
+| Public traffic abuse | upload/question/document/chunk limits, 24-hour cleanup, memory caps, and log rotation implemented; per-session rate limiting (429 + Retry-After) implemented in the API |

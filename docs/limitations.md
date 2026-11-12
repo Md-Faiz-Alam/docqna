@@ -40,7 +40,7 @@ The backend now enforces a 20 MB upload cap, a 2,000-character question limit, t
 
 Broader public exposure still needs:
 
-- reverse-proxy request/rate limiting
+- reverse-proxy rate limiting when running more than one API process (the built-in limiter is per process)
 - production timeout policies
 - host firewall/network rules
 - abuse monitoring appropriate to the hosting environment

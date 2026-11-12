@@ -8,6 +8,7 @@ from fastapi import FastAPI
 
 from docqna.api.errors import register_exception_handlers
 from docqna.api.middleware import request_observability
+from docqna.api.rate_limit import RateLimitRule, SlidingWindowLimiter, make_rate_limit_middleware
 from docqna.api.routes import documents, qa, system
 from docqna.api.session import SESSION_HEADER_NAME, require_session_id
 from docqna.constants import APP_NAME, APP_VERSION
@@ -50,6 +51,29 @@ def create_app() -> FastAPI:
             "document indexing."
         ),
         lifespan=lifespan,
+    )
+    settings = get_settings()
+    application.state.rate_limiter = SlidingWindowLimiter()
+    # Registered first so it runs inside request_observability: rejected
+    # requests still get request IDs, logs, and metrics.
+    application.middleware("http")(
+        make_rate_limit_middleware(
+            [
+                RateLimitRule(
+                    bucket="question",
+                    methods=frozenset({"POST"}),
+                    path_prefix="/qa",
+                    limit=settings.rate_limit_qa_per_minute,
+                ),
+                RateLimitRule(
+                    bucket="upload",
+                    methods=frozenset({"POST"}),
+                    path_prefix="/documents",
+                    limit=settings.rate_limit_uploads_per_minute,
+                ),
+            ],
+            limiter=application.state.rate_limiter,
+        )
     )
     application.middleware("http")(request_observability)
     register_exception_handlers(application)

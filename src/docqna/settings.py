@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     max_active_documents: int = 25
     max_chunks_per_document: int = 1000
     document_retention_hours: int = 24
+    # Per session (or client IP), per process. 0 disables a limit.
+    rate_limit_qa_per_minute: int = 20
+    rate_limit_uploads_per_minute: int = 10
 
     # LLM
     llm_provider: str = "ollama"
@@ -52,6 +55,7 @@ class Settings(BaseSettings):
     reranker_device: str = "cpu"
     reranker_candidate_pool_size: int = 20
     answerability_min_score: float = 0.0
+    max_cached_session_indexes: int = 256
 
     # Logging
     log_level: str = "INFO"
@@ -73,7 +77,7 @@ class Settings(BaseSettings):
 
     @property
     def registry_path(self) -> Path:
-        return self.metadata_dir / "documents.json"
+        return self.metadata_dir / "documents.db"
 
 
 @lru_cache

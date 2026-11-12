@@ -1,8 +1,8 @@
 """Production object graph for the API.
 
-Heavy objects (embedding model, cross-encoder, Chroma client) are created
-lazily and cached for the life of the process. The RAG pipeline itself is
-cheap to rebuild and is invalidated whenever the indexed corpus changes.
+Heavy objects (embedding model, cross-encoder, Chroma client, RAG
+pipeline) are created lazily and cached for the life of the process.
+Document mutations invalidate only the affected session's BM25 index.
 """
 
 from collections.abc import Callable
@@ -16,14 +16,10 @@ from docqna.generation.providers.base import BaseLLMProvider
 from docqna.generation.providers.ollama import OllamaProvider
 from docqna.indexing import ChromaVectorStore, DocumentIndexService
 from docqna.ingestion import DocumentIngestionService, DocumentRegistry
+from docqna.ingestion.models import DocumentChunk
 from docqna.rag import RAGPipeline
-from docqna.retrieval import (
-    BM25Retriever,
-    CrossEncoderReranker,
-    DenseRetriever,
-    RetrievalConfidenceGate,
-    RRFHybridRetriever,
-)
+from docqna.retrieval import CrossEncoderReranker, DenseRetriever, RetrievalConfidenceGate
+from docqna.retrieval.session_index import ChunkLoader, SessionScopedHybridRetriever
 from docqna.settings import Settings, get_settings
 
 PRODUCTION_CHUNKING_STRATEGY = "fixed"
@@ -107,45 +103,46 @@ def build_llm(settings: Settings) -> OllamaProvider:
     )
 
 
+def make_chunk_loader(vector_store: ChromaVectorStore) -> ChunkLoader:
+    """Load one session's chunks, enforcing the evaluated chunking strategy."""
+
+    def load(session_id: str | None) -> list[DocumentChunk]:
+        chunks = vector_store.get_all_chunks(session_id=session_id)
+        for chunk in chunks:
+            strategy = chunk.metadata.get("chunking_strategy")
+            if strategy != PRODUCTION_CHUNKING_STRATEGY:
+                raise IndexingError(
+                    f"Production API expected {PRODUCTION_CHUNKING_STRATEGY} chunks "
+                    f"but found strategy: {strategy!r}."
+                )
+        return chunks
+
+    return load
+
+
+def build_session_retriever(
+    *, settings: Settings, embedding_model: BaseEmbeddingModel, vector_store: ChromaVectorStore
+) -> SessionScopedHybridRetriever:
+    return SessionScopedHybridRetriever(
+        dense_retriever=DenseRetriever(embedding_model=embedding_model, vector_store=vector_store),
+        load_chunks=make_chunk_loader(vector_store),
+        rrf_k=settings.rrf_k,
+        candidate_pool_size=settings.hybrid_candidate_pool_size,
+        max_cached_sessions=settings.max_cached_session_indexes,
+    )
+
+
 def build_rag_pipeline(
     *,
     settings: Settings,
-    embedding_model: BaseEmbeddingModel,
-    vector_store: ChromaVectorStore,
+    session_retriever: SessionScopedHybridRetriever,
     cross_encoder_model: CrossEncoder | None,
     llm: BaseLLMProvider,
 ) -> RAGPipeline:
-    """Assemble dense + BM25 -> RRF -> cross-encoder -> gated generation.
-
-    Raises IndexingError if the corpus is empty or was indexed with a
-    chunking strategy other than the evaluated production one.
-    """
-
-    record_count = vector_store.count()
-    if record_count <= 0:
-        raise IndexingError("Production Chroma index is empty.")
-
-    chunks = vector_store.get_all_chunks()
-    if len(chunks) != record_count:
-        raise IndexingError("Production Chroma chunk count does not match the stored record count.")
-
-    for chunk in chunks:
-        strategy = chunk.metadata.get("chunking_strategy")
-        if strategy != PRODUCTION_CHUNKING_STRATEGY:
-            raise IndexingError(
-                f"Production API expected {PRODUCTION_CHUNKING_STRATEGY} chunks "
-                f"but found strategy: {strategy!r}."
-            )
-
-    hybrid_retriever = RRFHybridRetriever(
-        dense_retriever=DenseRetriever(embedding_model=embedding_model, vector_store=vector_store),
-        sparse_retriever=BM25Retriever(chunks=chunks),
-        rrf_k=settings.rrf_k,
-        candidate_pool_size=settings.hybrid_candidate_pool_size,
-    )
+    """Assemble dense + per-session BM25 -> RRF -> cross-encoder -> gated generation."""
 
     reranker = CrossEncoderReranker(
-        base_retriever=hybrid_retriever,
+        base_retriever=session_retriever,
         model_name=settings.reranker_model,
         candidate_pool_size=settings.reranker_candidate_pool_size,
         device=settings.reranker_device,
@@ -160,37 +157,50 @@ def build_rag_pipeline(
 
 
 @lru_cache(maxsize=1)
+def get_session_retriever() -> SessionScopedHybridRetriever:
+    """Shared retriever holding the per-session BM25 index cache."""
+
+    return build_session_retriever(
+        settings=get_settings(),
+        embedding_model=get_embedding_model(),
+        vector_store=get_vector_store(),
+    )
+
+
+@lru_cache(maxsize=1)
+def get_llm() -> BaseLLMProvider:
+    return build_llm(get_settings())
+
+
+@lru_cache(maxsize=1)
 def get_rag_pipeline() -> RAGPipeline:
-    """Build and cache the production RAG pipeline on first QA request."""
+    """Build the production RAG pipeline once, on the first QA request.
 
-    settings = get_settings()
-    vector_store = get_vector_store()
+    The pipeline is never rebuilt on uploads/deletes; only the affected
+    session's BM25 index is invalidated (see invalidate_session_index).
+    """
 
-    # Fail fast on an empty corpus before loading the cross-encoder.
-    if vector_store.count() <= 0:
-        raise IndexingError("Production Chroma index is empty.")
-
-    llm = build_llm(settings)
+    llm = get_llm()
     if not llm.health_check():
         raise LLMConnectionError("Ollama is not reachable.")
 
     return build_rag_pipeline(
-        settings=settings,
-        embedding_model=get_embedding_model(),
-        vector_store=vector_store,
+        settings=get_settings(),
+        session_retriever=get_session_retriever(),
         cross_encoder_model=get_cross_encoder_model(),
         llm=llm,
     )
 
 
-def clear_rag_pipeline_cache() -> None:
-    """Invalidate the cached RAG stack after document index mutations.
+def invalidate_session_index(session_id: str | None = None) -> None:
+    """Drop cached BM25 state after a document mutation.
 
-    Model weights and the Chroma client stay cached; the next QA request
-    rebuilds BM25/RRF/reranking against the current corpus.
+    Pass the mutated session, or None to drop every session (retention purge).
+    Does nothing if no QA request has built the retriever yet.
     """
 
-    get_rag_pipeline.cache_clear()
+    if get_session_retriever.cache_info().currsize:
+        get_session_retriever().invalidate(session_id)
 
 
 def get_document_index_service_provider() -> Callable[[], DocumentIndexService]:

@@ -77,7 +77,7 @@ ERROR_SPECS: dict[type[DocQNAError], ErrorSpec] = {
 }
 
 
-def _resolve_spec(exc: DocQNAError) -> ErrorSpec:
+def resolve_error_spec(exc: DocQNAError) -> ErrorSpec:
     for exc_type in type(exc).__mro__:
         spec = ERROR_SPECS.get(exc_type)
         if spec is not None:
@@ -89,7 +89,7 @@ async def docqna_exception_handler(request: Request, exc: Exception) -> JSONResp
     """Return `{error, detail}` without logging messages, queries, or document text."""
 
     assert isinstance(exc, DocQNAError)
-    spec = _resolve_spec(exc)
+    spec = resolve_error_spec(exc)
 
     logger.log(
         spec.log_level,

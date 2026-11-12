@@ -7,11 +7,13 @@ answer that points at sources it did not receive.
 
 import logging
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from time import perf_counter
 
 from docqna.filters import MetadataFilters, normalize_metadata_filters
 from docqna.generation.providers.base import BaseLLMProvider
+from docqna.observability import record_rag_timings
 from docqna.rag.models import CitationSource, RAGResponse
 from docqna.rag.prompt import (
     ABSTENTION_ANSWER,
@@ -205,16 +207,17 @@ class RAGPipeline:
             )
         return self.retriever.retrieve(query=query, top_k=top_k)
 
+    def _clean(self, raw_answer: str) -> str:
+        return self._normalize_citations(self._sanitize_generated_answer(raw_answer.strip()))
+
     def _generate_clean(self, prompt: str) -> str:
-        answer = self.llm.generate(prompt).strip()
-        return self._normalize_citations(self._sanitize_generated_answer(answer))
+        return self._clean(self.llm.generate(prompt))
 
-    def _generate_cited_answer(
-        self, query: str, results: list[RetrievalResult]
+    def _finalize_answer(
+        self, query: str, results: list[RetrievalResult], answer: str
     ) -> tuple[str, list[int]] | None:
-        """Generate an answer with valid citations, or None to abstain."""
+        """Validate citations (repairing once), or return None to abstain."""
 
-        answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
         if self._is_abstention_answer(answer):
             return None
 
@@ -260,6 +263,7 @@ class RAGPipeline:
     ) -> None:
         """Log timings without the query text or retrieved content."""
 
+        record_rag_timings(retrieval_ms=timer.retrieval_ms, generation_ms=timer.generation_ms)
         logger.info(
             "rag_complete mode=cited abstained=%s query_chars=%d top_k=%d results=%d "
             "filter_keys=%s retrieval_ms=%.2f generation_ms=%.2f total_ms=%.2f",
@@ -277,23 +281,26 @@ class RAGPipeline:
     # Public API
     # ------------------------------------------------------------------
 
-    def ask_with_citations(
-        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
-    ) -> RAGResponse:
-        """Answer `query` from retrieved evidence, or abstain."""
-
+    def _prepare(
+        self, query: str, top_k: int, metadata_filters: MetadataFilters | None
+    ) -> tuple[str, MetadataFilters | None, list[RetrievalResult], _Timer]:
         timer = _Timer()
         query = self._validate_request(query, top_k)
         metadata_filters = normalize_metadata_filters(metadata_filters)
-
         results = self._retrieve(query=query, top_k=top_k, metadata_filters=metadata_filters)
         timer.mark_retrieval_done()
+        return query, metadata_filters, results, timer
 
-        generated: tuple[str, list[int]] | None = None
-        if not self._should_abstain(results):
-            timer.start_generation()
-            generated = self._generate_cited_answer(query, results)
-
+    def _respond(
+        self,
+        *,
+        query: str,
+        top_k: int,
+        metadata_filters: MetadataFilters | None,
+        results: list[RetrievalResult],
+        timer: _Timer,
+        generated: tuple[str, list[int]] | None,
+    ) -> RAGResponse:
         self._log_completion(
             query=query,
             top_k=top_k,
@@ -309,4 +316,58 @@ class RAGPipeline:
         answer, citation_ids = generated
         return RAGResponse(
             answer=answer, sources=self._build_sources(results), cited_source_ids=citation_ids
+        )
+
+    def ask_with_citations(
+        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
+    ) -> RAGResponse:
+        """Answer `query` from retrieved evidence, or abstain."""
+
+        query, metadata_filters, results, timer = self._prepare(query, top_k, metadata_filters)
+
+        generated: tuple[str, list[int]] | None = None
+        if not self._should_abstain(results):
+            timer.start_generation()
+            answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
+            generated = self._finalize_answer(query, results, answer)
+
+        return self._respond(
+            query=query,
+            top_k=top_k,
+            metadata_filters=metadata_filters,
+            results=results,
+            timer=timer,
+            generated=generated,
+        )
+
+    def stream_with_citations(
+        self, query: str, top_k: int = 5, metadata_filters: MetadataFilters | None = None
+    ) -> Iterator[str | RAGResponse]:
+        """Yield draft answer text as it is generated, then the final RAGResponse.
+
+        The final response is authoritative: citation validation/repair run
+        after generation, so clients must replace the draft with it (it may
+        be a corrected answer or the abstention).
+        """
+
+        query, metadata_filters, results, timer = self._prepare(query, top_k, metadata_filters)
+
+        generated: tuple[str, list[int]] | None = None
+        if not self._should_abstain(results):
+            timer.start_generation()
+            parts: list[str] = []
+            for delta in self.llm.generate_stream(
+                build_cited_rag_prompt(query=query, results=results)
+            ):
+                parts.append(delta)
+                yield delta
+            generated = self._finalize_answer(query, results, self._clean("".join(parts)))
+
+        yield self._respond(
+            query=query,
+            top_k=top_k,
+            metadata_filters=metadata_filters,
+            results=results,
+            timer=timer,
+            generated=generated,
         )

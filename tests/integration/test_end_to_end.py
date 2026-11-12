@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from docqna.api.dependencies import build_llm, build_rag_pipeline
+from docqna.api.dependencies import build_llm, build_rag_pipeline, build_session_retriever
 from docqna.embeddings import SentenceTransformerEmbedding
 from docqna.generation.providers.base import BaseLLMProvider
 from docqna.indexing import ChromaVectorStore, DocumentIndexService
@@ -76,8 +76,9 @@ def make_pipeline(
     embedding_model, vector_store = indexed_store
     return build_rag_pipeline(
         settings=settings,
-        embedding_model=embedding_model,
-        vector_store=vector_store,
+        session_retriever=build_session_retriever(
+            settings=settings, embedding_model=embedding_model, vector_store=vector_store
+        ),
         cross_encoder_model=None,
         llm=llm,
     )
@@ -135,3 +136,24 @@ def test_real_llm_answer_cites_valid_sources(settings, indexed_store) -> None:
     assert response.cited_source_ids
     assert all(1 <= cid <= len(response.sources) for cid in response.cited_source_ids)
     assert re.search(r"\b60\b", response.answer)
+
+
+def test_real_llm_streams_tokens_then_final_answer(settings, indexed_store) -> None:
+    from docqna.rag import RAGResponse
+
+    llm = build_llm(settings)
+    if not llm.health_check():
+        pytest.skip("Ollama is not reachable")
+
+    pipeline = make_pipeline(settings, indexed_store, llm)
+    items = list(
+        pipeline.stream_with_citations(
+            "How many remote work days are allowed per week?",
+            metadata_filters={"session_id": SESSION_ID},
+        )
+    )
+
+    *tokens, final = items
+    assert len(tokens) > 1, "expected incremental tokens from Ollama"
+    assert isinstance(final, RAGResponse)
+    assert final.answer == ABSTENTION_ANSWER or final.cited_source_ids

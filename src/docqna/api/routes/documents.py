@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
-from docqna.api.dependencies import clear_rag_pipeline_cache, get_document_index_service_provider
+from docqna.api.dependencies import get_document_index_service_provider, invalidate_session_index
 from docqna.api.retention import purge_expired_documents
 from docqna.api.schemas import (
     DocumentDeleteResponse,
@@ -98,7 +98,7 @@ def upload_document(
         _save_upload(file, temp_path, max_bytes, limit_mb)
         result = service.index_document(temp_path, session_id=session_id)
 
-    clear_rag_pipeline_cache()
+    invalidate_session_index(session_id)
 
     logger.info(
         "document_upload_response filename=%s document_id=%s version=%d chunks=%d size_bytes=%d",
@@ -161,7 +161,7 @@ def delete_document(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Document '{document_id}' was not found."
         )
 
-    clear_rag_pipeline_cache()
+    invalidate_session_index(session_id)
     logger.info("document_delete_response document_id=%s", document_id)
 
     return DocumentDeleteResponse(document_id=document_id, deleted=True)
