@@ -8,6 +8,8 @@ It is intentionally more than a basic “chat with PDF” demo: the project comp
 
 **Deployment status:** the local Docker stack has passed end-to-end and persistence validation. Public cloud deployment and HTTPS are the next deployment steps.
 
+**New here?** Start with the plain-language [roadmap](docs/roadmap.md): what DocQ&A does, what is built, and the plan to a free public website.
+
 ---
 
 ## Current capabilities
