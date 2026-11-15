@@ -1,0 +1,253 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design tokens. Every accent colour is computed from two numbers, the
+ * accent hue (--ah) and chroma (--ac), so a theme only sets those (see the
+ * [data-accent] blocks below). Mode (light/dark) is the .dark class.
+ */
+:root {
+  --ah: 268;
+  --ac: 0.2;
+  --pl: 0.52; /* primary lightness, light mode */
+  --pl-dark: 0.74; /* primary lightness, dark mode */
+  --radius: 0.8rem;
+
+  --background: oklch(0.992 0.002 var(--ah));
+  --foreground: oklch(0.2 0.015 var(--ah));
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(var(--pl) var(--ac) var(--ah));
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.965 calc(var(--ac) * 0.06) var(--ah));
+  --secondary-foreground: oklch(0.27 0.02 var(--ah));
+  --muted: oklch(0.966 calc(var(--ac) * 0.04) var(--ah));
+  --muted-foreground: oklch(0.48 0.02 var(--ah));
+  --accent: oklch(0.95 calc(var(--ac) * 0.2) var(--ah));
+  --accent-foreground: oklch(0.36 calc(var(--ac) * 0.7) var(--ah));
+  --destructive: oklch(0.55 0.21 27);
+  --success: oklch(0.52 0.13 155);
+  --warning: oklch(0.6 0.14 70);
+  --border: oklch(0.915 calc(var(--ac) * 0.06) var(--ah));
+  --input: var(--border);
+  --ring: oklch(calc(var(--pl) + 0.06) var(--ac) var(--ah));
+  --highlight: oklch(0.93 0.1 95);
+  --glow-1: oklch(0.72 calc(var(--ac) * 0.9) var(--ah));
+  --glow-2: oklch(0.78 calc(var(--ac) * 0.7) calc(var(--ah) + 55));
+  --glow-3: oklch(0.8 calc(var(--ac) * 0.6) calc(var(--ah) - 45));
+  --grid: oklch(0.2 0.02 var(--ah) / 7%);
+  --chart-1: var(--primary);
+  --chart-2: oklch(0.66 0.14 calc(var(--ah) + 150));
+  --chart-3: oklch(0.72 0.14 calc(var(--ah) + 95));
+  --chart-4: oklch(0.6 0.19 15);
+  --chart-5: oklch(0.6 0.14 155);
+}
+
+.dark {
+  --background: oklch(0.145 0.012 var(--ah));
+  --foreground: oklch(0.965 0.004 var(--ah));
+  --card: oklch(0.185 0.014 var(--ah));
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.2 0.015 var(--ah));
+  --popover-foreground: var(--foreground);
+  --primary: oklch(var(--pl-dark) calc(var(--ac) * 0.85) var(--ah));
+  --primary-foreground: oklch(0.16 0.03 var(--ah));
+  --secondary: oklch(0.25 0.015 var(--ah));
+  --secondary-foreground: oklch(0.95 0.004 var(--ah));
+  --muted: oklch(0.23 0.014 var(--ah));
+  --muted-foreground: oklch(0.72 0.016 var(--ah));
+  --accent: oklch(0.27 calc(var(--ac) * 0.3) var(--ah));
+  --accent-foreground: oklch(0.9 calc(var(--ac) * 0.35) var(--ah));
+  --destructive: oklch(0.67 0.19 25);
+  --success: oklch(0.74 0.14 155);
+  --warning: oklch(0.82 0.13 80);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(var(--pl-dark) var(--ac) var(--ah));
+  --highlight: oklch(0.47 0.1 95);
+  --glow-1: oklch(0.55 calc(var(--ac) * 0.9) var(--ah));
+  --glow-2: oklch(0.5 calc(var(--ac) * 0.8) calc(var(--ah) + 55));
+  --glow-3: oklch(0.48 calc(var(--ac) * 0.7) calc(var(--ah) - 45));
+  --grid: oklch(1 0 0 / 6%);
+  --chart-2: oklch(0.76 0.13 calc(var(--ah) + 150));
+  --chart-3: oklch(0.8 0.13 calc(var(--ah) + 95));
+  --chart-4: oklch(0.7 0.17 15);
+  --chart-5: oklch(0.74 0.13 155);
+}
+
+/* Accent themes: hue + chroma (+ lightness where a hue needs it). */
+[data-accent="indigo"] { --ah: 268; --ac: 0.2; }
+[data-accent="violet"] { --ah: 300; --ac: 0.21; }
+[data-accent="ocean"] { --ah: 235; --ac: 0.17; --pl: 0.53; }
+[data-accent="teal"] { --ah: 185; --ac: 0.12; --pl: 0.5; --pl-dark: 0.78; }
+[data-accent="emerald"] { --ah: 155; --ac: 0.15; --pl: 0.5; --pl-dark: 0.77; }
+[data-accent="sunset"] { --ah: 45; --ac: 0.18; --pl: 0.58; --pl-dark: 0.76; }
+[data-accent="rose"] { --ah: 10; --ac: 0.2; --pl: 0.56; --pl-dark: 0.74; }
+[data-accent="mono"] { --ah: 270; --ac: 0; --pl: 0.2; --pl-dark: 0.94; }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-highlight: var(--highlight);
+  --color-glow-1: var(--glow-1);
+  --color-glow-2: var(--glow-2);
+  --color-glow-3: var(--glow-3);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-blink: blink 1s steps(2, start) infinite;
+
+  @keyframes aurora {
+    0% { transform: translate3d(-6%, -4%, 0) scale(1) rotate(0deg); }
+    50% { transform: translate3d(5%, 6%, 0) scale(1.12) rotate(8deg); }
+    100% { transform: translate3d(-3%, 3%, 0) scale(0.95) rotate(-6deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes blink {
+    to { visibility: hidden; }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 25%, transparent);
+  }
+}
+
+@layer components {
+  /* Faint grid that fades out towards the edges. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 75%);
+  }
+
+  /* Headline text filled with the accent gradient. */
+  .text-gradient {
+    background: linear-gradient(110deg, var(--primary) 10%, var(--glow-2) 50%, var(--primary) 90%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-shimmer);
+    animation-duration: 8s;
+  }
+
+  /* Card with a soft accent glow and lift on hover. */
+  .card-glow {
+    position: relative;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .card-glow:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+    box-shadow:
+      0 12px 32px -12px color-mix(in oklch, var(--primary) 35%, transparent),
+      0 2px 6px -2px rgb(0 0 0 / 8%);
+  }
+
+  /* 1px gradient border around a panel. */
+  .ring-gradient {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(140deg, var(--glow-1), var(--border) 35%, var(--border) 65%, var(--glow-2)) border-box;
+  }
+
+  .glass {
+    background: color-mix(in oklch, var(--card) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+  }
+
+  /* Scroll reveal (see components/reveal.tsx). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
