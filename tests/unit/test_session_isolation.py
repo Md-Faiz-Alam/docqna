@@ -64,7 +64,7 @@ def test_session_isolation() -> None:
 
     with TemporaryDirectory(ignore_cleanup_errors=True) as temp_dir:
         root = Path(temp_dir)
-        registry = DocumentRegistry(registry_path=root / "documents.json")
+        registry = DocumentRegistry(registry_path=root / "documents.db")
         file_path = root / "same.txt"
         file_path.write_text("same content", encoding="utf-8")
 

@@ -50,8 +50,6 @@ services:
         condition: service_completed_successfully
     environment:
       APP_ENV: production
-      APP_HOST: 0.0.0.0
-      APP_PORT: 8000
 
       LLM_PROVIDER: ollama
       OLLAMA_BASE_URL: http://ollama:11434
@@ -72,6 +70,9 @@ services:
       # self-hosted public deployment.
       ANONYMIZED_TELEMETRY: "false"
       HF_HUB_DISABLE_TELEMETRY: "1"
+
+      # The website (web/, `npm run dev`) calls the API from the browser.
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
 
       LOG_LEVEL: INFO
       LOG_TO_FILE: "false"
@@ -104,40 +105,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
-
-  streamlit:
-    build:
-      context: .
-      dockerfile: docker/streamlit.Dockerfile
-    restart: unless-stopped
-    depends_on:
-      api:
-        condition: service_healthy
-    environment:
-      DOCQNA_API_URL: http://api:8000
-      STREAMLIT_SERVER_MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE_MB:-20}
-      DOCQNA_MAX_QUESTION_CHARS: ${MAX_QUESTION_CHARS:-2000}
-
-    mem_limit: 512m
-    logging: *default-logging
-
-    # The public reverse proxy added on the VM will be the only
-    # internet-facing entry point. Streamlit stays host-local.
-    ports:
-      - "127.0.0.1:8501:8501"
-
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "python",
-          "-c",
-          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=5)"
-        ]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
 
 volumes:
   ollama_data:

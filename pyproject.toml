@@ -32,9 +32,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ui = ["streamlit==1.64.0"]
 dev = [
-    "docqna[ui]",
     "httpx==0.28.1",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
@@ -64,7 +62,6 @@ filterwarnings = [
 
 [tool.coverage.run]
 source = ["docqna"]
-omit = ["src/docqna/ui/*"]
 
 [tool.coverage.report]
 show_missing = true
@@ -109,7 +106,6 @@ split-on-trailing-comma = false
 [tool.mypy]
 python_version = "3.11"
 files = ["src/docqna"]
-exclude = ["src/docqna/ui/"]
 warn_unused_ignores = true
 warn_redundant_casts = true
 no_implicit_optional = true

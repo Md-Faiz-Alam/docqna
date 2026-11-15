@@ -61,7 +61,7 @@ def indexed_store(
     vector_store = ChromaVectorStore(persist_directory=root / "chroma", collection_name="e2e")
     service = DocumentIndexService(
         ingestion_service=DocumentIngestionService(),
-        registry=DocumentRegistry(root / "documents.json"),
+        registry=DocumentRegistry(root / "documents.db"),
         embedding_model=embedding_model,
         vector_store=vector_store,
     )

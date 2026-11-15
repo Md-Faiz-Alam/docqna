@@ -18,8 +18,6 @@ class Settings(BaseSettings):
 
     # Application
     app_env: str = "development"
-    app_host: str = "0.0.0.0"
-    app_port: int = 8000
 
     # Storage. All runtime state lives under data_dir unless overridden.
     data_dir: Path = PROJECT_ROOT / "data"

@@ -11,7 +11,7 @@ def test_document_registry() -> None:
     with TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
 
-        registry_path = root / "documents.json"
+        registry_path = root / "documents.db"
 
         document_path = root / "project.txt"
 

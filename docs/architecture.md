@@ -14,17 +14,17 @@ The architecture separates document ingestion/indexing, online question answerin
 
 ```mermaid
 flowchart LR
-    U[Browser User] --> ST[Streamlit]
+    U[Browser User] --> ST[Next.js website]
     ST -->|HTTP + X-DocQNA-Session-ID| API[FastAPI]
-    API --> OLL[Ollama]
+    API --> OLL[Ollama or Gemini]
     API --> CH[(ChromaDB)]
-    API --> REG[(Document Registry JSON)]
+    API --> REG[(Document Registry SQLite)]
     API --> LOG[(Application Logs)]
 ```
 
 | Component | Responsibility |
 |---|---|
-| Streamlit | UI, browser-cookie-backed anonymous session identity, upload/query/document actions |
+| Website (`web/`) | Next.js UI: anonymous session ID in `localStorage`, upload, streamed chat, citation viewer, feedback |
 | FastAPI | API boundary, validation, session enforcement, upload-size enforcement, orchestration |
 | Ingestion | parsing, validation, cleaning, metadata, chunking |
 | ChromaDB | persistent dense-vector storage |
@@ -62,7 +62,7 @@ Current behavior:
 - exact duplicates in the same session scope are rejected
 - the same filename with changed content becomes a new version
 - a new filename becomes a new logical document
-- the registry is SQLite in WAL mode; duplicate/version checks and inserts run in one `BEGIN IMMEDIATE` transaction, so concurrent workers cannot lose or duplicate records (an old `documents.json` is imported once)
+- the registry is SQLite in WAL mode; duplicate/version checks and inserts run in one `BEGIN IMMEDIATE` transaction, so concurrent workers cannot lose or duplicate records
 - indexed chunks carry document and anonymous-session metadata
 - deleting a document removes its indexed representation for that session
 
@@ -133,18 +133,18 @@ Operational deployment controls such as the upload-size limit are separate from 
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant S as Streamlit
+    participant S as Website
     participant A as FastAPI
     participant R as Registry/Retrieval
 
     B->>S: Open or refresh app
-    B-->>S: Existing docqna_session_id cookie (if present)
+    B-->>S: Existing session ID in localStorage (if present)
 
-    alt Valid cookie exists
+    alt Valid ID exists
         S->>S: Reuse anonymous session ID
-    else Cookie missing or invalid
-        S->>S: Generate UUID4 session ID
-        S-->>B: Persist docqna_session_id cookie
+    else Missing or invalid
+        S->>S: Generate random session ID
+        S-->>B: Save it in localStorage
     end
 
     S->>A: Request + X-DocQNA-Session-ID
@@ -158,7 +158,7 @@ Isolation is enforced in registry ownership, Chroma metadata, BM25 filtering, QA
 
 Each session also gets its **own BM25 index**, built only from that session's chunks and kept in a bounded LRU cache (`MAX_CACHED_SESSION_INDEXES`, default 256). An upload or delete invalidates only the caller's index, and retention cleanup invalidates all of them. The models, Chroma client and RAG pipeline are built once per process and never rebuilt on document changes. Before this, any mutation in any session made the next question reload every chunk in the system.
 
-The browser cookie preserves the anonymous namespace across normal page refreshes in the same browser. A different browser profile or incognito session receives a different namespace.
+The stored session ID preserves the anonymous namespace across normal page refreshes in the same browser. A different browser profile or incognito session receives a different namespace.
 
 A session ID is not an account credential. This design does not provide authenticated identity, cross-device identity, or account recovery.
 
@@ -221,8 +221,8 @@ Evaluation is intentionally separate from the online serving path. Deployment va
 ```mermaid
 flowchart LR
     USER[Browser User] --> RP[Reverse proxy / future HTTPS]
-    RP --> ST[Streamlit :8501]
-    ST --> API[FastAPI :8000]
+    RP --> ST[Website]
+    ST -->|CORS| API[FastAPI :8000]
     API --> OLL[Ollama]
     API --> VOL1[(Chroma volume)]
     API --> VOL2[(Registry volume)]
@@ -233,14 +233,13 @@ flowchart LR
 
 Container/network behavior:
 
-- Streamlit is published only on host loopback at `127.0.0.1:8501`
 - FastAPI is published only on host loopback at `127.0.0.1:8000`
-- Streamlit reaches FastAPI internally at `http://api:8000`
+- the website calls FastAPI from the browser; CORS allows `http://localhost:3000` by default
 - FastAPI reaches Ollama internally at `http://ollama:11434`
 - Ollama is not published directly to the host by the Compose file
 - `ollama-init` pulls `phi3:mini` into the persistent Ollama volume
 - Ollama is pinned to `0.34.1`, limited to one parallel request/loaded model, and uses a bounded request queue
-- API/Ollama/Streamlit containers use memory caps and Docker JSON-log rotation
+- API/Ollama containers use memory caps and Docker JSON-log rotation
 - Chroma and Hugging Face telemetry are disabled in the Docker runtime
 - Chroma, registry metadata, Ollama model data, and Hugging Face model downloads survive container recreation
 

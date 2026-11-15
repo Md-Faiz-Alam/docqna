@@ -62,7 +62,7 @@ The configured upload limit is:
 20 MB
 ```
 
-FastAPI performs the authoritative size check while streaming the uploaded file in chunks. Streamlit is configured with the same upload limit for the product UI.
+FastAPI performs the authoritative size check while streaming the uploaded file in chunks. The website checks the same limit before uploading, but the backend check is the one that counts.
 
 Oversized uploads are rejected rather than fully copied into application storage.
 
@@ -92,9 +92,7 @@ X-DocQNA-Session-ID
 
 to isolate anonymous browser sessions.
 
-On first use, Streamlit generates a high-entropy UUID4-based session identifier. The identifier is persisted in the browser as `docqna_session_id` so normal page refreshes can reuse the same anonymous namespace.
-
-The browser cookie uses `Path=/` and `SameSite=Lax`; the `Secure` attribute is added when the application is served over HTTPS.
+On first visit, the website generates a high-entropy random session identifier and keeps it in the browser's `localStorage`, so normal page refreshes reuse the same anonymous namespace. It is never sent to any host other than the configured API.
 
 The backend validates the session header and enforces session scope across:
 
@@ -139,11 +137,10 @@ Gemini mode needs `GEMINI_API_KEY`. Keep it only in `.env` or the hosting platfo
 The validated local Compose topology exposes:
 
 ```text
-Streamlit: 127.0.0.1:8501
 FastAPI:   127.0.0.1:8000
 ```
 
-FastAPI and Streamlit are both bound to the Docker host loopback address in the local Compose configuration. A public deployment should expose only the reverse proxy on ports 80/443.
+FastAPI is bound to the Docker host loopback address in the local Compose configuration, and CORS allows only the local website origin by default. A public deployment should expose only the reverse proxy on ports 80/443.
 
 Ollama is reachable by FastAPI over the internal Compose network and is not directly published to the host by the Compose file.
 

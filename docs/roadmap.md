@@ -50,11 +50,12 @@ Steps 1–4 and 6 are DocQ&A's own code. Only step 5 uses an AI model, and that 
 | 👍/👎 feedback on answers | ✅ Done |
 | Privacy between users (each browser sees only its own files) | ✅ Done |
 | Abuse protection (file-size, question, and rate limits) | ✅ Done |
-| Automated tests (129) and quality checks on every code change | ✅ Done |
+| Automated tests and quality checks on every code change | ✅ Done |
 | Measured quality on a public 75-question benchmark | ✅ Done |
 | Runs on your own computer with Docker | ✅ Done |
-| **Public website anyone can open** | ❌ Not yet: this roadmap |
-| **Modern, product-quality user interface** | ❌ Not yet: this roadmap |
+| Cloud-ready backend (one container, Gemini) | ✅ Done |
+| **Modern website** (landing page, live demo, results) | ✅ Built in `web/` |
+| **Public website anyone can open** | ⏳ Next: step 6 below |
 
 ### Measured quality
 

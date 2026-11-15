@@ -57,7 +57,7 @@ def test_document_retention() -> None:
     now = datetime(2026, 9, 25, 18, 0, tzinfo=UTC)
 
     with TemporaryDirectory() as temp_dir:
-        registry = DocumentRegistry(registry_path=Path(temp_dir) / "documents.json")
+        registry = DocumentRegistry(registry_path=Path(temp_dir) / "documents.db")
 
         expired = record("doc_expired", "expired.pdf", "session_a", 1, now - timedelta(hours=25))
         recent = record("doc_recent", "recent.pdf", "session_b", 1, now - timedelta(hours=2))

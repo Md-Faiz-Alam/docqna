@@ -118,12 +118,6 @@ jobs:
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Build UI image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/streamlit.Dockerfile
-          push: false
       - name: Build cloud image (Hugging Face Space)
         uses: docker/build-push-action@v6
         with:

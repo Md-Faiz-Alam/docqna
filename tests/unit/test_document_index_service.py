@@ -39,7 +39,7 @@ def test_document_index_service() -> None:
 
         document_path = root / "project.txt"
 
-        registry = DocumentRegistry(registry_path=(root / "documents.json"))
+        registry = DocumentRegistry(registry_path=(root / "documents.db"))
 
         vector_store = ChromaVectorStore(
             persist_directory=(root / "chroma"), collection_name=("document_index_test")

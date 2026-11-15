@@ -3,12 +3,10 @@
 SQLite (WAL mode) replaces the original JSON file so concurrent API
 workers cannot lose updates: duplicate/version checks and inserts run in
 one `BEGIN IMMEDIATE` transaction, and uniqueness is enforced by the
-schema itself. An existing `documents.json` registry is imported once on
-first start.
+schema itself.
 """
 
 import hashlib
-import json
 import logging
 import sqlite3
 from collections.abc import Iterator
@@ -38,17 +36,11 @@ CREATE TABLE IF NOT EXISTS documents (
 );
 CREATE INDEX IF NOT EXISTS idx_documents_filename
     ON documents (session_id, filename COLLATE NOCASE);
-CREATE TABLE IF NOT EXISTS registry_meta (
-    key   TEXT PRIMARY KEY,
-    value TEXT NOT NULL
-);
 """
 
 _COLUMNS = (
     "document_id, session_id, filename, file_type, version, content_hash, size_bytes, registered_at"
 )
-
-_LEGACY_IMPORTED_KEY = "legacy_json_imported"
 
 
 def _duplicate_error(record: DocumentRecord) -> DuplicateDocumentError:
@@ -71,16 +63,13 @@ class DocumentRegistry:
     """
 
     def __init__(self, registry_path: str | Path | None = None) -> None:
-        path = Path(registry_path) if registry_path is not None else get_settings().registry_path
-
-        # Accept the historical `.json` path and keep the database beside it.
-        self.db_path = path.with_suffix(".db") if path.suffix == ".json" else path
-        self.legacy_json_path = self.db_path.with_suffix(".json")
+        self.db_path = (
+            Path(registry_path) if registry_path is not None else get_settings().registry_path
+        )
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
         with self._connect() as connection:
             connection.executescript(_SCHEMA)
-        self._import_legacy_json()
 
     # ------------------------------------------------------------------
     # Connection management
@@ -138,45 +127,6 @@ class DocumentRegistry:
                 record.registered_at.isoformat(),
             ),
         )
-
-    def _import_legacy_json(self) -> None:
-        """One-time import of a pre-SQLite `documents.json` registry."""
-
-        with self._write_transaction() as connection:
-            already = connection.execute(
-                "SELECT 1 FROM registry_meta WHERE key = ?", (_LEGACY_IMPORTED_KEY,)
-            ).fetchone()
-            if already is not None:
-                return
-
-            imported = 0
-            if self.legacy_json_path.exists():
-                try:
-                    raw = json.loads(self.legacy_json_path.read_text(encoding="utf-8"))
-                    records = [DocumentRecord.model_validate(item) for item in raw]
-                except (OSError, ValueError, TypeError) as exc:
-                    raise DocumentError(
-                        f"Could not import legacy registry: {self.legacy_json_path}"
-                    ) from exc
-
-                for record in records:
-                    try:
-                        self._insert(connection, record)
-                        imported += 1
-                    except sqlite3.IntegrityError:
-                        logger.warning(
-                            "registry_legacy_import_skipped document_id=%s version=%d",
-                            record.document_id,
-                            record.version,
-                        )
-
-            connection.execute(
-                "INSERT INTO registry_meta (key, value) VALUES (?, ?)",
-                (_LEGACY_IMPORTED_KEY, datetime.now(UTC).isoformat()),
-            )
-
-        if imported:
-            logger.info("registry_legacy_import_complete records=%d", imported)
 
     # ------------------------------------------------------------------
     # Helpers

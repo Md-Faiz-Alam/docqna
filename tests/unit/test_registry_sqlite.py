@@ -1,49 +1,10 @@
-import json
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import pytest
-
-from docqna.exceptions import DocumentError, DuplicateDocumentError
+from docqna.exceptions import DuplicateDocumentError
 from docqna.ingestion.registry import DocumentRegistry
 
 SESSION = "s" * 32
-
-
-def _legacy_record(document_id: str, version: int, content_hash: str) -> dict:
-    return {
-        "document_id": document_id,
-        "session_id": SESSION,
-        "filename": "policy.txt",
-        "file_type": "txt",
-        "version": version,
-        "content_hash": content_hash,
-        "size_bytes": 10,
-        "registered_at": "2026-01-01T00:00:00+00:00",
-    }
-
-
-def test_legacy_json_registry_is_imported_once(tmp_path: Path) -> None:
-    legacy = tmp_path / "documents.json"
-    legacy.write_text(
-        json.dumps([_legacy_record("doc_a", 1, "h1"), _legacy_record("doc_a", 2, "h2")]),
-        encoding="utf-8",
-    )
-
-    registry = DocumentRegistry(legacy)
-    assert [r.version for r in registry.list_records(session_id=SESSION)] == [1, 2]
-    assert registry.db_path == tmp_path / "documents.db"
-
-    # Deleting everything must not resurrect legacy rows on restart.
-    assert registry.delete_document("doc_a", session_id=SESSION) == 2
-    assert DocumentRegistry(legacy).list_records() == []
-
-
-def test_corrupt_legacy_json_fails_loudly(tmp_path: Path) -> None:
-    (tmp_path / "documents.json").write_text("{not json", encoding="utf-8")
-
-    with pytest.raises(DocumentError):
-        DocumentRegistry(tmp_path / "documents.db")
 
 
 def test_concurrent_identical_uploads_commit_exactly_once(tmp_path: Path) -> None:
