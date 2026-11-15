@@ -1,0 +1,297 @@
+{
+  "labelled": 80,
+  "items": 80,
+  "label_counts": {
+    "correct": 67,
+    "partly": 3,
+    "wrong": 10,
+    "unsure": 0
+  },
+  "overall": {
+    "strict": {
+      "compared": 80,
+      "agree": 71,
+      "agreement": 0.887,
+      "kappa": 0.642,
+      "both_correct": 60,
+      "auto_correct_human_not": 2,
+      "human_correct_auto_not": 7,
+      "both_not_correct": 11,
+      "auto_correct_rate": 0.775,
+      "human_correct_rate": 0.838
+    },
+    "lenient": {
+      "compared": 80,
+      "agree": 72,
+      "agreement": 0.9,
+      "kappa": 0.66,
+      "both_correct": 62,
+      "auto_correct_human_not": 0,
+      "human_correct_auto_not": 8,
+      "both_not_correct": 10,
+      "auto_correct_rate": 0.775,
+      "human_correct_rate": 0.875
+    }
+  },
+  "by_group": {
+    "heldout/gemini": {
+      "strict": {
+        "compared": 20,
+        "agree": 16,
+        "agreement": 0.8,
+        "kappa": 0.494,
+        "both_correct": 13,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 4,
+        "both_not_correct": 3,
+        "auto_correct_rate": 0.65,
+        "human_correct_rate": 0.85
+      },
+      "lenient": {
+        "compared": 20,
+        "agree": 15,
+        "agreement": 0.75,
+        "kappa": 0.342,
+        "both_correct": 13,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 5,
+        "both_not_correct": 2,
+        "auto_correct_rate": 0.65,
+        "human_correct_rate": 0.9
+      }
+    },
+    "heldout/phi3_mini": {
+      "strict": {
+        "compared": 20,
+        "agree": 17,
+        "agreement": 0.85,
+        "kappa": 0.706,
+        "both_correct": 9,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 3,
+        "both_not_correct": 8,
+        "auto_correct_rate": 0.45,
+        "human_correct_rate": 0.6
+      },
+      "lenient": {
+        "compared": 20,
+        "agree": 17,
+        "agreement": 0.85,
+        "kappa": 0.706,
+        "both_correct": 9,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 3,
+        "both_not_correct": 8,
+        "auto_correct_rate": 0.45,
+        "human_correct_rate": 0.6
+      }
+    },
+    "public/gemini": {
+      "strict": {
+        "compared": 20,
+        "agree": 20,
+        "agreement": 1.0,
+        "kappa": null,
+        "both_correct": 20,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 0,
+        "both_not_correct": 0,
+        "auto_correct_rate": 1.0,
+        "human_correct_rate": 1.0
+      },
+      "lenient": {
+        "compared": 20,
+        "agree": 20,
+        "agreement": 1.0,
+        "kappa": null,
+        "both_correct": 20,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 0,
+        "both_not_correct": 0,
+        "auto_correct_rate": 1.0,
+        "human_correct_rate": 1.0
+      }
+    },
+    "public/phi3_mini": {
+      "strict": {
+        "compared": 20,
+        "agree": 18,
+        "agreement": 0.9,
+        "kappa": 0.0,
+        "both_correct": 18,
+        "auto_correct_human_not": 2,
+        "human_correct_auto_not": 0,
+        "both_not_correct": 0,
+        "auto_correct_rate": 1.0,
+        "human_correct_rate": 0.9
+      },
+      "lenient": {
+        "compared": 20,
+        "agree": 20,
+        "agreement": 1.0,
+        "kappa": null,
+        "both_correct": 20,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 0,
+        "both_not_correct": 0,
+        "auto_correct_rate": 1.0,
+        "human_correct_rate": 1.0
+      }
+    }
+  },
+  "by_question_type": {
+    "answerable": {
+      "strict": {
+        "compared": 67,
+        "agree": 63,
+        "agreement": 0.94,
+        "kappa": 0.568,
+        "both_correct": 60,
+        "auto_correct_human_not": 2,
+        "human_correct_auto_not": 2,
+        "both_not_correct": 3,
+        "auto_correct_rate": 0.925,
+        "human_correct_rate": 0.925
+      },
+      "lenient": {
+        "compared": 67,
+        "agree": 65,
+        "agreement": 0.97,
+        "kappa": 0.735,
+        "both_correct": 62,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 2,
+        "both_not_correct": 3,
+        "auto_correct_rate": 0.925,
+        "human_correct_rate": 0.955
+      }
+    },
+    "unanswerable": {
+      "strict": {
+        "compared": 13,
+        "agree": 8,
+        "agreement": 0.615,
+        "kappa": 0.0,
+        "both_correct": 0,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 5,
+        "both_not_correct": 8,
+        "auto_correct_rate": 0.0,
+        "human_correct_rate": 0.385
+      },
+      "lenient": {
+        "compared": 13,
+        "agree": 7,
+        "agreement": 0.538,
+        "kappa": 0.0,
+        "both_correct": 0,
+        "auto_correct_human_not": 0,
+        "human_correct_auto_not": 6,
+        "both_not_correct": 7,
+        "auto_correct_rate": 0.0,
+        "human_correct_rate": 0.462
+      }
+    }
+  },
+  "disagreements": [
+    {
+      "item_id": "g004",
+      "group": "heldout/gemini",
+      "case_id": "squad_57268c01dd62a815002e8916",
+      "should_answer": true,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "",
+      "question": "How does cooling of the local environment affect the mnemiopsis?",
+      "answer": "A cooling of the local climate from 1991 to 1993 significantly slowed the metabolism of Mnemiopsis [1]."
+    },
+    {
+      "item_id": "g011",
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_572a2224af94a219006aa824",
+      "should_answer": true,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "",
+      "question": "What can and old, ill man not do?",
+      "answer": "An old, ill man cannot earn as much income as a healthy young man due to his lower capabilities [1]."
+    },
+    {
+      "item_id": "g016",
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad3ea79604f3c001a3ff6ea",
+      "should_answer": false,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "Although SQuAD marks this question as unanswerable from the supplied paragraph, DocQ&A's answer is supported elsewhere in the Normans article.\n\nEvidence: In 911, Rollo led the Norse settlers who established themselves in Normandy and pledged fealty to King Charles III of West Francia. This supports the answer's identification of Rollo as their leader in the 10th century.\nImportant distinction: The supplied paragraph discusses Normans serving under George Maniaces in 1038 (11th century), so it cannot support the answer. However, your grading instructions explicitly allow answers supported elsewhere in the full article.\n\nEvaluation: Historically supported and responsive to the actual question. The fact that SQuAD labels it unanswerable does not automatically make it wrong.",
+      "question": "Who did the Normans serve under in the 10th century?",
+      "answer": "In the 10th century, the Normans served under their leader Rollo, who agreed to swear fealty to King Charles III of West Francia [1][4]."
+    },
+    {
+      "item_id": "g022",
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad260dbd7d075001a428fd9",
+      "should_answer": false,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "Reason: DocQ&A correctly identifies distributive efficiency as the concept illustrated by unequal utility from housing.\n\nSource evidence: “A house that provides less utility to a millionaire as a summer home than it would to a homeless family of five, is an example of reduced ‘distributive efficiency’ within society.”\n\nEvaluation: Although the question was deliberately altered by replacing “house” with “adobe,” the answer correctly identifies the underlying example and provides the concept requested. The added explanation is supported by the source.",
+      "question": "An adobe that provides more utility to one person than another is an example of reduced what?",
+      "answer": "An adobe or house that provides less utility to a millionaire as a summer home than it would to a homeless family of five exemplifies reduced \"distributive efficiency\" within society [1]."
+    },
+    {
+      "item_id": "g045",
+      "group": "public/phi3_mini",
+      "case_id": "sla_06",
+      "should_answer": true,
+      "auto_correct": true,
+      "human": "partly",
+      "note": "Reason: DocQ&A correctly states that Business customers have a one-hour first-response target for Priority 1 outages.\n\nSource evidence: “For Business subscriptions the first response targets are one hour for Priority 1.”\n\nMinor error: The additional escalation statement is imprecise. The SLA specifies that customers may escalate after a Priority 1 issue remains unresolved for four hours, not that escalation must occur within four hours.\n\nEvaluation: The core answer is correct, but the additional statement misrepresents the escalation timing.",
+      "question": "How fast does support respond to a critical outage on a Business plan?",
+      "answer": "For a Business plan, the first response to a Priority 1 issue is within one hour, and the escalation to the duty engineering manager is within four hours if not resolved [1]."
+    },
+    {
+      "item_id": "g050",
+      "group": "public/phi3_mini",
+      "case_id": "sla_08",
+      "should_answer": true,
+      "auto_correct": true,
+      "human": "partly",
+      "note": "Reason: DocQ&A correctly identifies the four-hour threshold for escalating an unresolved Priority 1 outage, but incorrectly describes the timing as “within four hours.”\n\nSource evidence: “If a Priority 1 issue is not resolved within four hours, the customer may escalate to the duty engineering manager.”\n\nCritical distinction:\n- DocQ&A: Escalation is allowed within four hours.\n- Document: Escalation is allowed after the issue remains unresolved for four hours.\nCorrect answer: You may escalate a Priority 1 outage to the duty engineering manager if it remains unresolved after four hours.",
+      "question": "When can I escalate an unresolved outage to an engineering manager?",
+      "answer": "You may escalate an unresolved outage to the engineering manager within four hours if it's a Priority 1 issue [2]."
+    },
+    {
+      "item_id": "g066",
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5a63969068151a001a9223aa",
+      "should_answer": false,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "Reason: DocQ&A correctly identifies the Victorian Alps in northeastern Victoria as the state's highest mountainous region.\n\nSource evidence: “The Victorian Alps in the northeast are the coldest part of Victoria.” The passage also refers to the highest parts of the ranges.\n\nEvaluation: Although SQuAD labels the altered question as unanswerable, the answer is consistent with the geographical information provided. The additional temperature records and descriptions are also supported by the source.",
+      "question": "Where is the highest section of Victoria?",
+      "answer": "The highest section of Victoria is the Victorian Alps in the northeast, which are part of the Great Dividing Range mountain system. The Alps are the coldest part of Victoria, with average temperatures less than 9 °C (48 °F) in winter and below 0 °C (32 °F) in the highest parts of the ranges. The state's lowest minimum temperature of −11.7 °C (10.9 °F) was recorded at Omeo on 13 June 1965, and again at Falls Creek on 3 July 1970. [2] [3] [4] [5]"
+    },
+    {
+      "item_id": "g072",
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad268cbd7d075001a429294",
+      "should_answer": false,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "",
+      "question": "In what year was the Edict of Nantes revoked?",
+      "answer": "The Edict of Nantes was revoked in 1685. [2]"
+    },
+    {
+      "item_id": "g079",
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad259fdd7d075001a428e27",
+      "should_answer": false,
+      "auto_correct": false,
+      "human": "correct",
+      "note": "Reason: DocQ&A correctly identifies the 1910–1940 high school movement and the period thereafter as a time when income inequality declined in the United States.\n\nSource evidence: “Income inequality did fall in the United States during its High school movement from 1910 to 1940 and thereafter.”\n\nEvaluation: Although SQuAD marks this question as unanswerable, the supplied paragraph directly supports DocQ&A's answer. The model does not claim an exact starting year; it correctly identifies the period of decline.",
+      "question": "When did income inequality begin to decrease in the US?",
+      "answer": "Income inequality fell in the United States during the high school movement from 1910 to 1940 and thereafter [2]."
+    }
+  ]
+}

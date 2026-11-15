@@ -4,7 +4,7 @@ from typing import Any
 import ollama
 
 from docqna.exceptions import GenerationError, LLMConnectionError, LLMModelError
-from docqna.generation.providers.base import BaseLLMProvider
+from docqna.generation.providers.base import BaseLLMProvider, TokenUsage
 
 
 class OllamaProvider(BaseLLMProvider):
@@ -53,10 +53,20 @@ class OllamaProvider(BaseLLMProvider):
             return LLMModelError(f"Ollama model '{self.model}' is not available.")
         return GenerationError(f"Ollama generation failed using model '{self.model}'.")
 
+    @staticmethod
+    def _usage(response: Any) -> TokenUsage | None:
+        prompt_tokens = response.get("prompt_eval_count")
+        output_tokens = response.get("eval_count")
+        if prompt_tokens is None and output_tokens is None:
+            return None
+        return TokenUsage(input_tokens=prompt_tokens or 0, output_tokens=output_tokens or 0)
+
     def generate(self, prompt: str, system_prompt: str | None = None) -> str:
         """Generate a complete response."""
 
+        self.last_usage = None
         response = self._chat(self._messages(prompt, system_prompt), stream=False)
+        self.last_usage = self._usage(response)
         content = response["message"]["content"].strip()
         if not content:
             raise GenerationError("Ollama returned an empty response.")
@@ -65,10 +75,13 @@ class OllamaProvider(BaseLLMProvider):
     def generate_stream(self, prompt: str, system_prompt: str | None = None) -> Iterator[str]:
         """Yield response text as Ollama produces it."""
 
+        self.last_usage = None
         stream = self._chat(self._messages(prompt, system_prompt), stream=True)
         produced = False
         try:
             for part in stream:
+                if part.get("done"):
+                    self.last_usage = self._usage(part)
                 text = part["message"]["content"]
                 if text:
                     produced = True

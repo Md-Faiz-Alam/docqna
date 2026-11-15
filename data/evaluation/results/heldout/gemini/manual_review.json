@@ -1,0 +1,53 @@
+{
+  "reviewer_note": "Hand review of Gemini's post-fix held-out answers against the article text (docs/evaluation.md section 18). Judgement calls, recorded so they can be checked.",
+  "unanswerable_but_answered": {
+    "supported_by_article": {
+      "why": "SQuAD marks a question unanswerable for one paragraph; another part of the article answers it.",
+      "cases": [
+        "squad_5ad2467ad7d075001a428af6",
+        "squad_5ad259fdd7d075001a428e27",
+        "squad_5ad3ea79604f3c001a3ff6ea",
+        "squad_5a63969068151a001a9223aa",
+        "squad_5a8359c1e60761001a2eb5f4",
+        "squad_5ad268cbd7d075001a429294"
+      ]
+    },
+    "sidestepped_false_premise": {
+      "why": "States true facts from the article that contradict or avoid the question's false premise, or says the year is not given, without claiming the asked-for fact.",
+      "cases": [
+        "squad_5ad3ee2d604f3c001a3ff7e2",
+        "squad_5ad3af11604f3c001a3fec64",
+        "squad_5ad40280604f3c001a3ffd58",
+        "squad_5ad24600d7d075001a428aca",
+        "squad_5ad24d2ad7d075001a428c22"
+      ]
+    },
+    "fell_for_trap": {
+      "why": "The question was altered (negation, swapped word) so the text no longer answers it; the answer responds as if it did.",
+      "cases": [
+        "squad_5ad2690ed7d075001a4292b1",
+        "squad_5ad2690ed7d075001a4292b0",
+        "squad_5ad2654fd7d075001a4291aa",
+        "squad_5ad260dbd7d075001a428fd9",
+        "squad_5a837038e60761001a2eb6f5",
+        "squad_5a838db9e60761001a2eb7bd"
+      ]
+    }
+  },
+  "answerable_not_correct": {
+    "correct_but_worded_differently": [
+      "squad_57268c01dd62a815002e8916"
+    ],
+    "question_needs_its_original_paragraph": [
+      "squad_56de16ca4396321400ee25c8",
+      "squad_570d30fdfed7b91900d45ce5",
+      "squad_5710f4b8b654c5140001fa48",
+      "squad_571099b2b654c5140001f9b6"
+    ],
+    "genuine_miss": [
+      "squad_570d32e4fed7b91900d45d05",
+      "squad_572684365951b619008f7541",
+      "squad_57108198b654c5140001f93b"
+    ]
+  }
+}

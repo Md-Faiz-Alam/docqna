@@ -74,6 +74,9 @@ data/evaluation/work/
 .streamlit/secrets.toml
 # Per-case LLM answers derived from the private sample document
 data/evaluation/results/answerability/*/private_cases.jsonl
+data/evaluation/results/pipeline_layers/*/private_*.jsonl
+# Full downloaded SQuAD 2.0 file; only the sampled test set is committed
+data/evaluation/heldout/raw/
 
 # ---------------------------------------------------------
 # Website (web/) build output and dependencies

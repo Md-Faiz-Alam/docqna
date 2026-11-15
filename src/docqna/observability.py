@@ -39,6 +39,16 @@ GROUNDING_REJECTIONS = Counter(
     "Generated answers replaced by abstention because cited sources did not support them.",
 )
 
+INJECTION_REMOVALS = Counter(
+    "docqna_injection_removals_total",
+    "Parts of retrieved passages removed because they were addressed to an AI assistant.",
+)
+
+UNSUPPORTED_LINK_REJECTIONS = Counter(
+    "docqna_unsupported_link_rejections_total",
+    "Generated answers replaced by abstention because they contained a link not in any source.",
+)
+
 FEEDBACK = Counter("docqna_feedback_total", "Answer feedback by rating.", ["rating"])
 
 RATE_LIMITED = Counter(

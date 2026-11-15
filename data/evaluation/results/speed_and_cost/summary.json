@@ -1,0 +1,180 @@
+{
+  "gemini": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "hardware": {
+      "system": "Windows 10",
+      "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "logical_cpus": 8,
+      "python": "3.11.9"
+    },
+    "startup_seconds": {
+      "embedding_model": 8.4,
+      "reranker_model": 8.96
+    },
+    "indexing": [
+      {
+        "document": "cloudbox_s2_warranty.txt",
+        "kilobytes": 3.7,
+        "chunks": 4,
+        "seconds": 0.28
+      },
+      {
+        "document": "northwind_cloud_sla.txt",
+        "kilobytes": 3.6,
+        "chunks": 4,
+        "seconds": 0.18
+      },
+      {
+        "document": "northwind_employee_handbook.txt",
+        "kilobytes": 4.7,
+        "chunks": 5,
+        "seconds": 0.19
+      },
+      {
+        "document": "northwind_it_security_policy.txt",
+        "kilobytes": 4.3,
+        "chunks": 4,
+        "seconds": 0.19
+      },
+      {
+        "document": "private sample.pdf",
+        "kilobytes": 895.7,
+        "chunks": 192,
+        "seconds": 9.94
+      }
+    ],
+    "questions": 75,
+    "questions_reaching_llm": 70,
+    "llm_calls_per_question": 1.0571428571428572,
+    "stages_ms": {
+      "search_ms": {
+        "median": 43.4,
+        "p95": 61.2,
+        "count": 75
+      },
+      "rerank_ms": {
+        "median": 600.3,
+        "p95": 664.5,
+        "count": 75
+      },
+      "first_token_ms": {
+        "median": 1594.1,
+        "p95": 2075.5,
+        "count": 70
+      },
+      "generation_ms": {
+        "median": 1028.1,
+        "p95": 1873.7,
+        "count": 70
+      },
+      "grounding_ms": {
+        "median": 264.7,
+        "p95": 410.7,
+        "count": 57
+      },
+      "total_ms": {
+        "median": 1915.2,
+        "p95": 2596.5,
+        "count": 75
+      }
+    },
+    "mean_tokens_per_question": {
+      "input_tokens": 1571.5,
+      "output_tokens": 28.5,
+      "thinking_tokens": 0
+    },
+    "cost_usd": {
+      "per_question": 0.000543,
+      "per_1000_questions": 0.54,
+      "prices": {
+        "input_per_million": 0.3,
+        "output_per_million": 2.5,
+        "source": "https://aistudio.google.com/docs/pricing",
+        "checked": "2026-11-15",
+        "free_tier": "Free of charge within rate limits; Google may use free-tier data to improve its products."
+      }
+    }
+  },
+  "phi3_mini": {
+    "provider": "ollama",
+    "model": "phi3:mini",
+    "hardware": {
+      "system": "Windows 10",
+      "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "logical_cpus": 8,
+      "python": "3.11.9"
+    },
+    "startup_seconds": {
+      "embedding_model": 7.19,
+      "reranker_model": 9.26
+    },
+    "indexing": [
+      {
+        "document": "cloudbox_s2_warranty.txt",
+        "kilobytes": 3.7,
+        "chunks": 4,
+        "seconds": 0.26
+      },
+      {
+        "document": "northwind_cloud_sla.txt",
+        "kilobytes": 3.6,
+        "chunks": 4,
+        "seconds": 0.21
+      },
+      {
+        "document": "northwind_employee_handbook.txt",
+        "kilobytes": 4.7,
+        "chunks": 5,
+        "seconds": 0.23
+      },
+      {
+        "document": "northwind_it_security_policy.txt",
+        "kilobytes": 4.3,
+        "chunks": 4,
+        "seconds": 0.21
+      }
+    ],
+    "questions": 75,
+    "questions_reaching_llm": 70,
+    "llm_calls_per_question": 1.0714285714285714,
+    "stages_ms": {
+      "search_ms": {
+        "median": 13.9,
+        "p95": 25.0,
+        "count": 75
+      },
+      "rerank_ms": {
+        "median": 483.9,
+        "p95": 625.9,
+        "count": 75
+      },
+      "first_token_ms": {
+        "median": 30555.7,
+        "p95": 40481.8,
+        "count": 70
+      },
+      "generation_ms": {
+        "median": 35123.2,
+        "p95": 68220.2,
+        "count": 70
+      },
+      "grounding_ms": {
+        "median": 242.6,
+        "p95": 352.0,
+        "count": 62
+      },
+      "total_ms": {
+        "median": 35406.1,
+        "p95": 66088.7,
+        "count": 75
+      }
+    },
+    "mean_tokens_per_question": {
+      "input_tokens": 1830.9,
+      "output_tokens": 29.9,
+      "thinking_tokens": 0
+    },
+    "cost_usd": null
+  }
+}

@@ -104,6 +104,427 @@
       }
     }
   ],
+  "pipeline_layers": [
+    {
+      "provider": "ollama",
+      "label": "phi3:mini (local)",
+      "layers": [
+        {
+          "key": "dense",
+          "label": "Plain RAG (meaning search only)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 73,
+          "correct": 69,
+          "wrong": 5,
+          "false_answers": 19
+        },
+        {
+          "key": "hybrid",
+          "label": "+ keyword search (hybrid)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 75,
+          "wrong": 1,
+          "false_answers": 18
+        },
+        {
+          "key": "reranked",
+          "label": "+ reranker",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 69,
+          "wrong": 5,
+          "false_answers": 19
+        },
+        {
+          "key": "gated",
+          "label": "+ retrieval gate",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 69,
+          "wrong": 5,
+          "false_answers": 8
+        },
+        {
+          "key": "grounded",
+          "label": "+ grounding check (full system)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 58,
+          "wrong": 1,
+          "false_answers": 0
+        }
+      ]
+    },
+    {
+      "provider": "gemini",
+      "label": "Gemini gemini-3.5-flash-lite",
+      "layers": [
+        {
+          "key": "dense",
+          "label": "Plain RAG (meaning search only)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 73,
+          "correct": 73,
+          "wrong": 1,
+          "false_answers": 0
+        },
+        {
+          "key": "hybrid",
+          "label": "+ keyword search (hybrid)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 76,
+          "wrong": 0,
+          "false_answers": 0
+        },
+        {
+          "key": "reranked",
+          "label": "+ reranker",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 76,
+          "wrong": 0,
+          "false_answers": 0
+        },
+        {
+          "key": "gated",
+          "label": "+ retrieval gate",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 76,
+          "wrong": 0,
+          "false_answers": 0
+        },
+        {
+          "key": "grounded",
+          "label": "+ grounding check (full system)",
+          "answerable": 77,
+          "unanswerable": 28,
+          "evidence_in_top_k": 77,
+          "correct": 76,
+          "wrong": 0,
+          "false_answers": 0
+        }
+      ]
+    }
+  ],
+  "prompt_injection": [
+    {
+      "provider": "ollama",
+      "label": "phi3:mini (local)",
+      "attacks": [
+        {
+          "key": "hijack",
+          "label": "Take over the answer",
+          "cases": 4,
+          "before": 1,
+          "after": 0
+        },
+        {
+          "key": "fake_answer",
+          "label": "Fake answer planted in text",
+          "cases": 3,
+          "before": 1,
+          "after": 0
+        },
+        {
+          "key": "phishing_link",
+          "label": "Add a phishing link",
+          "cases": 2,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "data_exfiltration",
+          "label": "Leak data via an image URL",
+          "cases": 2,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "false_fact",
+          "label": "Override a fact",
+          "cases": 3,
+          "before": 3,
+          "after": 0
+        },
+        {
+          "key": "prompt_leak",
+          "label": "Reveal the instructions",
+          "cases": 4,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "off_task",
+          "label": "Answer off-task",
+          "cases": 2,
+          "before": 0,
+          "after": 0
+        }
+      ],
+      "overall": {
+        "baseline": {
+          "cases": 20,
+          "llm_fell_for_it": 7,
+          "user_saw_it": 5,
+          "real_answer_cases": 13,
+          "real_answer_correct": 9
+        },
+        "defended": {
+          "cases": 20,
+          "llm_fell_for_it": 2,
+          "user_saw_it": 0,
+          "real_answer_cases": 13,
+          "real_answer_correct": 11
+        }
+      }
+    },
+    {
+      "provider": "gemini",
+      "label": "Gemini gemini-3.5-flash-lite",
+      "attacks": [
+        {
+          "key": "hijack",
+          "label": "Take over the answer",
+          "cases": 4,
+          "before": 1,
+          "after": 0
+        },
+        {
+          "key": "fake_answer",
+          "label": "Fake answer planted in text",
+          "cases": 3,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "phishing_link",
+          "label": "Add a phishing link",
+          "cases": 2,
+          "before": 2,
+          "after": 0
+        },
+        {
+          "key": "data_exfiltration",
+          "label": "Leak data via an image URL",
+          "cases": 2,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "false_fact",
+          "label": "Override a fact",
+          "cases": 3,
+          "before": 3,
+          "after": 0
+        },
+        {
+          "key": "prompt_leak",
+          "label": "Reveal the instructions",
+          "cases": 4,
+          "before": 0,
+          "after": 0
+        },
+        {
+          "key": "off_task",
+          "label": "Answer off-task",
+          "cases": 2,
+          "before": 0,
+          "after": 0
+        }
+      ],
+      "overall": {
+        "baseline": {
+          "cases": 20,
+          "llm_fell_for_it": 6,
+          "user_saw_it": 6,
+          "real_answer_cases": 13,
+          "real_answer_correct": 7
+        },
+        "defended": {
+          "cases": 20,
+          "llm_fell_for_it": 2,
+          "user_saw_it": 0,
+          "real_answer_cases": 13,
+          "real_answer_correct": 12
+        }
+      }
+    }
+  ],
+  "speed_and_cost": [
+    {
+      "provider": "gemini",
+      "label": "Gemini gemini-3.5-flash-lite",
+      "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "logical_cpus": 8,
+      "questions": 75,
+      "stages_ms": {
+        "search_ms": {
+          "median": 43.4,
+          "p95": 61.2
+        },
+        "rerank_ms": {
+          "median": 600.3,
+          "p95": 664.5
+        },
+        "first_token_ms": {
+          "median": 1594.1,
+          "p95": 2075.5
+        },
+        "generation_ms": {
+          "median": 1028.1,
+          "p95": 1873.7
+        },
+        "grounding_ms": {
+          "median": 264.7,
+          "p95": 410.7
+        },
+        "total_ms": {
+          "median": 1915.2,
+          "p95": 2596.5
+        }
+      },
+      "tokens": {
+        "input_tokens": 1571.5,
+        "output_tokens": 28.5,
+        "thinking_tokens": 0
+      },
+      "cost_per_1000_usd": 0.54,
+      "startup_seconds": 17.4,
+      "index_public_seconds": 0.84,
+      "index_private": {
+        "document": "private sample.pdf",
+        "kilobytes": 895.7,
+        "chunks": 192,
+        "seconds": 9.94
+      }
+    },
+    {
+      "provider": "ollama",
+      "label": "phi3:mini (local)",
+      "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "logical_cpus": 8,
+      "questions": 75,
+      "stages_ms": {
+        "search_ms": {
+          "median": 13.9,
+          "p95": 25.0
+        },
+        "rerank_ms": {
+          "median": 483.9,
+          "p95": 625.9
+        },
+        "first_token_ms": {
+          "median": 30555.7,
+          "p95": 40481.8
+        },
+        "generation_ms": {
+          "median": 35123.2,
+          "p95": 68220.2
+        },
+        "grounding_ms": {
+          "median": 242.6,
+          "p95": 352.0
+        },
+        "total_ms": {
+          "median": 35406.1,
+          "p95": 66088.7
+        }
+      },
+      "tokens": {
+        "input_tokens": 1830.9,
+        "output_tokens": 29.9,
+        "thinking_tokens": 0
+      },
+      "cost_per_1000_usd": null,
+      "startup_seconds": 16.4,
+      "index_public_seconds": 0.91,
+      "index_private": null
+    }
+  ],
+  "heldout": {
+    "rows": [
+      {
+        "provider": "gemini",
+        "label": "Gemini gemini-3.5-flash-lite",
+        "answerable": 50,
+        "unanswerable": 50,
+        "evidence_in_top_k": 48,
+        "correct": 42,
+        "wrong": 6,
+        "declined_answerable": 2,
+        "made_up": 17
+      },
+      {
+        "provider": "phi3_mini",
+        "label": "phi3:mini (local)",
+        "answerable": 50,
+        "unanswerable": 50,
+        "evidence_in_top_k": 48,
+        "correct": 32,
+        "wrong": 9,
+        "declined_answerable": 9,
+        "made_up": 34
+      }
+    ],
+    "gemini_review": {
+      "supported_by_article": 6,
+      "sidestepped_false_premise": 5,
+      "fell_for_trap": 6,
+      "correct_but_worded_differently": 1,
+      "question_needs_its_original_paragraph": 4,
+      "genuine_miss": 3
+    }
+  },
+  "grading_check": {
+    "labelled": 80,
+    "label_counts": {
+      "correct": 67,
+      "partly": 3,
+      "wrong": 10,
+      "unsure": 0
+    },
+    "rows": [
+      {
+        "key": "answerable",
+        "label": "Normal questions",
+        "compared": 67,
+        "agree": 63,
+        "kappa": 0.568,
+        "auto_too_harsh": 2,
+        "auto_too_generous": 2
+      },
+      {
+        "key": "unanswerable",
+        "label": "SQuAD trick questions",
+        "compared": 13,
+        "agree": 8,
+        "kappa": 0.0,
+        "auto_too_harsh": 5,
+        "auto_too_generous": 0
+      },
+      {
+        "key": "overall",
+        "label": "All answers",
+        "compared": 80,
+        "agree": 71,
+        "kappa": 0.642,
+        "auto_too_harsh": 7,
+        "auto_too_generous": 2
+      }
+    ]
+  },
   "old_gate": {
     "label": "Before recalibration (gate >= 0)",
     "public_correct": 0.3729,

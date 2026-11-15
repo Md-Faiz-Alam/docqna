@@ -175,6 +175,7 @@ def build_rag_pipeline(
         llm=llm,
         confidence_gate=RetrievalConfidenceGate(min_top_score=settings.answerability_min_score),
         grounding_verifier=grounding_verifier,
+        injection_filter=settings.injection_filter_enabled,
     )
 
 

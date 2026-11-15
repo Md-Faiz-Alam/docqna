@@ -1,0 +1,167 @@
+{
+  "provider": "ollama",
+  "model": "phi3:mini",
+  "retrieval_gate": -10.5,
+  "grounding_min": 3.3,
+  "top_k": 5,
+  "layers": {
+    "dense": "Plain RAG (meaning search only)",
+    "hybrid": "+ keyword search (hybrid)",
+    "reranked": "+ reranker",
+    "gated": "+ retrieval gate",
+    "grounded": "+ grounding check (full system)"
+  },
+  "by_dataset": {
+    "public": {
+      "dense": {
+        "answerable": 59,
+        "unanswerable": 16,
+        "correct": 54,
+        "wrong": 5,
+        "declined_answerable": 0,
+        "false_answers": 8,
+        "evidence_in_top_k": 55,
+        "median_seconds": 35.84
+      },
+      "hybrid": {
+        "answerable": 59,
+        "unanswerable": 16,
+        "correct": 57,
+        "wrong": 1,
+        "declined_answerable": 1,
+        "false_answers": 9,
+        "evidence_in_top_k": 59,
+        "median_seconds": 37.28
+      },
+      "reranked": {
+        "answerable": 59,
+        "unanswerable": 16,
+        "correct": 51,
+        "wrong": 5,
+        "declined_answerable": 3,
+        "false_answers": 10,
+        "evidence_in_top_k": 59,
+        "median_seconds": null
+      },
+      "gated": {
+        "answerable": 59,
+        "unanswerable": 16,
+        "correct": 51,
+        "wrong": 5,
+        "declined_answerable": 3,
+        "false_answers": 6,
+        "evidence_in_top_k": 59,
+        "median_seconds": null
+      },
+      "grounded": {
+        "answerable": 59,
+        "unanswerable": 16,
+        "correct": 41,
+        "wrong": 1,
+        "declined_answerable": 17,
+        "false_answers": 0,
+        "evidence_in_top_k": 59,
+        "median_seconds": null
+      }
+    },
+    "private": {
+      "dense": {
+        "answerable": 18,
+        "unanswerable": 12,
+        "correct": 15,
+        "wrong": 0,
+        "declined_answerable": 3,
+        "false_answers": 11,
+        "evidence_in_top_k": 18,
+        "median_seconds": 52.98
+      },
+      "hybrid": {
+        "answerable": 18,
+        "unanswerable": 12,
+        "correct": 18,
+        "wrong": 0,
+        "declined_answerable": 0,
+        "false_answers": 9,
+        "evidence_in_top_k": 18,
+        "median_seconds": 56.31
+      },
+      "reranked": {
+        "answerable": 18,
+        "unanswerable": 12,
+        "correct": 18,
+        "wrong": 0,
+        "declined_answerable": 0,
+        "false_answers": 9,
+        "evidence_in_top_k": 18,
+        "median_seconds": null
+      },
+      "gated": {
+        "answerable": 18,
+        "unanswerable": 12,
+        "correct": 18,
+        "wrong": 0,
+        "declined_answerable": 0,
+        "false_answers": 2,
+        "evidence_in_top_k": 18,
+        "median_seconds": null
+      },
+      "grounded": {
+        "answerable": 18,
+        "unanswerable": 12,
+        "correct": 17,
+        "wrong": 0,
+        "declined_answerable": 1,
+        "false_answers": 0,
+        "evidence_in_top_k": 18,
+        "median_seconds": null
+      }
+    }
+  },
+  "combined": {
+    "dense": {
+      "answerable": 77,
+      "unanswerable": 28,
+      "correct": 69,
+      "wrong": 5,
+      "declined_answerable": 3,
+      "false_answers": 19,
+      "evidence_in_top_k": 73
+    },
+    "hybrid": {
+      "answerable": 77,
+      "unanswerable": 28,
+      "correct": 75,
+      "wrong": 1,
+      "declined_answerable": 1,
+      "false_answers": 18,
+      "evidence_in_top_k": 77
+    },
+    "reranked": {
+      "answerable": 77,
+      "unanswerable": 28,
+      "correct": 69,
+      "wrong": 5,
+      "declined_answerable": 3,
+      "false_answers": 19,
+      "evidence_in_top_k": 77
+    },
+    "gated": {
+      "answerable": 77,
+      "unanswerable": 28,
+      "correct": 69,
+      "wrong": 5,
+      "declined_answerable": 3,
+      "false_answers": 8,
+      "evidence_in_top_k": 77
+    },
+    "grounded": {
+      "answerable": 77,
+      "unanswerable": 28,
+      "correct": 58,
+      "wrong": 1,
+      "declined_answerable": 18,
+      "false_answers": 0,
+      "evidence_in_top_k": 77
+    }
+  }
+}

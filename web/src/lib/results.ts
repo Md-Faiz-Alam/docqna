@@ -20,6 +20,85 @@ export interface ProviderQuality {
   private: DatasetQuality;
 }
 
+export interface LayerRow {
+  key: string;
+  label: string;
+  answerable: number;
+  unanswerable: number;
+  evidence_in_top_k: number;
+  correct: number;
+  wrong: number;
+  false_answers: number;
+}
+
+export interface ProviderLayers {
+  provider: string;
+  label: string;
+  layers: LayerRow[];
+}
+
+export interface AttackStage {
+  cases: number;
+  llm_fell_for_it: number;
+  user_saw_it: number;
+  real_answer_cases: number;
+  real_answer_correct: number;
+}
+
+export interface ProviderAttacks {
+  provider: string;
+  label: string;
+  attacks: { key: string; label: string; cases: number; before: number; after: number }[];
+  overall: { baseline: AttackStage; defended: AttackStage };
+}
+
+export interface SpeedRow {
+  provider: string;
+  label: string;
+  processor: string;
+  logical_cpus: number;
+  questions: number;
+  stages_ms: Record<string, { median: number | null; p95: number | null }>;
+  tokens: { input_tokens: number; output_tokens: number; thinking_tokens: number };
+  cost_per_1000_usd: number | null;
+  startup_seconds: number;
+  index_public_seconds: number;
+  index_private: { document: string; kilobytes: number; chunks: number; seconds: number } | null;
+}
+
+export interface HeldoutRow {
+  provider: string;
+  label: string;
+  answerable: number;
+  unanswerable: number;
+  evidence_in_top_k: number;
+  correct: number;
+  wrong: number;
+  declined_answerable: number;
+  made_up: number;
+}
+
+export interface GradingRow {
+  key: string;
+  label: string;
+  compared: number;
+  agree: number;
+  kappa: number | null;
+  auto_too_harsh: number;
+  auto_too_generous: number;
+}
+
+export interface GradingCheck {
+  labelled: number;
+  label_counts: Record<string, number>;
+  rows: GradingRow[];
+}
+
+export interface Heldout {
+  rows: HeldoutRow[];
+  gemini_review: Record<string, number> | null;
+}
+
 export interface Results {
   public_benchmark: {
     answerable: number;
@@ -32,6 +111,11 @@ export interface Results {
   retrieval: { key: string; label: string; hit_at_1: number; hit_at_5: number; mrr: number }[];
   chunking: { key: string; label: string; hit_at_1: number; mrr: number }[];
   answer_quality: ProviderQuality[];
+  pipeline_layers: ProviderLayers[];
+  prompt_injection: ProviderAttacks[];
+  speed_and_cost: SpeedRow[];
+  heldout: Heldout | null;
+  grading_check: GradingCheck | null;
   old_gate: { label: string; public_correct: number; public_false_answers: number };
   gate_only_sweep_phi3_public: { threshold: number; correct: number; false_answers: number }[];
 }
@@ -51,4 +135,18 @@ export function inventedAnswers(q: ProviderQuality): { count: number; total: num
     q.public.false_answers * q.public.unanswerable + q.private.false_answers * q.private.unanswerable,
   );
   return { count, total };
+}
+
+export function layers(provider: "ollama" | "gemini"): ProviderLayers {
+  const row = results.pipeline_layers.find((q) => q.provider === provider);
+  if (!row) throw new Error(`No layer results for ${provider}`);
+  return row;
+}
+
+/** Milliseconds as a short human duration: "45 ms", "1.9 s", "38 s". */
+export function duration(ms: number | null | undefined): string {
+  if (ms === null || ms === undefined) return "–";
+  if (ms < 1000) return `${Math.round(ms)} ms`;
+  const seconds = ms / 1000;
+  return `${seconds < 10 ? seconds.toFixed(1) : Math.round(seconds)} s`;
 }

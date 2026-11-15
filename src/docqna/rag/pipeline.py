@@ -14,8 +14,14 @@ from time import perf_counter
 from docqna.exceptions import GenerationError
 from docqna.filters import MetadataFilters, normalize_metadata_filters
 from docqna.generation.providers.base import BaseLLMProvider
-from docqna.observability import GROUNDING_REJECTIONS, record_rag_timings
+from docqna.observability import (
+    GROUNDING_REJECTIONS,
+    INJECTION_REMOVALS,
+    UNSUPPORTED_LINK_REJECTIONS,
+    record_rag_timings,
+)
 from docqna.rag.grounding import GroundingVerifier
+from docqna.rag.injection import screen_passages, unsupported_links
 from docqna.rag.models import CitationSource, RAGResponse
 from docqna.rag.prompt import (
     ABSTENTION_ANSWER,
@@ -74,6 +80,10 @@ _INTERNAL_MARKERS = (
 
 _CITATION_ID = re.compile(r"\[(\d+)\]")
 
+# Grouped citations "[1, 5]" / "[1,2;3]" -> "[1][5]". Found by the held-out
+# test: without this, correct answers citing two sources at once were refused.
+_GROUPED_CITATION = re.compile(r"\[\s*(\d+(?:\s*[,;]\s*\d+)+)\s*\]")
+
 
 @dataclass
 class _Timer:
@@ -111,11 +121,13 @@ class RAGPipeline:
         llm: BaseLLMProvider,
         confidence_gate: RetrievalConfidenceGate | None = None,
         grounding_verifier: GroundingVerifier | None = None,
+        injection_filter: bool = True,
     ) -> None:
         self.retriever = retriever
         self.llm = llm
         self.confidence_gate = confidence_gate
         self.grounding_verifier = grounding_verifier
+        self.injection_filter = injection_filter
 
     # ------------------------------------------------------------------
     # Answer post-processing (pure functions, unit-tested directly)
@@ -127,7 +139,9 @@ class RAGPipeline:
 
         for pattern, replacement in _CITATION_REWRITES:
             answer = pattern.sub(replacement, answer)
-        return answer
+        return _GROUPED_CITATION.sub(
+            lambda match: "".join(f"[{n}]" for n in re.findall(r"\d+", match.group(1))), answer
+        )
 
     @staticmethod
     def _sanitize_generated_answer(answer: str) -> str:
@@ -250,6 +264,34 @@ class RAGPipeline:
         )
         return None
 
+    def _check_links(
+        self, results: list[RetrievalResult], generated: tuple[str, list[int]] | None
+    ) -> tuple[str, list[int]] | None:
+        """Abstain when the answer contains a link or e-mail address no source contains."""
+
+        if generated is None or not self.injection_filter:
+            return generated
+
+        unknown = unsupported_links(generated[0], [result.text for result in results])
+        if not unknown:
+            return generated
+
+        UNSUPPORTED_LINK_REJECTIONS.inc()
+        logger.warning("unsupported_link_in_answer links=%d action=abstain", len(unknown))
+        return None
+
+    def _screen(self, results: list[RetrievalResult]) -> list[RetrievalResult]:
+        """Remove text addressed to an AI assistant before the LLM sees the passages."""
+
+        if not self.injection_filter:
+            return results
+
+        screened, removed = screen_passages(results)
+        if removed:
+            INJECTION_REMOVALS.inc(removed)
+            logger.warning("injection_filter_removed parts=%d results=%d", removed, len(results))
+        return screened
+
     def _finalize_answer(
         self, query: str, results: list[RetrievalResult], answer: str
     ) -> tuple[str, list[int]] | None:
@@ -359,7 +401,9 @@ class RAGPipeline:
         query = self._condense_question(query, history)
         timer.mark_rewrite_done()
         metadata_filters = normalize_metadata_filters(metadata_filters)
-        results = self._retrieve(query=query, top_k=top_k, metadata_filters=metadata_filters)
+        results = self._screen(
+            self._retrieve(query=query, top_k=top_k, metadata_filters=metadata_filters)
+        )
         timer.mark_retrieval_done()
         return query, metadata_filters, results, timer
 
@@ -421,8 +465,9 @@ class RAGPipeline:
         if not self._should_abstain(results):
             timer.start_generation()
             answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
-            generated = self._check_grounding(
-                results, self._finalize_answer(query, results, answer)
+            generated = self._check_links(
+                results,
+                self._check_grounding(results, self._finalize_answer(query, results, answer)),
             )
 
         return self._respond(
@@ -462,8 +507,11 @@ class RAGPipeline:
             ):
                 parts.append(delta)
                 yield delta
-            generated = self._check_grounding(
-                results, self._finalize_answer(query, results, self._clean("".join(parts)))
+            generated = self._check_links(
+                results,
+                self._check_grounding(
+                    results, self._finalize_answer(query, results, self._clean("".join(parts)))
+                ),
             )
 
         yield self._respond(

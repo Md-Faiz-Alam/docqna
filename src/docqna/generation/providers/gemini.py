@@ -13,7 +13,7 @@ from docqna.exceptions import (
     LLMModelError,
     LLMRateLimitError,
 )
-from docqna.generation.providers.base import BaseLLMProvider
+from docqna.generation.providers.base import BaseLLMProvider, TokenUsage
 
 THINKING_LEVELS = {"minimal", "low", "medium", "high"}
 
@@ -94,6 +94,17 @@ class GeminiProvider(BaseLLMProvider):
         return GenerationError(f"Gemini generation failed using model '{self.model}'.")
 
     @staticmethod
+    def _usage(response: Any) -> TokenUsage | None:
+        meta = getattr(response, "usage_metadata", None)
+        if meta is None or meta.prompt_token_count is None:
+            return None
+        return TokenUsage(
+            input_tokens=meta.prompt_token_count or 0,
+            output_tokens=meta.candidates_token_count or 0,
+            thinking_tokens=meta.thoughts_token_count or 0,
+        )
+
+    @staticmethod
     def _blocked(response: Any) -> bool:
         feedback = getattr(response, "prompt_feedback", None)
         return bool(feedback is not None and getattr(feedback, "block_reason", None))
@@ -102,6 +113,7 @@ class GeminiProvider(BaseLLMProvider):
         """Generate a complete response."""
 
         self._check_prompt(prompt)
+        self.last_usage = None
         try:
             response = self.client.models.generate_content(
                 model=self.model, contents=prompt, config=self._config(system_prompt)
@@ -109,6 +121,7 @@ class GeminiProvider(BaseLLMProvider):
         except Exception as exc:
             raise self._translate(exc) from exc
 
+        self.last_usage = self._usage(response)
         if self._blocked(response):
             raise GenerationError("Gemini declined to answer this request.")
         content = (response.text or "").strip()
@@ -120,12 +133,15 @@ class GeminiProvider(BaseLLMProvider):
         """Yield response text as Gemini produces it."""
 
         self._check_prompt(prompt)
+        self.last_usage = None
         produced = False
         try:
             stream = self.client.models.generate_content_stream(
                 model=self.model, contents=prompt, config=self._config(system_prompt)
             )
             for chunk in stream:
+                # Each chunk reports the running total; the last one is final.
+                self.last_usage = self._usage(chunk) or self.last_usage
                 if self._blocked(chunk):
                     raise GenerationError("Gemini declined to answer this request.")
                 text = chunk.text

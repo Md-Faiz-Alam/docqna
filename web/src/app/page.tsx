@@ -67,6 +67,7 @@ export default function HomePage() {
   const gemini = quality("gemini");
   const local = quality("ollama");
   const invented = inventedAnswers(gemini);
+  const heldoutGemini = results.heldout?.rows.find((row) => row.provider === "gemini");
   const totalQuestions = results.public_benchmark.answerable + results.public_benchmark.unanswerable;
 
   const comparison = [
@@ -94,7 +95,7 @@ export default function HomePage() {
             >
               <span className="rounded-full bg-primary px-2 py-0.5 font-medium text-primary-foreground">New</span>
               <span className="text-muted-foreground">
-                {percent(gemini.public.correct)} correct, 0 made-up answers
+                Now tested on unseen questions and prompt-injection attacks
               </span>
               <ArrowRightIcon className="size-3 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden />
             </Link>
@@ -160,7 +161,7 @@ export default function HomePage() {
                     <CountUp value={invented.count} /> <span className="text-2xl text-muted-foreground">/ {invented.total}</span>
                   </>
                 ),
-                label: "Made-up answers to unanswerable questions",
+                label: "Made-up answers on the tuned test sets",
               },
               {
                 value: <CountUp value={gemini.public.median_seconds ?? 2} decimals={1} suffix=" s" />,
@@ -175,7 +176,10 @@ export default function HomePage() {
           </ul>
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Measured on {totalQuestions} public questions about fictional company documents, plus a private
-            set.{" "}
+            set, which the settings were tuned on.
+            {heldoutGemini
+              ? ` On ${heldoutGemini.unanswerable} unseen trick questions from SQuAD 2.0, Gemini still answered ${heldoutGemini.made_up}.`
+              : ""}{" "}
             <Link href="/results" className="font-medium text-primary underline-offset-4 hover:underline">
               Methodology
             </Link>
@@ -191,8 +195,8 @@ export default function HomePage() {
             Answers you can verify in one click
           </h2>
           <p className="mt-3 text-muted-foreground text-pretty">
-            Most chat-with-PDF tools sound confident even when they are wrong. DocQ&amp;A is designed and
-            measured around one rule: never invent an answer.
+            Most chat-with-PDF tools sound confident even when they are wrong. DocQ&amp;A is designed around
+            one rule, never invent an answer, and measures honestly where it still does.
           </p>
         </Reveal>
 

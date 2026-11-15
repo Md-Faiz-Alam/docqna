@@ -16,6 +16,7 @@ from docqna.exceptions import (
     LLMRateLimitError,
 )
 from docqna.generation.providers import GeminiProvider, OllamaProvider
+from docqna.generation.providers.base import TokenUsage
 from docqna.settings import Settings
 
 
@@ -195,3 +196,54 @@ def test_each_provider_uses_its_own_measured_grounding_threshold() -> None:
 def test_unknown_provider_is_rejected() -> None:
     with pytest.raises(ValueError):
         Settings(_env_file=None, llm_provider="openai")  # type: ignore[call-arg]
+
+
+def _usage(prompt: int, output: int, thoughts: int | None = None) -> Any:
+    return SimpleNamespace(
+        prompt_token_count=prompt, candidates_token_count=output, thoughts_token_count=thoughts
+    )
+
+
+def test_token_usage_is_recorded_for_cost_reporting() -> None:
+    reply = _response("Answer [1].")
+    reply.usage_metadata = _usage(900, 25, 4)
+    provider = make_provider(FakeModels(reply=reply))
+
+    provider.generate("prompt")
+
+    assert provider.last_usage == TokenUsage(input_tokens=900, output_tokens=25, thinking_tokens=4)
+
+
+def test_streaming_keeps_the_final_token_usage() -> None:
+    first, last = _response("Ans"), _response("wer [1].")
+    first.usage_metadata = _usage(900, 2)
+    last.usage_metadata = _usage(900, 25)
+    provider = make_provider(FakeModels(chunks=[first, last]))
+
+    assert "".join(provider.generate_stream("prompt")) == "Answer [1]."
+    assert provider.last_usage == TokenUsage(input_tokens=900, output_tokens=25)
+
+
+def test_missing_usage_metadata_leaves_usage_empty() -> None:
+    provider = make_provider(FakeModels(reply=_response("Answer [1].")))
+
+    provider.generate("prompt")
+
+    assert provider.last_usage is None
+
+
+def test_ollama_token_counts_are_recorded() -> None:
+    from ollama import ChatResponse
+
+    provider = OllamaProvider(base_url="http://127.0.0.1:1", model="phi3:mini")
+    reply = ChatResponse(
+        model="phi3:mini",
+        message={"role": "assistant", "content": "Answer [1]."},
+        done=True,
+        prompt_eval_count=850,
+        eval_count=40,
+    )
+    provider.client = SimpleNamespace(chat=lambda **kwargs: reply)  # type: ignore[assignment]
+
+    assert provider.generate("prompt") == "Answer [1]."
+    assert provider.last_usage == TokenUsage(input_tokens=850, output_tokens=40)

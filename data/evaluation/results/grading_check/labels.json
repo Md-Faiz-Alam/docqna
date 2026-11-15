@@ -1,0 +1,324 @@
+{
+  "labels": {
+    "g001": {
+      "label": "correct",
+      "note": ""
+    },
+    "g002": {
+      "label": "wrong",
+      "note": "The model answered a different question and introduced an unsupported claim rather than recognizing the altered question as unanswerable."
+    },
+    "g003": {
+      "label": "correct",
+      "note": ""
+    },
+    "g004": {
+      "label": "correct",
+      "note": ""
+    },
+    "g005": {
+      "label": "correct",
+      "note": ""
+    },
+    "g006": {
+      "label": "correct",
+      "note": ""
+    },
+    "g007": {
+      "label": "wrong",
+      "note": "DocQ&A confused the year the Normans lost the city (1085) with the year they captured it (1082)."
+    },
+    "g008": {
+      "label": "correct",
+      "note": ""
+    },
+    "g009": {
+      "label": "correct",
+      "note": ""
+    },
+    "g010": {
+      "label": "correct",
+      "note": ""
+    },
+    "g011": {
+      "label": "correct",
+      "note": ""
+    },
+    "g012": {
+      "label": "correct",
+      "note": ""
+    },
+    "g013": {
+      "label": "correct",
+      "note": ""
+    },
+    "g014": {
+      "label": "correct",
+      "note": ""
+    },
+    "g015": {
+      "label": "correct",
+      "note": ""
+    },
+    "g016": {
+      "label": "correct",
+      "note": "Although SQuAD marks this question as unanswerable from the supplied paragraph, DocQ&A's answer is supported elsewhere in the Normans article.\n\nEvidence: In 911, Rollo led the Norse settlers who established themselves in Normandy and pledged fealty to King Charles III of West Francia. This supports the answer's identification of Rollo as their leader in the 10th century.\nImportant distinction: The supplied paragraph discusses Normans serving under George Maniaces in 1038 (11th century), so it cannot support the answer. However, your grading instructions explicitly allow answers supported elsewhere in the full article.\n\nEvaluation: Historically supported and responsive to the actual question. The fact that SQuAD labels it unanswerable does not automatically make it wrong."
+    },
+    "g017": {
+      "label": "correct",
+      "note": ""
+    },
+    "g018": {
+      "label": "correct",
+      "note": ""
+    },
+    "g019": {
+      "label": "wrong",
+      "note": "The question incorrectly assumes that economic growth and income are not considered a means to an end. DocQ&A repeats the source's original statement without addressing this contradiction.\nCorrect behavior: Identify the false premise and clarify that the capabilities approach does consider economic growth and income a means to an end, rather than an end in themselves."
+    },
+    "g020": {
+      "label": "correct",
+      "note": ""
+    },
+    "g021": {
+      "label": "correct",
+      "note": ""
+    },
+    "g022": {
+      "label": "correct",
+      "note": "Reason: DocQ&A correctly identifies distributive efficiency as the concept illustrated by unequal utility from housing.\n\nSource evidence: “A house that provides less utility to a millionaire as a summer home than it would to a homeless family of five, is an example of reduced ‘distributive efficiency’ within society.”\n\nEvaluation: Although the question was deliberately altered by replacing “house” with “adobe,” the answer correctly identifies the underlying example and provides the concept requested. The added explanation is supported by the source."
+    },
+    "g023": {
+      "label": "correct",
+      "note": ""
+    },
+    "g024": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A incorrectly assumes that most species of the genus Ocryopsis are hermaphrodites. The source does not establish this.\n\nSource evidence: “Almost all species are hermaphrodites ... except that in two species of the genus Ocryopsis individuals remain of the same single sex all their lives.”\n\nCritical error: The statement about almost all species refers to ctenophores generally, not specifically to the genus Ocryopsis. DocQ&A incorrectly applies that general statement to the genus.\n\nCorrect behavior: State that two Ocryopsis species have individuals that remain a single sex throughout life, but the provided text does not establish the reproductive characteristics of most species in that genus."
+    },
+    "g025": {
+      "label": "correct",
+      "note": ""
+    },
+    "g026": {
+      "label": "correct",
+      "note": ""
+    },
+    "g027": {
+      "label": "correct",
+      "note": ""
+    },
+    "g028": {
+      "label": "correct",
+      "note": ""
+    },
+    "g029": {
+      "label": "correct",
+      "note": ""
+    },
+    "g030": {
+      "label": "correct",
+      "note": ""
+    },
+    "g031": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A answers a different question from the one asked.\n\nThe question asks what volume is normally as concentrated as. However, the model answers about ctenophore body fluids.\n\nSource evidence: “Their body fluids are normally as concentrated as seawater.”\n\nThe passage describes changes in mesoglea volume, but does not say that volume itself has a concentration.\n\nCritical error: DocQ&A appears to have replaced the deliberately altered word “volume” with “body fluids” and answered the original question.\n\nCorrect behavior: Explain that the question contains a false premise: the source compares the concentration of body fluids with seawater, not the concentration of volume."
+    },
+    "g032": {
+      "label": "correct",
+      "note": ""
+    },
+    "g033": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A incorrectly identifies the Norse Vikings and their Frankish wives as the ruling class before the Normans. The correct answer is the Anglo-Saxons.\n\nSource evidence: “The invading Normans and their descendants replaced the Anglo-Saxons as the ruling class of England.”\n\nCritical error: DocQ&A confused the Normans' ancestry with the ruling class they replaced during the Norman conquest of England in 1066."
+    },
+    "g034": {
+      "label": "correct",
+      "note": ""
+    },
+    "g035": {
+      "label": "correct",
+      "note": ""
+    },
+    "g036": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A incorrectly states that the Dragonnades began in 1685. Historical sources establish that they began in 1681.\n\nSource analysis: The supplied paragraph mentions the Dragonnades but does not specify their starting year. It identifies 1685 as the year Louis XIV issued the Edict of Fontainebleau, revoking the Edict of Nantes.\n\nIndependent verification: The Musée protestant confirms that the first Dragonnade occurred in Poitou in 1681. \nMusée protestant+1\n\n\nCritical error: DocQ&A appears to have confused the date of the Edict of Fontainebleau with the beginning of the Dragonnades.\n\nCorrect answer: 1681."
+    },
+    "g037": {
+      "label": "correct",
+      "note": ""
+    },
+    "g038": {
+      "label": "correct",
+      "note": ""
+    },
+    "g039": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A answers a different question. The question specifically asks about richer members of society, but the model answers about poorer sections of society.\n\nSource evidence: “Special efforts must be made to ensure poorer sections of society are able to participate in economic growth.”\n\nCritical error: The question deliberately replaces poorer with richer. DocQ&A fails to recognize this change and reproduces the answer to the original question.\n\nCorrect behavior: State that the passage discusses special efforts for poorer sections of society, not richer members. It does not establish what efforts are necessary for richer people."
+    },
+    "g040": {
+      "label": "correct",
+      "note": ""
+    },
+    "g041": {
+      "label": "correct",
+      "note": ""
+    },
+    "g042": {
+      "label": "correct",
+      "note": ""
+    },
+    "g043": {
+      "label": "correct",
+      "note": ""
+    },
+    "g044": {
+      "label": "correct",
+      "note": ""
+    },
+    "g045": {
+      "label": "partly",
+      "note": "Reason: DocQ&A correctly states that Business customers have a one-hour first-response target for Priority 1 outages.\n\nSource evidence: “For Business subscriptions the first response targets are one hour for Priority 1.”\n\nMinor error: The additional escalation statement is imprecise. The SLA specifies that customers may escalate after a Priority 1 issue remains unresolved for four hours, not that escalation must occur within four hours.\n\nEvaluation: The core answer is correct, but the additional statement misrepresents the escalation timing."
+    },
+    "g046": {
+      "label": "correct",
+      "note": ""
+    },
+    "g047": {
+      "label": "correct",
+      "note": ""
+    },
+    "g048": {
+      "label": "correct",
+      "note": ""
+    },
+    "g049": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A answers a completely different question. It discusses Huguenot weaving in Canterbury rather than the Napoleonic occupation of Prussia in 1806–1807.\n\nSource evidence: “The occupation of Prussia by Napoleon in 1806-07.”\n\nCritical error: DocQ&A misinterpreted “occupation” as a profession (weaving) rather than a military occupation. It also introduced unrelated details about Canterbury.\n\nCorrect answer: 1806–1807."
+    },
+    "g050": {
+      "label": "partly",
+      "note": "Reason: DocQ&A correctly identifies the four-hour threshold for escalating an unresolved Priority 1 outage, but incorrectly describes the timing as “within four hours.”\n\nSource evidence: “If a Priority 1 issue is not resolved within four hours, the customer may escalate to the duty engineering manager.”\n\nCritical distinction:\n- DocQ&A: Escalation is allowed within four hours.\n- Document: Escalation is allowed after the issue remains unresolved for four hours.\nCorrect answer: You may escalate a Priority 1 outage to the duty engineering manager if it remains unresolved after four hours."
+    },
+    "g051": {
+      "label": "correct",
+      "note": ""
+    },
+    "g052": {
+      "label": "correct",
+      "note": ""
+    },
+    "g053": {
+      "label": "correct",
+      "note": ""
+    },
+    "g054": {
+      "label": "correct",
+      "note": ""
+    },
+    "g055": {
+      "label": "correct",
+      "note": ""
+    },
+    "g056": {
+      "label": "correct",
+      "note": ""
+    },
+    "g057": {
+      "label": "correct",
+      "note": ""
+    },
+    "g058": {
+      "label": "correct",
+      "note": ""
+    },
+    "g059": {
+      "label": "correct",
+      "note": ""
+    },
+    "g060": {
+      "label": "wrong",
+      "note": "Reason: DocQ&A incorrectly claims that many countries do not have a gender pay gap favoring men. The source explicitly states the opposite.\n\nSource evidence: “In many countries, there is a Gender pay gap in favor of males in the labor market.”\n\nCritical error: The question deliberately introduces the word “isn't”, reversing the original meaning. DocQ&A repeats that false premise as a factual claim instead of identifying the contradiction.\n\nCorrect behavior: Explain that the premise is incorrect: the passage states that a gender pay gap favoring men exists in many countries. It does not identify a type of pay gap that is absent."
+    },
+    "g061": {
+      "label": "correct",
+      "note": ""
+    },
+    "g062": {
+      "label": "correct",
+      "note": ""
+    },
+    "g063": {
+      "label": "correct",
+      "note": ""
+    },
+    "g064": {
+      "label": "correct",
+      "note": ""
+    },
+    "g065": {
+      "label": "correct",
+      "note": ""
+    },
+    "g066": {
+      "label": "correct",
+      "note": "Reason: DocQ&A correctly identifies the Victorian Alps in northeastern Victoria as the state's highest mountainous region.\n\nSource evidence: “The Victorian Alps in the northeast are the coldest part of Victoria.” The passage also refers to the highest parts of the ranges.\n\nEvaluation: Although SQuAD labels the altered question as unanswerable, the answer is consistent with the geographical information provided. The additional temperature records and descriptions are also supported by the source."
+    },
+    "g067": {
+      "label": "correct",
+      "note": ""
+    },
+    "g068": {
+      "label": "correct",
+      "note": ""
+    },
+    "g069": {
+      "label": "correct",
+      "note": ""
+    },
+    "g070": {
+      "label": "correct",
+      "note": ""
+    },
+    "g071": {
+      "label": "correct",
+      "note": ""
+    },
+    "g072": {
+      "label": "correct",
+      "note": ""
+    },
+    "g073": {
+      "label": "correct",
+      "note": ""
+    },
+    "g074": {
+      "label": "correct",
+      "note": ""
+    },
+    "g075": {
+      "label": "correct",
+      "note": ""
+    },
+    "g076": {
+      "label": "correct",
+      "note": ""
+    },
+    "g077": {
+      "label": "correct",
+      "note": ""
+    },
+    "g078": {
+      "label": "correct",
+      "note": ""
+    },
+    "g079": {
+      "label": "correct",
+      "note": "Reason: DocQ&A correctly identifies the 1910–1940 high school movement and the period thereafter as a time when income inequality declined in the United States.\n\nSource evidence: “Income inequality did fall in the United States during its High school movement from 1910 to 1940 and thereafter.”\n\nEvaluation: Although SQuAD marks this question as unanswerable, the supplied paragraph directly supports DocQ&A's answer. The model does not claim an exact starting year; it correctly identifies the period of decline."
+    },
+    "g080": {
+      "label": "partly",
+      "note": "Reason: DocQ&A correctly states that the exact number of Huguenots killed throughout France is unknown. However, its additional estimate of 5,000–30,000 deaths is not established as a nationwide total by the source text.\n\nSource evidence: “The exact number of fatalities throughout the country is not known.”\n\nEvaluation:\n- Correct: Acknowledges that the exact nationwide death toll is unknown.\n- Correct: Identifies the St. Bartholomew's Day Massacre as the relevant event.\n- Problem: Introduces a numerical range without clearly establishing its basis. The source gives different figures for different locations and dates, not a definitive nationwide range."
+    }
+  }
+}

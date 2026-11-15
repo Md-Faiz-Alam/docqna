@@ -1,0 +1,1206 @@
+{
+  "description": "Blind sample for the grading check: answers the final system showed, 20 per group, drawn by experiments/grading_check.py (seed 2026). SQuAD-derived text is CC BY-SA 4.0 (Rajpurkar, Jia and Liang, 2018).",
+  "available": {
+    "public/gemini": 58,
+    "heldout/gemini": 65,
+    "public/phi3_mini": 42,
+    "heldout/phi3_mini": 75
+  },
+  "items": [
+    {
+      "group": "public/gemini",
+      "case_id": "cb_02",
+      "should_answer": true,
+      "question": "Are the hard drives that come in the box covered too?",
+      "answer": "Yes, the drives that are supplied with the device are covered by the warranty for two years [2].",
+      "reference": [
+        "drives that are supplied with the device are covered for two years"
+      ],
+      "reference_kind": "expected",
+      "context": "The CloudBox S2 enclosure is covered by a limited hardware warranty of three years from the date of purchase. Drives that are supplied with the device are covered for two years. The power adapter is covered for one year. The warranty covers defects in materials and workmanship under normal use. To claim warranty service, the customer must provide the device serial number and a proof of purchase showing the date and the seller.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g001"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad2654fd7d075001a4291aa",
+      "should_answer": false,
+      "question": "What doesn't it take a country with high inequality longer to achieve?",
+      "answer": "A country with high inequality does not take longer to achieve economic growth. [2]",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "While acknowledging the central role economic growth can potentially play in human development, poverty reduction and the achievement of the Millennium Development Goals, it is becoming widely understood amongst the development community that special efforts must be made to ensure poorer sections of society are able to participate in economic growth. The effect of economic growth on poverty reduction – the growth elasticity of poverty – can depend on the existing level of inequality. For instance, with low inequality a country with a growth rate of 2% per head and 40% of its population living in poverty, can halve poverty in ten years, but a country with high inequality would take nearly 60 years to achieve the same reduction. In the words of the Secretary General of the United Nations Ban Ki-Moon: \"While economic growth is necessary, it is not sufficient for progress on reducing poverty.\"",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g002"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_09",
+      "should_answer": true,
+      "question": "When does planned maintenance happen?",
+      "answer": "Planned maintenance takes place on Sundays between 01:00 and 05:00 UTC, with customers notified at least seven days in advance [1].",
+      "reference": [
+        "sundays between 01:00 and 05:00 utc"
+      ],
+      "reference_kind": "expected",
+      "context": "Routine maintenance takes place on Sundays between 01:00 and 05:00 UTC. Customers are notified at least seven days in advance through the status page and by email. Emergency maintenance to fix critical security vulnerabilities may be performed with 24 hours' notice. Maintenance is limited to eight hours per calendar month in total.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g003"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_57268c01dd62a815002e8916",
+      "should_answer": true,
+      "question": "How does cooling of the local environment affect the mnemiopsis?",
+      "answer": "A cooling of the local climate from 1991 to 1993 significantly slowed the metabolism of Mnemiopsis [1].",
+      "reference": [
+        "significantly slowed the animal's metabolism",
+        "slowed the animal's metabolism"
+      ],
+      "reference_kind": "expected",
+      "context": "On the other hand, in the late 1980s the Western Atlantic ctenophore Mnemiopsis leidyi was accidentally introduced into the Black Sea and Sea of Azov via the ballast tanks of ships, and has been blamed for causing sharp drops in fish catches by eating both fish larvae and small crustaceans that would otherwise feed the adult fish. Mnemiopsis is well equipped to invade new territories (although this was not predicted until after it so successfully colonized the Black Sea), as it can breed very rapidly and tolerate a wide range of water temperatures and salinities. The impact was increased by chronic overfishing, and by eutrophication that gave the entire ecosystem a short-term boost, causing the Mnemiopsis population to increase even faster than normal – and above all by the absence of efficient predators on these introduced ctenophores. Mnemiopsis populations in those areas were eventually brought under control by the accidental introduction of the Mnemiopsis-eating North American ctenophore Beroe ovata, and by a cooling of the local climate from 1991 to 1993, which significantly slowed the animal's metabolism. However the abundance of plankton in the area seems unlikely to be restored to pre-Mnemiopsis levels.",
+      "document": "ctenophora.txt",
+      "auto_correct": false,
+      "item_id": "g004"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_07",
+      "should_answer": true,
+      "question": "What is the first response time for urgent tickets on Enterprise?",
+      "answer": "The first response time for urgent tickets on Enterprise subscriptions is 15 minutes [1].",
+      "reference": [
+        "15-minute first response for priority 1"
+      ],
+      "reference_kind": "expected",
+      "context": "Support requests are classified by the customer when they are opened and may be reclassified by Northwind support. Priority 1 means the production service is down or unusable for all users. Priority 2 means a major feature is impaired without a workaround. Priority 3 means a minor issue or a question. For Business subscriptions the first response targets are one hour for Priority 1, four business hours for Priority 2 and two business days for Priority 3. Enterprise subscriptions receive a 15-minute first response for Priority 1, available around the clock, and a named technical account manager.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g005"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5727e6cbff5b5019007d97ef",
+      "should_answer": true,
+      "question": "According to Oxfam, the 85 richest people have wealth equal to how many average people?",
+      "answer": "According to a January 2014 report by Oxfam, the 85 wealthiest individuals in the world possess a combined wealth equal to that of the bottom 50% of the global population, which equates to about 3.5 billion people [1].",
+      "reference": [
+        "3.5 billion",
+        "50%",
+        "about 3.5 billion people"
+      ],
+      "reference_kind": "expected",
+      "context": "A study by the World Institute for Development Economics Research at United Nations University reports that the richest 1% of adults alone owned 40% of global assets in the year 2000. The three richest people in the world possess more financial assets than the lowest 48 nations combined. The combined wealth of the \"10 million dollar millionaires\" grew to nearly $41 trillion in 2008. A January 2014 report by Oxfam claims that the 85 wealthiest individuals in the world have a combined wealth equal to that of the bottom 50% of the world's population, or about 3.5 billion people. According to a Los Angeles Times analysis of the report, the wealthiest 1% owns 46% of the world's wealth; the 85 richest people, a small part of the wealthiest 1%, own about 0.7% of the human population's wealth, which is the same as the bottom half of the population. More recently, in January 2015, Oxfam reported that the wealthiest 1 percent will own more than half of the global wealth by 2016. An October 2014 study by Credit Suisse also claims that the top 1% now own nearly half of the world's wealth and that the accelerating disparity could trigger a recession. In October 2015, Credit Suisse published a study which shows global inequality continues to increase, and that half of the world's wealth is now in the hands of those in the top percentile, whose assets each exceed $759,900. A 2016 report by Oxfam claims that the 62 wealthiest individuals own as much wealth as the poorer half of the global population combined. Oxfam's claims have however been questioned on the basis of the methodology used: by using net wealth (adding up assets and subtracting debts), the Oxfam report, for instance, finds that there are more poor people in the United States and Western Europe than in China (due to a greater tendency to take on debts).[unreliable source?][unreliable source?] Anthony Shorrocks, the lead author of the Credit Suisse report which is one of the sources of Oxfam's data, considers the criticism about debt to be a \"silly argument\" and \"a non-issue . . . a diversion.\"",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g006"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_56de148dcffd8e1900b4b5bd",
+      "should_answer": true,
+      "question": "When did Dyrrachium  fall to the Normans?",
+      "answer": "Dyrrachium fell to the Normans in 1085, after the death of Robert [1].",
+      "reference": [
+        "1082",
+        "February 1082"
+      ],
+      "reference_kind": "expected",
+      "context": "Robert Guiscard, an other Norman adventurer previously elevated to the dignity of count of Apulia as the result of his military successes, ultimately drove the Byzantines out of southern Italy. Having obtained the consent of pope Gregory VII and acting as his vassal, Robert continued his campaign conquering the Balkan peninsula as a foothold for western feudal lords and the Catholic Church. After allying himself with Croatia and the Catholic cities of Dalmatia, in 1081 he led an army of 30,000 men in 300 ships landing on the southern shores of Albania, capturing Valona, Kanina, Jericho (Orikumi), and reaching Butrint after numerous pillages. They joined the fleet that had previously conquered Corfu and attacked Dyrrachium from land and sea, devastating everything along the way. Under these harsh circumstances, the locals accepted the call of emperor Alexius I Comnenus to join forces with the Byzantines against the Normans. The Albanian forces could not take part in the ensuing battle because it had started before their arrival. Immediately before the battle, the Venetian fleet had secured a victory in the coast surrounding the city. Forced to retreat, Alexius ceded the command to a high Albanian official named Comiscortes in the service of Byzantium. The city's garrison resisted until February 1082, when Dyrrachium was betrayed to the Normans by the Venetian and Amalfitan merchants who had settled there. The Normans were now free to penetrate into the hinterland; they took Ioannina and some minor cities in southwestern Macedonia and Thessaly before appearing at the gates of Thessalonica. Dissension among the high ranks coerced the Normans to retreat to Italy. They lost Dyrrachium, Valona, and Butrint in 1085, after the death of Robert.",
+      "document": "normans.txt",
+      "auto_correct": false,
+      "item_id": "g007"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "cb_06",
+      "should_answer": true,
+      "question": "Who pays the postage when I return the product?",
+      "answer": "The customer pays return shipping unless the device is faulty [1].",
+      "reference": [
+        "the customer pays return shipping unless the device is faulty"
+      ],
+      "reference_kind": "expected",
+      "context": "Products bought directly from the Northwind Devices online store can be returned within 30 days of delivery for a full refund, provided the device is undamaged and all accessories are included. Opened drives that have been formatted are still eligible. The customer pays return shipping unless the device is faulty. Refunds are issued to the original payment method within 14 days after the returned device has been inspected. Products bought from other retailers must be returned to that retailer under its own policy.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g008"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_57268a37f1498d1400e8e33c",
+      "should_answer": true,
+      "question": "Why was it thought that  ctenophores were a poor diet for other animals?",
+      "answer": "Ctenophores were thought to be a poor diet for other animals because of their low ratio of organic matter to salt and water, making them less nutritious [1].",
+      "reference": [
+        "low ratio of organic matter to salt and water",
+        "their low ratio of organic matter to salt and water"
+      ],
+      "reference_kind": "expected",
+      "context": "Ctenophores used to be regarded as \"dead ends\" in marine food chains because it was thought their low ratio of organic matter to salt and water made them a poor diet for other animals. It is also often difficult to identify the remains of ctenophores in the guts of possible predators, although the combs sometimes remain intact long enough to provide a clue. Detailed investigation of chum salmon, Oncorhynchus keta, showed that these fish digest ctenophores 20 times as fast as an equal weight of shrimps, and that ctenophores can provide a good diet if there are enough of them around. Beroids prey mainly on other ctenophores. Some jellyfish and turtles eat large quantities of ctenophores, and jellyfish may temporarily wipe out ctenophore populations. Since ctenophores and jellyfish often have large seasonal variations in population, most fish that prey on them are generalists, and may have a greater effect on populations than the specialist jelly-eaters. This is underlined by an observation of herbivorous fishes deliberately feeding on gelatinous zooplankton during blooms in the Red Sea. The larvae of some sea anemones are parasites on ctenophores, as are the larvae of some flatworms that parasitize fish when they reach adulthood.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g009"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_12",
+      "should_answer": true,
+      "question": "How frequently are the production databases backed up?",
+      "answer": "Production databases are backed up every six hours [1].",
+      "reference": [
+        "backed up every six hours"
+      ],
+      "reference_kind": "expected",
+      "context": "Production databases are backed up every six hours, and backups are retained for 35 days. A copy of every backup is stored in a second EU region and is immutable for 14 days, so that ransomware cannot delete it. Restore tests are performed every quarter for each critical system, and the results are recorded. The recovery point objective for critical systems is six hours and the recovery time objective is eight hours.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g010"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_572a2224af94a219006aa824",
+      "should_answer": true,
+      "question": "What can and old, ill man not do?",
+      "answer": "An old, ill man cannot earn as much income as a healthy young man due to his lower capabilities [1].",
+      "reference": [
+        "earn as much as a healthy young man"
+      ],
+      "reference_kind": "expected",
+      "context": "When a person’s capabilities are lowered, they are in some way deprived of earning as much income as they would otherwise. An old, ill man cannot earn as much as a healthy young man; gender roles and customs may prevent a woman from receiving an education or working outside the home. There may be an epidemic that causes widespread panic, or there could be rampant violence in the area that prevents people from going to work for fear of their lives. As a result, income and economic inequality increases, and it becomes more difficult to reduce the gap without additional aid. To prevent such inequality, this approach believes it’s important to have political freedom, economic facilities, social opportunities, transparency guarantees, and protective security to ensure that people aren’t denied their functionings, capabilities, and agency and can thus work towards a better relevant income.",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g011"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_03",
+      "should_answer": true,
+      "question": "What kind of second factor do admins have to use?",
+      "answer": "Administrators are required to use hardware security keys as their second factor [1].",
+      "reference": [
+        "hardware security keys are required for administrators"
+      ],
+      "reference_kind": "expected",
+      "context": "Passwords for company accounts must contain at least 14 characters. Passphrases made of several unrelated words are encouraged. Passwords must not be reused across services and must be stored only in the approved company password manager. Multi-factor authentication is mandatory for email, the VPN, the source code platform and every system that holds confidential data. Hardware security keys are required for administrators; other staff may use the authenticator app. SMS codes are not accepted as a second factor. Passwords are not rotated on a fixed schedule; they must be changed immediately if a compromise is suspected.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g012"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5729da0faf94a219006aa678",
+      "should_answer": true,
+      "question": "What type of wages result from jobs where there is low supply but high demand?",
+      "answer": "Jobs where there is a low supply of workers and a high demand for positions result in high wages [1]. This occurs because competition between employers for employees drives up wages [1].",
+      "reference": [
+        "high",
+        "high wages"
+      ],
+      "reference_kind": "expected",
+      "context": "A job where there are many workers willing to work a large amount of time (high supply) competing for a job that few require (low demand) will result in a low wage for that job. This is because competition between workers drives down the wage. An example of this would be jobs such as dish-washing or customer service. Competition amongst workers tends to drive down wages due to the expendable nature of the worker in relation to his or her particular job. A job where there are few able or willing workers (low supply), but a large need for the positions (high demand), will result in high wages for that job. This is because competition between employers for employees will drive up the wage. Examples of this would include jobs that require highly developed skills, rare abilities, or a high level of risk. Competition amongst employers tends to drive up wages due to the nature of the job, since there is a relative shortage of workers for the particular position. Professional and labor organizations may limit the supply of workers which results in higher demand and greater incomes for members. Members may also receive higher wages through collective bargaining, political influence, or corruption.",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g013"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_02",
+      "should_answer": true,
+      "question": "How long must errors last before it counts as downtime?",
+      "answer": "Errors must last at least five consecutive minutes before it counts as downtime [1].",
+      "reference": [
+        "at least five consecutive minutes"
+      ],
+      "reference_kind": "expected",
+      "context": "\"Monthly Uptime Percentage\" means the total minutes in a calendar month minus the minutes of Downtime, divided by the total minutes in that month. \"Downtime\" means a period of at least five consecutive minutes during which the platform API returns server errors for more than five percent of requests. Scheduled maintenance announced in advance is not counted as Downtime.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g014"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_56de17f9cffd8e1900b4b5e1",
+      "should_answer": true,
+      "question": "Who was Margaret's husband?",
+      "answer": "King Malcolm III of Scotland married Margaret, the sister of Edgar Atheling [1].",
+      "reference": [
+        "King Malcolm III",
+        "King Malcolm III of Scotland"
+      ],
+      "reference_kind": "expected",
+      "context": "One of the claimants of the English throne opposing William the Conqueror, Edgar Atheling, eventually fled to Scotland. King Malcolm III of Scotland married Edgar's sister Margaret, and came into opposition to William who had already disputed Scotland's southern borders. William invaded Scotland in 1072, riding as far as Abernethy where he met up with his fleet of ships. Malcolm submitted, paid homage to William and surrendered his son Duncan as a hostage, beginning a series of arguments as to whether the Scottish Crown owed allegiance to the King of England.",
+      "document": "normans.txt",
+      "auto_correct": true,
+      "item_id": "g015"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad3ea79604f3c001a3ff6ea",
+      "should_answer": false,
+      "question": "Who did the Normans serve under in the 10th century?",
+      "answer": "In the 10th century, the Normans served under their leader Rollo, who agreed to swear fealty to King Charles III of West Francia [1][4].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "Several families of Byzantine Greece were of Norman mercenary origin during the period of the Comnenian Restoration, when Byzantine emperors were seeking out western European warriors. The Raoulii were descended from an Italo-Norman named Raoul, the Petraliphae were descended from a Pierre d'Aulps, and that group of Albanian clans known as the Maniakates were descended from Normans who served under George Maniaces in the Sicilian expedition of 1038.",
+      "document": "normans.txt",
+      "auto_correct": false,
+      "item_id": "g016"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "cb_12",
+      "should_answer": true,
+      "question": "At what time do firmware updates get installed?",
+      "answer": "Firmware updates are installed automatically between 02:00 and 05:00 local time [2].",
+      "reference": [
+        "between 02:00 and 05:00 local time"
+      ],
+      "reference_kind": "expected",
+      "context": "Security updates for the CloudBox S2 firmware are provided for at least five years after the product was last sold, and feature updates for at least three years. Updates install automatically between 02:00 and 05:00 local time unless automatic updates are switched off in the settings. Installing unofficial firmware voids the software support but does not, by itself, void the hardware warranty.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g017"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_04",
+      "should_answer": true,
+      "question": "How many vacation days does a full-time employee get each year?",
+      "answer": "Full-time employees accrue 24 days of paid annual leave per calendar year [4].",
+      "reference": [
+        "24 days of paid annual leave"
+      ],
+      "reference_kind": "expected",
+      "context": "Full-time employees accrue 24 days of paid annual leave per calendar year. Leave accrues monthly at a rate of two days per completed month of service. Up to five unused days may be carried over into the next calendar year; any remaining balance above five days expires on 31 March of the following year. Requests for leave longer than ten consecutive working days must be submitted to the line manager at least four weeks in advance. Part-time employees receive leave in proportion to their contracted hours.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g018"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad2690ed7d075001a4292b1",
+      "should_answer": false,
+      "question": "In the capabilities approach, grow and income aren't considered a means to an end rather than what?",
+      "answer": "In the capabilities approach, economic growth and income are considered a means to an end rather than the end itself [1].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "The capabilities approach – sometimes called the human development approach – looks at income inequality and poverty as form of “capability deprivation”. Unlike neoliberalism, which “defines well-being as utility maximization”, economic growth and income are considered a means to an end rather than the end itself. Its goal is to “wid[en] people’s choices and the level of their achieved well-being” through increasing functionings (the things a person values doing), capabilities (the freedom to enjoy functionings) and agency (the ability to pursue valued goals).",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g019"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5727ec062ca10214002d99b9",
+      "should_answer": true,
+      "question": "How do competing businesses attract workers?",
+      "answer": "Competing businesses attract workers by offering a higher wage to take advantage of the situation [3]. Additionally, competitors offer higher wages to secure the best of the available labor [3].",
+      "reference": [
+        "by offering a higher wage",
+        "offering a higher wage",
+        "offering a higher wage the best of their labor"
+      ],
+      "reference_kind": "expected",
+      "context": "In a purely capitalist mode of production (i.e. where professional and labor organizations cannot limit the number of workers) the workers wages will not be controlled by these organizations, or by the employer, but rather by the market. Wages work in the same way as prices for any other good. Thus, wages can be considered as a function of market price of skill. And therefore, inequality is driven by this price. Under the law of supply and demand, the price of skill is determined by a race between the demand for the skilled worker and the supply of the skilled worker. \"On the other hand, markets can also concentrate wealth, pass environmental costs on to society, and abuse workers and consumers.\" \"Markets, by themselves, even when they are stable, often lead to high levels of inequality, outcomes that are widely viewed as unfair.\" Employers who offer a below market wage will find that their business is chronically understaffed. Their competitors will take advantage of the situation by offering a higher wage the best of their labor. For a businessman who has the profit motive as the prime interest, it is a losing proposition to offer below or above market wages to workers.",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g020"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_57108198b654c5140001f93b",
+      "should_answer": true,
+      "question": "What country currently has a group who call themselves Huguenots?",
+      "answer": "A small group of Huguenots still resides in Australia, where they maintain their cultural heritage, supported by the Huguenot Society of Australia's genealogical research services. [2]",
+      "reference": [
+        "Australia"
+      ],
+      "reference_kind": "expected",
+      "context": "Approximately one million Protestants in modern France represent some 2% of its population. Most are concentrated in Alsace in northeast France and the Cévennes mountain region in the south, who still regard themselves as Huguenots to this day.[citation needed] A diaspora of French Australians still considers itself Huguenot, even after centuries of exile. Long integrated into Australian society, it is encouraged by the Huguenot Society of Australia to embrace and conserve its cultural heritage, aided by the Society's genealogical research services.",
+      "document": "huguenot.txt",
+      "auto_correct": true,
+      "item_id": "g021"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad260dbd7d075001a428fd9",
+      "should_answer": false,
+      "question": "An adobe that provides more utility to one person than another is an example of reduced what?",
+      "answer": "An adobe or house that provides less utility to a millionaire as a summer home than it would to a homeless family of five exemplifies reduced \"distributive efficiency\" within society [1].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "Following the utilitarian principle of seeking the greatest good for the greatest number – economic inequality is problematic. A house that provides less utility to a millionaire as a summer home than it would to a homeless family of five, is an example of reduced \"distributive efficiency\" within society, that decreases marginal utility of wealth and thus the sum total of personal utility. An additional dollar spent by a poor person will go to things providing a great deal of utility to that person, such as basic necessities like food, water, and healthcare; while, an additional dollar spent by a much richer person will very likely go to luxury items providing relatively less utility to that person. Thus, the marginal utility of wealth per person (\"the additional dollar\") decreases as a person becomes richer. From this standpoint, for any given amount of wealth in society, a society with more equality will have higher aggregate utility. Some studies have found evidence for this theory, noting that in societies where inequality is lower, population-wide satisfaction and happiness tend to be higher.",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g022"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_16",
+      "should_answer": true,
+      "question": "What is the deadline for submitting travel receipts?",
+      "answer": "Business travel expenses must be submitted through the finance portal within 30 days of the trip [1]. Receipts are required for any single expense above 25 euros [1].",
+      "reference": [
+        "within 30 days of the trip"
+      ],
+      "reference_kind": "expected",
+      "context": "Business travel expenses are reimbursed when they are submitted through the finance portal within 30 days of the trip. Receipts are mandatory for any single expense above 25 euros. Economy class is the default for flights shorter than six hours; premium economy may be booked for longer flights. Rail is preferred over flying for journeys under four hours. Meal expenses are capped at 60 euros per day while travelling, excluding alcohol, which is never reimbursed. Hotel bookings must use the corporate travel platform, with a nightly limit of 180 euros in most cities and 250 euros in London, Paris and Zurich.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g023"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5a838db9e60761001a2eb7bd",
+      "should_answer": false,
+      "question": "What are most species of the genus Ocryopsis thought to be?",
+      "answer": "Most species of the genus Ocryopsis are thought to be hermaphrodites, with the exception of two species that remain of the same single sex throughout their lives [2].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "Almost all species are hermaphrodites, in other words they function as both males and females at the same time – except that in two species of the genus Ocryopsis individuals remain of the same single sex all their lives. The gonads are located in the parts of the internal canal network under the comb rows, and eggs and sperm are released via pores in the epidermis. Fertilization is external in most species, but platyctenids use internal fertilization and keep the eggs in brood chambers until they hatch. Self-fertilization has occasionally been seen in species of the genus Mnemiopsis, and it is thought that most of the hermaphroditic species are self-fertile.",
+      "document": "ctenophora.txt",
+      "auto_correct": false,
+      "item_id": "g024"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "hb_08",
+      "should_answer": true,
+      "question": "Can I work from another country for a while, and for how long?",
+      "answer": "Yes, you can work from another country for a while. The maximum duration allowed is 20 working days per calendar year, as stated in the employee handbook [1].",
+      "reference": [
+        "maximum of 20 working days per calendar year"
+      ],
+      "reference_kind": "expected",
+      "context": "Employees may work remotely for up to three days per week after completing their probation period. Remote work requires a secure home network and use of the company VPN for all access to internal systems. Teams must keep Tuesday as a shared in-office collaboration day unless the department head approves an exception in writing. Working from another country is allowed for a maximum of 20 working days per calendar year and must be registered with HR at least two weeks before departure, because of tax and insurance rules.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g025"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_06",
+      "should_answer": true,
+      "question": "How quickly must critical operating system patches be applied?",
+      "answer": "Operating system security updates that are marked as critical by IT must be installed within 72 hours of release [2]. Regular operating system security updates must be installed within 14 days of release [2].",
+      "reference": [
+        "within 72 hours for updates that it marks as critical"
+      ],
+      "reference_kind": "expected",
+      "context": "All laptops must use full-disk encryption and the endpoint protection agent managed by IT. Operating system security updates must be installed within 14 days of release, and within 72 hours for updates that IT marks as critical. Screens must lock automatically after five minutes of inactivity. Personal devices may access company email through the managed mobile app only; they may not connect to internal systems or store company files. USB storage devices are blocked by default and can be enabled for a maximum of seven days on request.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g026"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_570d4c3bfed7b91900d45e35",
+      "should_answer": true,
+      "question": "The passage of what act gave Victoria its own government?",
+      "answer": "The Colony of Victoria Act 1855 gave Victoria its own government. [1]",
+      "reference": [
+        "Colony of Victoria Act",
+        "Colony of Victoria Act 1855",
+        "the Colony of Victoria Act"
+      ],
+      "reference_kind": "expected",
+      "context": "In 1854 at Ballarat there was an armed rebellion against the government of Victoria by miners protesting against mining taxes (the \"Eureka Stockade\"). This was crushed by British troops, but the discontents prompted colonial authorities to reform the administration (particularly reducing the hated mining licence fees) and extend the franchise. Within a short time, the Imperial Parliament granted Victoria responsible government with the passage of the Colony of Victoria Act 1855. Some of the leaders of the Eureka rebellion went on to become members of the Victorian Parliament.",
+      "document": "victoria_australia.txt",
+      "auto_correct": true,
+      "item_id": "g027"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sec_09",
+      "should_answer": true,
+      "question": "How often do managers check who has access to what?",
+      "answer": "Managers review the access rights of their team every quarter [1].",
+      "reference": [
+        "managers review the access rights of their team every quarter"
+      ],
+      "reference_kind": "expected",
+      "context": "Access is granted on the principle of least privilege and must be requested through the access portal with manager approval. Managers review the access rights of their team every quarter. Accounts of people leaving the company are disabled on their last working day by 18:00. Shared accounts are prohibited, except for documented service accounts whose credentials are held in the secrets vault and rotated every 90 days.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g028"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5729e4291d04691400779655",
+      "should_answer": true,
+      "question": "What does high inequality go hand-in-hand with?",
+      "answer": "High inequality goes hand-in-hand with weak labor movements, and conversely, high rates of unionization are associated with very low levels of inequality [1].",
+      "reference": [
+        "weak labor movements"
+      ],
+      "reference_kind": "expected",
+      "context": "Sociologist Jake Rosenfield of the University of Washington asserts that the decline of organized labor in the United States has played a more significant role in expanding the income gap than technological changes and globalization, which were also experienced by other industrialized nations that didn't experience steep surges in inequality. He points out that nations with high rates of unionization, particularly in Scandinavia, have very low levels of inequality, and concludes \"the historical pattern is clear; the cross-national pattern is clear: high inequality goes hand-in-hand with weak labor movements and vice-versa.\"",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g029"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_57264a0ef1498d1400e8db41",
+      "should_answer": true,
+      "question": "Which group of ctenophore are are hardest to study?",
+      "answer": "Oceanic species of ctenophores are hardest to study because they are fragile and do not preserve well, known mainly from photographs and observers' notes [3].",
+      "reference": [
+        "oceanic species"
+      ],
+      "reference_kind": "expected",
+      "context": "For a phylum with relatively few species, ctenophores have a wide range of body plans. Coastal species need to be tough enough to withstand waves and swirling sediment particles, while some oceanic species are so fragile that it is very difficult to capture them intact for study. In addition oceanic species do not preserve well, and are known mainly from photographs and from observers' notes. Hence most attention has until recently concentrated on three coastal genera – Pleurobrachia, Beroe and Mnemiopsis. At least two textbooks base their descriptions of ctenophores on the cydippid Pleurobrachia.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g030"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5a837038e60761001a2eb6f5",
+      "should_answer": false,
+      "question": "What is volume normally as concentrated as?",
+      "answer": "Ctenophore body fluids are normally as concentrated as seawater [1][5].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "It is uncertain how ctenophores control their buoyancy, but experiments have shown that some species rely on osmotic pressure to adapt to water of different densities. Their body fluids are normally as concentrated as seawater. If they enter less dense brackish water, the ciliary rosettes in the body cavity may pump this into the mesoglea to increase its bulk and decrease its density, to avoid sinking. Conversely if they move from brackish to full-strength seawater, the rosettes may pump water out of the mesoglea to reduce its volume and increase its density.",
+      "document": "ctenophora.txt",
+      "auto_correct": false,
+      "item_id": "g031"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_07",
+      "should_answer": true,
+      "question": "How many days per week am I allowed to work from home?",
+      "answer": "After completing your probation period, you are allowed to work remotely for up to three days per week [2].",
+      "reference": [
+        "remotely for up to three days per week"
+      ],
+      "reference_kind": "expected",
+      "context": "Employees may work remotely for up to three days per week after completing their probation period. Remote work requires a secure home network and use of the company VPN for all access to internal systems. Teams must keep Tuesday as a shared in-office collaboration day unless the department head approves an exception in writing. Working from another country is allowed for a maximum of 20 working days per calendar year and must be registered with HR at least two weeks before departure, because of tax and insurance rules.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g032"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_56de16ca4396321400ee25c8",
+      "should_answer": true,
+      "question": "Who was the ruling class ahead of the Normans?",
+      "answer": "The ruling class ahead of the Normans was the Norse Vikings and their Frankish wives. [1]",
+      "reference": [
+        "Anglo-Saxons",
+        "the Anglo-Saxons"
+      ],
+      "reference_kind": "expected",
+      "context": "In 1066, Duke William II of Normandy conquered England killing King Harold II at the Battle of Hastings. The invading Normans and their descendants replaced the Anglo-Saxons as the ruling class of England. The nobility of England were part of a single Normans culture and many had lands on both sides of the channel. Early Norman kings of England, as Dukes of Normandy, owed homage to the King of France for their land on the continent. They considered England to be their most important holding (it brought with it the title of King—an important status symbol).",
+      "document": "normans.txt",
+      "auto_correct": false,
+      "item_id": "g033"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sec_12",
+      "should_answer": true,
+      "question": "How frequently are the production databases backed up?",
+      "answer": "Production databases are backed up every six hours [1].",
+      "reference": [
+        "backed up every six hours"
+      ],
+      "reference_kind": "expected",
+      "context": "Production databases are backed up every six hours, and backups are retained for 35 days. A copy of every backup is stored in a second EU region and is immutable for 14 days, so that ransomware cannot delete it. Restore tests are performed every quarter for each critical system, and the results are recorded. The recovery point objective for critical systems is six hours and the recovery time objective is eight hours.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g034"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "cb_05",
+      "should_answer": true,
+      "question": "How long do I have to send back a CloudBox I bought from your web shop?",
+      "answer": "Products bought directly from the Northwind Devices online store can be returned within 30 days of delivery for a full refund [3]. If you use the advance replacement service during the first year of the warranty, you must return the faulty unit within 14 days in the same packaging [2].",
+      "reference": [
+        "returned within 30 days of delivery"
+      ],
+      "reference_kind": "expected",
+      "context": "Products bought directly from the Northwind Devices online store can be returned within 30 days of delivery for a full refund, provided the device is undamaged and all accessories are included. Opened drives that have been formatted are still eligible. The customer pays return shipping unless the device is faulty. Refunds are issued to the original payment method within 14 days after the returned device has been inspected. Products bought from other retailers must be returned to that retailer under its own policy.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g035"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad24d2ad7d075001a428c22",
+      "should_answer": false,
+      "question": "In what year were the Dragonnades started?",
+      "answer": "The Dragonnades were started in 1685. [1]",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "Louis XIV gained the throne in 1643 and acted increasingly aggressively to force the Huguenots to convert. At first he sent missionaries, backed by a fund to financially reward converts to Catholicism. Then he imposed penalties, closed Huguenot schools and excluded them from favored professions. Escalating, he instituted dragonnades, which included the occupation and looting of Huguenot homes by military troops, in an effort to forcibly convert them. In 1685, he issued the Edict of Fontainebleau, revoking the Edict of Nantes and declaring Protestantism illegal.[citation needed]",
+      "document": "huguenot.txt",
+      "auto_correct": false,
+      "item_id": "g036"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sla_01",
+      "should_answer": true,
+      "question": "What availability is promised to Enterprise customers?",
+      "answer": "Northwind Cloud commits to a Monthly Uptime Percentage of at least 99.95 percent for Enterprise subscriptions [2].",
+      "reference": [
+        "99.95 percent for enterprise subscriptions"
+      ],
+      "reference_kind": "expected",
+      "context": "Northwind Cloud commits to a Monthly Uptime Percentage of at least 99.9 percent for Business subscriptions and 99.95 percent for Enterprise subscriptions. Availability is measured by an independent monitoring service from three regions, and monthly reports are available in the customer console.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g037"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_05",
+      "should_answer": true,
+      "question": "Can I get service credits paid out as a refund?",
+      "answer": "No, service credits are not paid out as cash refunds. Instead, they are applied to the next invoice [1].",
+      "reference": [
+        "cannot be exchanged for cash"
+      ],
+      "reference_kind": "expected",
+      "context": "If the availability commitment is missed, the customer is eligible for a service credit calculated on the monthly fee for the affected service. For Business subscriptions, uptime below 99.9 percent earns a 10 percent credit, below 99.0 percent a 25 percent credit, and below 95.0 percent a 50 percent credit. Enterprise subscriptions earn the same credits with the first threshold at 99.95 percent. Credits must be requested through a support ticket within 30 days after the end of the affected month and are applied to the next invoice. Service credits are the sole remedy for missed availability and cannot be exchanged for cash.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g038"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad2654fd7d075001a4291a8",
+      "should_answer": false,
+      "question": "What needs to be made to ensure richer members of society can participate in economic growth?",
+      "answer": "Efforts must be made to ensure poorer sections of society are able to participate in economic growth, as their exclusion can hinder the reduction of poverty and achievement of development goals [1].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "While acknowledging the central role economic growth can potentially play in human development, poverty reduction and the achievement of the Millennium Development Goals, it is becoming widely understood amongst the development community that special efforts must be made to ensure poorer sections of society are able to participate in economic growth. The effect of economic growth on poverty reduction – the growth elasticity of poverty – can depend on the existing level of inequality. For instance, with low inequality a country with a growth rate of 2% per head and 40% of its population living in poverty, can halve poverty in ten years, but a country with high inequality would take nearly 60 years to achieve the same reduction. In the words of the Secretary General of the United Nations Ban Ki-Moon: \"While economic growth is necessary, it is not sufficient for progress on reducing poverty.\"",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g039"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_14",
+      "should_answer": true,
+      "question": "How much notice do I have to give when I resign after probation?",
+      "answer": "After probation, the notice period for leaving the company is three months, unless the employment contract specifies otherwise [3].",
+      "reference": [
+        "three months afterwards"
+      ],
+      "reference_kind": "expected",
+      "context": "The notice period is one month during probation and three months afterwards, unless the employment contract states otherwise. Remaining annual leave should be taken during the notice period; if this is not possible, unused days are paid out with the final salary. Exit interviews are optional and are conducted by HR, not by the line manager.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g040"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sla_02",
+      "should_answer": true,
+      "question": "How long must errors last before it counts as downtime?",
+      "answer": "Downtime is defined as a period of at least five consecutive minutes during which the platform API returns server errors for more than five percent of requests [1].",
+      "reference": [
+        "at least five consecutive minutes"
+      ],
+      "reference_kind": "expected",
+      "context": "\"Monthly Uptime Percentage\" means the total minutes in a calendar month minus the minutes of Downtime, divided by the total minutes in that month. \"Downtime\" means a period of at least five consecutive minutes during which the platform API returns server errors for more than five percent of requests. Scheduled maintenance announced in advance is not counted as Downtime.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g041"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_01",
+      "should_answer": true,
+      "question": "What availability is promised to Enterprise customers?",
+      "answer": "Enterprise customers are promised a Monthly Uptime Percentage of at least 99.95 percent, as stated in [2].",
+      "reference": [
+        "99.95 percent for enterprise subscriptions"
+      ],
+      "reference_kind": "expected",
+      "context": "Northwind Cloud commits to a Monthly Uptime Percentage of at least 99.9 percent for Business subscriptions and 99.95 percent for Enterprise subscriptions. Availability is measured by an independent monitoring service from three regions, and monthly reports are available in the customer console.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g042"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sla_05",
+      "should_answer": true,
+      "question": "Can I get service credits paid out as a refund?",
+      "answer": "Service credits are the sole remedy for missed availability and cannot be exchanged for cash [1].",
+      "reference": [
+        "cannot be exchanged for cash"
+      ],
+      "reference_kind": "expected",
+      "context": "If the availability commitment is missed, the customer is eligible for a service credit calculated on the monthly fee for the affected service. For Business subscriptions, uptime below 99.9 percent earns a 10 percent credit, below 99.0 percent a 25 percent credit, and below 95.0 percent a 50 percent credit. Enterprise subscriptions earn the same credits with the first threshold at 99.95 percent. Credits must be requested through a support ticket within 30 days after the end of the affected month and are applied to the next invoice. Service credits are the sole remedy for missed availability and cannot be exchanged for cash.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g043"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_05",
+      "should_answer": true,
+      "question": "Where are we allowed to keep customers' personal data?",
+      "answer": "Restricted data, which includes customer personal data, payment information, and cryptographic keys, may only be stored in the approved data platform located in the EU region [1].",
+      "reference": [
+        "approved data platform in the eu region"
+      ],
+      "reference_kind": "expected",
+      "context": "Company information is classified into four levels: Public, Internal, Confidential and Restricted. Restricted data includes customer personal data, payment information and cryptographic keys. Restricted data may only be stored in the approved data platform in the EU region, must be encrypted at rest, and must never be sent by email or chat. Confidential documents shared outside the company require a non-disclosure agreement and must be shared through expiring links rather than attachments.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g044"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_06",
+      "should_answer": true,
+      "question": "How fast does support respond to a critical outage on a Business plan?",
+      "answer": "For a Business plan, the first response to a Priority 1 issue is within one hour, and the escalation to the duty engineering manager is within four hours if not resolved [1].",
+      "reference": [
+        "one hour for priority 1"
+      ],
+      "reference_kind": "expected",
+      "context": "Support requests are classified by the customer when they are opened and may be reclassified by Northwind support. Priority 1 means the production service is down or unusable for all users. Priority 2 means a major feature is impaired without a workaround. Priority 3 means a minor issue or a question. For Business subscriptions the first response targets are one hour for Priority 1, four business hours for Priority 2 and two business days for Priority 3. Enterprise subscriptions receive a 15-minute first response for Priority 1, available around the clock, and a named technical account manager.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g045"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_11",
+      "should_answer": true,
+      "question": "What happens to my data after I cancel my subscription?",
+      "answer": "After a subscription ends, data remains available for export for 30 days and is then permanently deleted within a further 30 days [1].",
+      "reference": [
+        "available for export for 30 days"
+      ],
+      "reference_kind": "expected",
+      "context": "Customer data is stored in the region selected at sign-up and is not moved to another region without the customer's consent. Object storage is designed for 99.999999999 percent durability. Customers can export all of their data at any time in standard formats. After a subscription ends, data remains available for export for 30 days and is then permanently deleted within a further 30 days.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g046"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_570d3468b3d812140066d547",
+      "should_answer": true,
+      "question": "What brand of car is manufactured in Broadmeadows?",
+      "answer": "Ford manufactures cars in Broadmeadows. [2]",
+      "reference": [
+        "Ford"
+      ],
+      "reference_kind": "expected",
+      "context": "Historically, Victoria has been the base for the manufacturing plants of the major car brands Ford, Toyota and Holden; however, closure announcements by all three companies in the 21st century will mean that Australia will no longer be a base for the global car industry, with Toyota's statement in February 2014 outlining a closure year of 2017. Holden's announcement occurred in May 2013, followed by Ford's decision in December of the same year (Ford's Victorian plants—in Broadmeadows and Geelong—will close in October 2016).",
+      "document": "victoria_australia.txt",
+      "auto_correct": true,
+      "item_id": "g047"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_572683075951b619008f7513",
+      "should_answer": true,
+      "question": "How are eggs and sperm released?",
+      "answer": "Eggs and sperm are released via pores in the epidermis [1].",
+      "reference": [
+        "pores in the epidermis",
+        "via pores in the epidermis"
+      ],
+      "reference_kind": "expected",
+      "context": "Almost all species are hermaphrodites, in other words they function as both males and females at the same time – except that in two species of the genus Ocryopsis individuals remain of the same single sex all their lives. The gonads are located in the parts of the internal canal network under the comb rows, and eggs and sperm are released via pores in the epidermis. Fertilization is external in most species, but platyctenids use internal fertilization and keep the eggs in brood chambers until they hatch. Self-fertilization has occasionally been seen in species of the genus Mnemiopsis, and it is thought that most of the hermaphroditic species are self-fertile.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g048"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_571099b2b654c5140001f9b6",
+      "should_answer": true,
+      "question": "What years did this occupation take place?",
+      "answer": "The occupation of weaving by the Huguenots in Canterbury took place from the late 16th century to about 1830, with the Weavers, a half-timbered house by the river, being the site of a weaving school during this period [4].",
+      "reference": [
+        "1806-07",
+        "1806-07."
+      ],
+      "reference_kind": "expected",
+      "context": "In Berlin, the Huguenots created two new neighbourhoods: Dorotheenstadt and Friedrichstadt. By 1700, one-fifth of the city's population was French speaking. The Berlin Huguenots preserved the French language in their church services for nearly a century. They ultimately decided to switch to German in protest against the occupation of Prussia by Napoleon in 1806-07. Many of their descendents rose to positions of prominence. Several congregations were founded, such as those of Fredericia (Denmark), Berlin, Stockholm, Hamburg, Frankfurt, Helsinki, and Emden.",
+      "document": "huguenot.txt",
+      "auto_correct": false,
+      "item_id": "g049"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sla_08",
+      "should_answer": true,
+      "question": "When can I escalate an unresolved outage to an engineering manager?",
+      "answer": "You may escalate an unresolved outage to the engineering manager within four hours if it's a Priority 1 issue [2].",
+      "reference": [
+        "not resolved within four hours"
+      ],
+      "reference_kind": "expected",
+      "context": "If a Priority 1 issue is not resolved within four hours, the customer may escalate to the duty engineering manager through the escalation number in the console. Enterprise customers may additionally escalate to their technical account manager at any time. Root cause analysis reports are published within five business days after every Priority 1 incident.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g050"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_57265c10f1498d1400e8dd36",
+      "should_answer": true,
+      "question": "What does the bathocyroe and ocyropsis do to escape danger?",
+      "answer": "Bathocyroe and Ocyropsis can escape danger by clapping their lobes, propelling them backwards quickly. [1]",
+      "reference": [
+        "by clapping their lobes",
+        "clapping their lobes"
+      ],
+      "reference_kind": "expected",
+      "context": "Lobates have eight comb-rows, originating at the aboral pole and usually not extending beyond the body to the lobes; in species with (four) auricles, the cilia edging the auricles are extensions of cilia in four of the comb rows. Most lobates are quite passive when moving through the water, using the cilia on their comb rows for propulsion, although Leucothea has long and active auricles whose movements also contribute to propulsion. Members of the lobate genera Bathocyroe and Ocyropsis can escape from danger by clapping their lobes, so that the jet of expelled water drives them backwards very quickly. Unlike cydippids, the movements of lobates' combs are coordinated by nerves rather than by water disturbances created by the cilia, yet combs on the same row beat in the same Mexican wave style as the mechanically coordinated comb rows of cydippids and beroids. This may have enabled lobates to grow larger than cydippids and to have shapes that are less egg-like.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g051"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_11",
+      "should_answer": true,
+      "question": "Which incidents are classified as the most severe level?",
+      "answer": "Security incidents are classified by severity, and Severity 1 represents the most severe level [1]. Severity 1 covers confirmed breaches of Restricted data or ransomware [1].",
+      "reference": [
+        "confirmed breaches of restricted data or ransomware"
+      ],
+      "reference_kind": "expected",
+      "context": "Security incidents are classified by severity. Severity 1 covers confirmed breaches of Restricted data or ransomware; the incident commander must be paged immediately and the executive team informed within two hours. Severity 2 covers a compromised employee account or malware on a single device and must be contained within 24 hours. Severity 3 covers policy violations without evidence of compromise. Where personal data is affected, the data protection officer decides within 48 hours whether the supervisory authority must be notified, so that the 72-hour regulatory deadline can be met.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g052"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_570d3468b3d812140066d547",
+      "should_answer": true,
+      "question": "What brand of car is manufactured in Broadmeadows?",
+      "answer": "Ford manufactured cars in Broadmeadows, as its Victorian plants located in Broadmeadows and Geelong were scheduled to close in October 2016 [1][2].",
+      "reference": [
+        "Ford"
+      ],
+      "reference_kind": "expected",
+      "context": "Historically, Victoria has been the base for the manufacturing plants of the major car brands Ford, Toyota and Holden; however, closure announcements by all three companies in the 21st century will mean that Australia will no longer be a base for the global car industry, with Toyota's statement in February 2014 outlining a closure year of 2017. Holden's announcement occurred in May 2013, followed by Ford's decision in December of the same year (Ford's Victorian plants—in Broadmeadows and Geelong—will close in October 2016).",
+      "document": "victoria_australia.txt",
+      "auto_correct": true,
+      "item_id": "g053"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_572683075951b619008f7513",
+      "should_answer": true,
+      "question": "How are eggs and sperm released?",
+      "answer": "Eggs and sperm are released via pores in the epidermis [1].",
+      "reference": [
+        "pores in the epidermis",
+        "via pores in the epidermis"
+      ],
+      "reference_kind": "expected",
+      "context": "Almost all species are hermaphrodites, in other words they function as both males and females at the same time – except that in two species of the genus Ocryopsis individuals remain of the same single sex all their lives. The gonads are located in the parts of the internal canal network under the comb rows, and eggs and sperm are released via pores in the epidermis. Fertilization is external in most species, but platyctenids use internal fertilization and keep the eggs in brood chambers until they hatch. Self-fertilization has occasionally been seen in species of the genus Mnemiopsis, and it is thought that most of the hermaphroditic species are self-fertile.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g054"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_570d4030fed7b91900d45da2",
+      "should_answer": true,
+      "question": "What type of rail line is Pacific National?",
+      "answer": "Pacific National operates freight services over government-owned lines in Victoria [1].",
+      "reference": [
+        "freight",
+        "freight services"
+      ],
+      "reference_kind": "expected",
+      "context": "Rail transport in Victoria is provided by several private and public railway operators who operate over government-owned lines. Major operators include: Metro Trains Melbourne which runs an extensive, electrified, passenger system throughout Melbourne and suburbs; V/Line which is now owned by the Victorian Government, operates a concentrated service to major regional centres, as well as long distance services on other lines; Pacific National, CFCL Australia which operate freight services; Great Southern Rail which operates The Overland Melbourne—Adelaide; and NSW TrainLink which operates XPTs Melbourne—Sydney.",
+      "document": "victoria_australia.txt",
+      "auto_correct": true,
+      "item_id": "g055"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_572a20816aef0514001552e6",
+      "should_answer": true,
+      "question": "In an ideal moral society, what would all citizens be free from?",
+      "answer": "In an ideal moral society, all individuals would be free from force [1].",
+      "reference": [
+        "force"
+      ],
+      "reference_kind": "expected",
+      "context": "Robert Nozick argued that government redistributes wealth by force (usually in the form of taxation), and that the ideal moral society would be one where all individuals are free from force. However, Nozick recognized that some modern economic inequalities were the result of forceful taking of property, and a certain amount of redistribution would be justified to compensate for this force but not because of the inequalities themselves. John Rawls argued in A Theory of Justice that inequalities in the distribution of wealth are only justified when they improve society as a whole, including the poorest members. Rawls does not discuss the full implications of his theory of justice. Some see Rawls's argument as a justification for capitalism since even the poorest members of society theoretically benefit from increased innovations under capitalism; others believe only a strong welfare state can satisfy Rawls's theory of justice.",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g056"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sec_07",
+      "should_answer": true,
+      "question": "After how many idle minutes does my screen have to lock?",
+      "answer": "Screens must lock automatically after five minutes of inactivity [1].",
+      "reference": [
+        "lock automatically after five minutes"
+      ],
+      "reference_kind": "expected",
+      "context": "All laptops must use full-disk encryption and the endpoint protection agent managed by IT. Operating system security updates must be installed within 14 days of release, and within 72 hours for updates that IT marks as critical. Screens must lock automatically after five minutes of inactivity. Personal devices may access company email through the managed mobile app only; they may not connect to internal systems or store company files. USB storage devices are blocked by default and can be enabled for a maximum of seven days on request.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g057"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "hb_12",
+      "should_answer": true,
+      "question": "How much can I spend on training and conferences per year?",
+      "answer": "Each employee receives an annual learning budget of 1,500 euros that can be spent on courses, certifications, conference tickets and technical books [1].",
+      "reference": [
+        "learning budget of 1,500 euros"
+      ],
+      "reference_kind": "expected",
+      "context": "Each employee receives an annual learning budget of 1,500 euros that can be spent on courses, certifications, conference tickets and technical books. Unused learning budget does not carry over. Certification exam fees are covered twice per certification if the first attempt is unsuccessful. In addition, every employee has five paid learning days per year, which must be booked in the time portal like annual leave.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g058"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_572684365951b619008f7543",
+      "should_answer": true,
+      "question": "Which genus lack tentacles and sheaths?",
+      "answer": "In the genus Beroe, juveniles lack tentacles and tentacle sheaths, just like the adults [2]. Additionally, coastal beroids lack tentacles entirely [3].",
+      "reference": [
+        "Beroe"
+      ],
+      "reference_kind": "expected",
+      "context": "Development of the fertilized eggs is direct, in other words there is no distinctive larval form, and juveniles of all groups generally resemble miniature cydippid adults. In the genus Beroe the juveniles, like the adults, lack tentacles and tentacle sheaths. In most species the juveniles gradually develop the body forms of their parents. In some groups, such as the flat, bottom-dwelling platyctenids, the juveniles behave more like true larvae, as they live among the plankton and thus occupy a different ecological niche from their parents and attain the adult form by a more radical metamorphosis, after dropping to the sea-floor.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g059"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad258f3d7d075001a428de8",
+      "should_answer": false,
+      "question": "In many countries, what kind of pay gap isn't there?",
+      "answer": "In many countries, there is not a gender pay gap in favor of males in the labor market. [1]",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "In many countries, there is a Gender pay gap in favor of males in the labor market. Several factors other than discrimination may contribute to this gap. On average, women are more likely than men to consider factors other than pay when looking for work, and may be less willing to travel or relocate. Thomas Sowell, in his book Knowledge and Decisions, claims that this difference is due to women not taking jobs due to marriage or pregnancy, but income studies show that that does not explain the entire difference. A U.S. Census's report stated that in US once other factors are accounted for there is still a difference in earnings between women and men. The income gap in other countries ranges from 53% in Botswana to -40% in Bahrain.",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g060"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_572a0ecb1d04691400779719",
+      "should_answer": true,
+      "question": "What was persistent unemployment have a negative effect on?",
+      "answer": "Persistent unemployment has a negative effect on subsequent long-run economic growth [1]. It can harm growth not only because it is a waste of resources, but also because it generates redistributive pressures and subsequent distortions, drives people to poverty, constrains liquidity limiting labor mobility, and erodes self-esteem promoting social dislocation, unrest and conflict [1]. Policies aiming at controlling unemployment and in particular at reducing its inequality-associated effects support economic growth [1].",
+      "reference": [
+        "long-run economic growth",
+        "subsequent long-run economic growth"
+      ],
+      "reference_kind": "expected",
+      "context": "According to economists David Castells-Quintana and Vicente Royuela, increasing inequality harms economic growth. High and persistent unemployment, in which inequality increases, has a negative effect on subsequent long-run economic growth. Unemployment can harm growth not only because it is a waste of resources, but also because it generates redistributive pressures and subsequent distortions, drives people to poverty, constrains liquidity limiting labor mobility, and erodes self-esteem promoting social dislocation, unrest and conflict. Policies aiming at controlling unemployment and in particular at reducing its inequality-associated effects support economic growth.",
+      "document": "economic_inequality.txt",
+      "auto_correct": true,
+      "item_id": "g061"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_09",
+      "should_answer": true,
+      "question": "Is there money to set up a desk at home?",
+      "answer": "Yes, employees receive a one-off home office allowance of 300 euros, which is paid with the first salary after probation [1]. Additionally, after probation, employees may order an ergonomic chair, an external monitor, and a keyboard and mouse set from the approved catalogue [1].",
+      "reference": [
+        "home office allowance of 300 euros"
+      ],
+      "reference_kind": "expected",
+      "context": "After probation, every employee may order one ergonomic chair, one external monitor and one keyboard and mouse set from the approved catalogue. In addition, a one-off home office allowance of 300 euros is paid with the first salary after probation. Equipment remains company property and must be returned within ten working days after the employment ends.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g062"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "cb_01",
+      "should_answer": true,
+      "question": "How many years of warranty does the CloudBox S2 have?",
+      "answer": "The CloudBox S2 has a three-year limited hardware warranty [1].",
+      "reference": [
+        "limited hardware warranty of three years"
+      ],
+      "reference_kind": "expected",
+      "context": "The CloudBox S2 enclosure is covered by a limited hardware warranty of three years from the date of purchase. Drives that are supplied with the device are covered for two years. The power adapter is covered for one year. The warranty covers defects in materials and workmanship under normal use. To claim warranty service, the customer must provide the device serial number and a proof of purchase showing the date and the seller.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g063"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "hb_03",
+      "should_answer": true,
+      "question": "How is overtime worked on a public holiday compensated?",
+      "answer": "Overtime on a public holiday is compensated at a rate of 1.5 hours per hour worked, as stated in the employee handbook [1].",
+      "reference": [
+        "1.5 hours per hour worked on public holidays"
+      ],
+      "reference_kind": "expected",
+      "context": "The standard working week at Northwind Labs is 38 hours, normally spread over five days. Core collaboration hours are 10:00 to 15:00 local time; outside these hours employees may arrange their schedule freely, provided their team agrees. Hours are recorded weekly in the time portal by Friday 18:00. Overtime must be approved in advance by the line manager and is compensated as time off in lieu at a rate of one hour per hour worked, or 1.5 hours per hour worked on public holidays. Time off in lieu must be taken within three months, otherwise it lapses.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g064"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sec_15",
+      "should_answer": true,
+      "question": "What happens if I fall for one of the fake phishing test emails?",
+      "answer": "If you click a simulated phishing link, you will be assigned a short follow-up module instead of facing disciplinary action [2].",
+      "reference": [
+        "assigned a short follow-up module"
+      ],
+      "reference_kind": "expected",
+      "context": "All staff complete security awareness training during their first week and refresh it every year. Quarterly phishing simulations are run across the company; employees who click a simulated phishing link are assigned a short follow-up module rather than being disciplined.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g065"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5a63969068151a001a9223aa",
+      "should_answer": false,
+      "question": "Where is the highest section of Victoria?",
+      "answer": "The highest section of Victoria is the Victorian Alps in the northeast, which are part of the Great Dividing Range mountain system. The Alps are the coldest part of Victoria, with average temperatures less than 9 °C (48 °F) in winter and below 0 °C (32 °F) in the highest parts of the ranges. The state's lowest minimum temperature of −11.7 °C (10.9 °F) was recorded at Omeo on 13 June 1965, and again at Falls Creek on 3 July 1970. [2] [3] [4] [5]",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "The Victorian Alps in the northeast are the coldest part of Victoria. The Alps are part of the Great Dividing Range mountain system extending east-west through the centre of Victoria. Average temperatures are less than 9 °C (48 °F) in winter and below 0 °C (32 °F) in the highest parts of the ranges. The state's lowest minimum temperature of −11.7 °C (10.9 °F) was recorded at Omeo on 13 June 1965, and again at Falls Creek on 3 July 1970. Temperature extremes for the state are listed in the table below:",
+      "document": "victoria_australia.txt",
+      "auto_correct": false,
+      "item_id": "g066"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "cb_10",
+      "should_answer": true,
+      "question": "What do I pay if I keep the faulty unit after receiving an advance replacement?",
+      "answer": "If you keep the faulty unit after receiving an advance replacement for the first year of the warranty, a fee of 120 euros is charged [1].",
+      "reference": [
+        "a fee of 120 euros is charged"
+      ],
+      "reference_kind": "expected",
+      "context": "To start a warranty claim, open a return merchandise authorisation request in the support portal. Support first runs a remote diagnosis with the customer. If the fault is confirmed, a prepaid shipping label is emailed within two working days. Customers in the European Union receive a replacement unit within ten working days of the faulty device arriving at the repair centre. For the first year of the warranty, an advance replacement service is available: the replacement is shipped first, and the customer returns the faulty unit within 14 days in the same packaging, otherwise a fee of 120 euros is charged. Drives are not returned with a replaced unit; customers should remove their drives before shipping if they wish to keep them.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g067"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_572681c1dd62a815002e8797",
+      "should_answer": true,
+      "question": "What do platyctenida use their pharynx for?",
+      "answer": "Platyctenida use their pharynx for everting and using it as a muscular \"foot\" to cling to and creep on surfaces. [1]",
+      "reference": [
+        "as a muscular \"foot\"",
+        "cling to and creep on surfaces"
+      ],
+      "reference_kind": "expected",
+      "context": "Most Platyctenida have oval bodies that are flattened in the oral-aboral direction, with a pair of tentilla-bearing tentacles on the aboral surface. They cling to and creep on surfaces by everting the pharynx and using it as a muscular \"foot\". All but one of the known platyctenid species lack comb-rows. Platyctenids are usually cryptically colored, live on rocks, algae, or the body surfaces of other invertebrates, and are often revealed by their long tentacles with many sidebranches, seen streaming off the back of the ctenophore into the current.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g068"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "hb_07",
+      "should_answer": true,
+      "question": "How many days per week am I allowed to work from home?",
+      "answer": "After completing your probation period, you may work remotely for up to three days per week [2].",
+      "reference": [
+        "remotely for up to three days per week"
+      ],
+      "reference_kind": "expected",
+      "context": "Employees may work remotely for up to three days per week after completing their probation period. Remote work requires a secure home network and use of the company VPN for all access to internal systems. Teams must keep Tuesday as a shared in-office collaboration day unless the department head approves an exception in writing. Working from another country is allowed for a maximum of 20 working days per calendar year and must be registered with HR at least two weeks before departure, because of tax and insurance rules.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g069"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "sla_03",
+      "should_answer": true,
+      "question": "What credit do Business customers get if uptime drops below 99 percent?",
+      "answer": "Business customers receive a 25 percent credit if their uptime drops below 99.0 percent [1].",
+      "reference": [
+        "below 99.0 percent a 25 percent credit"
+      ],
+      "reference_kind": "expected",
+      "context": "If the availability commitment is missed, the customer is eligible for a service credit calculated on the monthly fee for the affected service. For Business subscriptions, uptime below 99.9 percent earns a 10 percent credit, below 99.0 percent a 25 percent credit, and below 95.0 percent a 50 percent credit. Enterprise subscriptions earn the same credits with the first threshold at 99.95 percent. Credits must be requested through a support ticket within 30 days after the end of the affected month and are applied to the next invoice. Service credits are the sole remedy for missed availability and cannot be exchanged for cash.",
+      "document": "northwind_cloud_sla.txt",
+      "auto_correct": true,
+      "item_id": "g070"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_57268a37f1498d1400e8e33c",
+      "should_answer": true,
+      "question": "Why was it thought that  ctenophores were a poor diet for other animals?",
+      "answer": "Ctenophores were previously regarded as \"dead ends\" in marine food chains because it was believed that their low ratio of organic matter to salt and water made them a poor diet for other animals [1].",
+      "reference": [
+        "low ratio of organic matter to salt and water",
+        "their low ratio of organic matter to salt and water"
+      ],
+      "reference_kind": "expected",
+      "context": "Ctenophores used to be regarded as \"dead ends\" in marine food chains because it was thought their low ratio of organic matter to salt and water made them a poor diet for other animals. It is also often difficult to identify the remains of ctenophores in the guts of possible predators, although the combs sometimes remain intact long enough to provide a clue. Detailed investigation of chum salmon, Oncorhynchus keta, showed that these fish digest ctenophores 20 times as fast as an equal weight of shrimps, and that ctenophores can provide a good diet if there are enough of them around. Beroids prey mainly on other ctenophores. Some jellyfish and turtles eat large quantities of ctenophores, and jellyfish may temporarily wipe out ctenophore populations. Since ctenophores and jellyfish often have large seasonal variations in population, most fish that prey on them are generalists, and may have a greater effect on populations than the specialist jelly-eaters. This is underlined by an observation of herbivorous fishes deliberately feeding on gelatinous zooplankton during blooms in the Red Sea. The larvae of some sea anemones are parasites on ctenophores, as are the larvae of some flatworms that parasitize fish when they reach adulthood.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g071"
+    },
+    {
+      "group": "heldout/phi3_mini",
+      "case_id": "squad_5ad268cbd7d075001a429294",
+      "should_answer": false,
+      "question": "In what year was the Edict of Nantes revoked?",
+      "answer": "The Edict of Nantes was revoked in 1685. [2]",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "After the revocation of the Edict of Nantes, the Dutch Republic received the largest group of Huguenot refugees, an estimated total of 75,000 to 100,000 people. Amongst them were 200 clergy. Many came from the region of the Cévennes, for instance, the village of Fraissinet-de-Lozère. This was a huge influx as the entire population of the Dutch Republic amounted to ca. 2 million at that time. Around 1700, it is estimated that nearly 25% of the Amsterdam population was Huguenot.[citation needed] In 1705, Amsterdam and the area of West Frisia were the first areas to provide full citizens rights to Huguenot immigrants, followed by the Dutch Republic in 1715. Huguenots intermarried with Dutch from the outset.",
+      "document": "huguenot.txt",
+      "auto_correct": false,
+      "item_id": "g072"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sec_08",
+      "should_answer": true,
+      "question": "Am I allowed to plug in a USB stick?",
+      "answer": "No, USB storage devices are blocked by default and can only be enabled for a maximum of seven days on request [1].",
+      "reference": [
+        "usb storage devices are blocked by default"
+      ],
+      "reference_kind": "expected",
+      "context": "All laptops must use full-disk encryption and the endpoint protection agent managed by IT. Operating system security updates must be installed within 14 days of release, and within 72 hours for updates that IT marks as critical. Screens must lock automatically after five minutes of inactivity. Personal devices may access company email through the managed mobile app only; they may not connect to internal systems or store company files. USB storage devices are blocked by default and can be enabled for a maximum of seven days on request.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g073"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_572681c1dd62a815002e8797",
+      "should_answer": true,
+      "question": "What do platyctenida use their pharynx for?",
+      "answer": "Platyctenida use their everted pharynx as a muscular \"foot\" to cling to and creep on surfaces [1].",
+      "reference": [
+        "as a muscular \"foot\"",
+        "cling to and creep on surfaces"
+      ],
+      "reference_kind": "expected",
+      "context": "Most Platyctenida have oval bodies that are flattened in the oral-aboral direction, with a pair of tentilla-bearing tentacles on the aboral surface. They cling to and creep on surfaces by everting the pharynx and using it as a muscular \"foot\". All but one of the known platyctenid species lack comb-rows. Platyctenids are usually cryptically colored, live on rocks, algae, or the body surfaces of other invertebrates, and are often revealed by their long tentacles with many sidebranches, seen streaming off the back of the ctenophore into the current.",
+      "document": "ctenophora.txt",
+      "auto_correct": true,
+      "item_id": "g074"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "cb_09",
+      "should_answer": true,
+      "question": "Can I get a replacement before I send my faulty unit in?",
+      "answer": "Yes, an advance replacement service is available for the first year of the warranty, where the replacement is shipped first, and the customer returns the faulty unit within 14 days in the same packaging. [1]",
+      "reference": [
+        "the replacement is shipped first"
+      ],
+      "reference_kind": "expected",
+      "context": "To start a warranty claim, open a return merchandise authorisation request in the support portal. Support first runs a remote diagnosis with the customer. If the fault is confirmed, a prepaid shipping label is emailed within two working days. Customers in the European Union receive a replacement unit within ten working days of the faulty device arriving at the repair centre. For the first year of the warranty, an advance replacement service is available: the replacement is shipped first, and the customer returns the faulty unit within 14 days in the same packaging, otherwise a fee of 120 euros is charged. Drives are not returned with a replaced unit; customers should remove their drives before shipping if they wish to keep them.",
+      "document": "cloudbox_s2_warranty.txt",
+      "auto_correct": true,
+      "item_id": "g075"
+    },
+    {
+      "group": "public/gemini",
+      "case_id": "hb_05",
+      "should_answer": true,
+      "question": "How much unused vacation can I take with me into the next year?",
+      "answer": "Full-time employees can carry over up to five unused annual leave days into the next calendar year [2]. Any remaining balance exceeding five days expires on 31 March of the following year [2]. Part-time employees receive leave in proportion to their contracted hours [4].",
+      "reference": [
+        "up to five unused days may be carried over"
+      ],
+      "reference_kind": "expected",
+      "context": "Full-time employees accrue 24 days of paid annual leave per calendar year. Leave accrues monthly at a rate of two days per completed month of service. Up to five unused days may be carried over into the next calendar year; any remaining balance above five days expires on 31 March of the following year. Requests for leave longer than ten consecutive working days must be submitted to the line manager at least four weeks in advance. Part-time employees receive leave in proportion to their contracted hours.",
+      "document": "northwind_employee_handbook.txt",
+      "auto_correct": true,
+      "item_id": "g076"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_57111428b654c5140001fb01",
+      "should_answer": true,
+      "question": "How many Huguenots were killed in Toulouse?",
+      "answer": "Nearly 3,000 Protestants were slaughtered in Toulouse during the St. Bartholomew's Day Massacre [1].",
+      "reference": [
+        "Nearly 3,000"
+      ],
+      "reference_kind": "expected",
+      "context": "In what became known as the St. Bartholomew's Day Massacre of 24 August – 3 October 1572, Catholics killed thousands of Huguenots in Paris. Similar massacres took place in other towns in the weeks following. The main provincial towns and cities experiencing the Massacre were Aix, Bordeaux, Bourges, Lyons, Meaux, Orleans, Rouen, Toulouse, and Troyes. Nearly 3,000 Protestants were slaughtered in Toulouse alone. The exact number of fatalities throughout the country is not known. On 23–24 August, between about 2,000 and 3,000 Protestants were killed in Paris and between 3,000 and 7,000 more in the French provinces. By 17 September, almost 25,000 Protestants had been massacred in Paris alone. Beyond Paris, the killings continued until 3 October. An amnesty granted in 1573 pardoned the perpetrators.[citation needed]",
+      "document": "huguenot.txt",
+      "auto_correct": true,
+      "item_id": "g077"
+    },
+    {
+      "group": "public/phi3_mini",
+      "case_id": "sec_11",
+      "should_answer": true,
+      "question": "Which incidents are classified as the most severe level?",
+      "answer": "Severity 1 incidents, which include confirmed breaches of Restricted data or ransomware, must be addressed immediately, with the incident commander being paged and the executive team informed within two hours [1].",
+      "reference": [
+        "confirmed breaches of restricted data or ransomware"
+      ],
+      "reference_kind": "expected",
+      "context": "Security incidents are classified by severity. Severity 1 covers confirmed breaches of Restricted data or ransomware; the incident commander must be paged immediately and the executive team informed within two hours. Severity 2 covers a compromised employee account or malware on a single device and must be contained within 24 hours. Severity 3 covers policy violations without evidence of compromise. Where personal data is affected, the data protection officer decides within 48 hours whether the supervisory authority must be notified, so that the 72-hour regulatory deadline can be met.",
+      "document": "northwind_it_security_policy.txt",
+      "auto_correct": true,
+      "item_id": "g078"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad259fdd7d075001a428e27",
+      "should_answer": false,
+      "question": "When did income inequality begin to decrease in the US?",
+      "answer": "Income inequality fell in the United States during the high school movement from 1910 to 1940 and thereafter [2].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "Plotting the relationship between level of income and inequality, Kuznets saw middle-income developing economies level of inequality bulging out to form what is now known as the Kuznets curve. Kuznets demonstrated this relationship using cross-sectional data. However, more recent testing of this theory with superior panel data has shown it to be very weak. Kuznets' curve predicts that income inequality will eventually decrease given time. As an example, income inequality did fall in the United States during its High school movement from 1910 to 1940 and thereafter.[citation needed] However, recent data shows that the level of income inequality began to rise after the 1970s. This does not necessarily disprove Kuznets' theory.[citation needed] It may be possible that another Kuznets' cycle is occurring, specifically the move from the manufacturing sector to the service sector.[citation needed] This implies that it may be possible for multiple Kuznets' cycles to be in effect at any given time.",
+      "document": "economic_inequality.txt",
+      "auto_correct": false,
+      "item_id": "g079"
+    },
+    {
+      "group": "heldout/gemini",
+      "case_id": "squad_5ad24600d7d075001a428aca",
+      "should_answer": false,
+      "question": "How many Huguenots were killed altogether in France?",
+      "answer": "The exact total number of fatalities among Huguenots throughout the country is not known [2]. During the St. Bartholomew's Day Massacre alone, varying estimates indicate that thousands were killed in Paris and the French provinces, with totals ranging from 5,000 to 30,000 killed overall during the height of that persecution [1], [2].",
+      "reference": [],
+      "reference_kind": "squad_unanswerable",
+      "context": "In what became known as the St. Bartholomew's Day Massacre of 24 August – 3 October 1572, Catholics killed thousands of Huguenots in Paris. Similar massacres took place in other towns in the weeks following. The main provincial towns and cities experiencing the Massacre were Aix, Bordeaux, Bourges, Lyons, Meaux, Orleans, Rouen, Toulouse, and Troyes. Nearly 3,000 Protestants were slaughtered in Toulouse alone. The exact number of fatalities throughout the country is not known. On 23–24 August, between about 2,000 and 3,000 Protestants were killed in Paris and between 3,000 and 7,000 more in the French provinces. By 17 September, almost 25,000 Protestants had been massacred in Paris alone. Beyond Paris, the killings continued until 3 October. An amnesty granted in 1573 pardoned the perpetrators.[citation needed]",
+      "document": "huguenot.txt",
+      "auto_correct": false,
+      "item_id": "g080"
+    }
+  ]
+}

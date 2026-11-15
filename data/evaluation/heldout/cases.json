@@ -1,0 +1,790 @@
+{
+  "description": "Held-out test set sampled from the SQuAD 2.0 development set by experiments/build_heldout_set.py (seed 2026). Never used to choose any setting. Answerable cases list the crowd-written answers; unanswerable cases were written to look answerable.",
+  "source": "https://rajpurkar.github.io/SQuAD-explorer/ (dev-v2.0.json)",
+  "license": "CC BY-SA 4.0, Rajpurkar, Jia and Liang (2018), Know What You Don't Know",
+  "articles": [
+    "Economic_inequality",
+    "Normans",
+    "Victoria_(Australia)",
+    "Ctenophora",
+    "Huguenot"
+  ],
+  "cases": [
+    {
+      "case_id": "squad_572a20816aef0514001552e6",
+      "question": "In an ideal moral society, what would all citizens be free from?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "force"
+      ]
+    },
+    {
+      "case_id": "squad_572a0d21af94a219006aa785",
+      "question": "What is the most recent example of financial fault lines?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "Financial crisis of 2007–08",
+        "the Financial crisis of 2007–08"
+      ]
+    },
+    {
+      "case_id": "squad_572a2224af94a219006aa824",
+      "question": "What can and old, ill man not do?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "earn as much as a healthy young man"
+      ]
+    },
+    {
+      "case_id": "squad_572a1fe16aef0514001552d3",
+      "question": "How do socialists think the means of production should be owned?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "socially"
+      ]
+    },
+    {
+      "case_id": "squad_572a18a4af94a219006aa7e2",
+      "question": "How long does it take for the effects to manifest as changes to economic growth?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "several years"
+      ]
+    },
+    {
+      "case_id": "squad_572a0ecb1d04691400779719",
+      "question": "What was persistent unemployment have a negative effect on?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "long-run economic growth",
+        "subsequent long-run economic growth"
+      ]
+    },
+    {
+      "case_id": "squad_5729e4291d04691400779655",
+      "question": "What does high inequality go hand-in-hand with?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "weak labor movements"
+      ]
+    },
+    {
+      "case_id": "squad_5727e6cbff5b5019007d97ef",
+      "question": "According to Oxfam, the 85 richest people have wealth equal to how many average people?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "3.5 billion",
+        "50%",
+        "about 3.5 billion people"
+      ]
+    },
+    {
+      "case_id": "squad_5727ec062ca10214002d99b9",
+      "question": "How do competing businesses attract workers?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "by offering a higher wage",
+        "offering a higher wage",
+        "offering a higher wage the best of their labor"
+      ]
+    },
+    {
+      "case_id": "squad_5729da0faf94a219006aa678",
+      "question": "What type of wages result from jobs where there is low supply but high demand?",
+      "should_answer": true,
+      "document": "economic_inequality.txt",
+      "answers": [
+        "high",
+        "high wages"
+      ]
+    },
+    {
+      "case_id": "squad_5ad258f3d7d075001a428de8",
+      "question": "In many countries, what kind of pay gap isn't there?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad2690ed7d075001a4292b1",
+      "question": "In the capabilities approach, grow and income aren't considered a means to an end rather than what?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad2467ad7d075001a428af6",
+      "question": "What has the tendency to decrease wages in a field or job position?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad25f42d7d075001a428f73",
+      "question": "Who rejected an index of health and social problems?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad242e5d7d075001a4289a6",
+      "question": "In order to be considered in the bottom percentile, a person would need to amass how much money each year?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad2690ed7d075001a4292b0",
+      "question": "What doesn't the capabilities approach look at poverty as a form of?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad2654fd7d075001a4291aa",
+      "question": "What doesn't it take a country with high inequality longer to achieve?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad260dbd7d075001a428fd9",
+      "question": "An adobe that provides more utility to one person than another is an example of reduced what?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad2654fd7d075001a4291a8",
+      "question": "What needs to be made to ensure richer members of society can participate in economic growth?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_5ad259fdd7d075001a428e27",
+      "question": "When did income inequality begin to decrease in the US?",
+      "should_answer": false,
+      "document": "economic_inequality.txt"
+    },
+    {
+      "case_id": "squad_56de148dcffd8e1900b4b5bd",
+      "question": "When did Dyrrachium  fall to the Normans?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "1082",
+        "February 1082"
+      ]
+    },
+    {
+      "case_id": "squad_56de17f9cffd8e1900b4b5e1",
+      "question": "Who was Margaret's husband?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "King Malcolm III",
+        "King Malcolm III of Scotland"
+      ]
+    },
+    {
+      "case_id": "squad_56de1563cffd8e1900b4b5c3",
+      "question": "What was the naval base called?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "Dyrrachium"
+      ]
+    },
+    {
+      "case_id": "squad_56de16ca4396321400ee25c8",
+      "question": "Who was the ruling class ahead of the Normans?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "Anglo-Saxons",
+        "the Anglo-Saxons"
+      ]
+    },
+    {
+      "case_id": "squad_56de1728cffd8e1900b4b5d7",
+      "question": "What was the Anglo-Norman language's final form?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "Modern English"
+      ]
+    },
+    {
+      "case_id": "squad_56de179dcffd8e1900b4b5dc",
+      "question": "What culture did the Normans combine with in Ireland?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "Irish"
+      ]
+    },
+    {
+      "case_id": "squad_56de52614396321400ee27fe",
+      "question": "What tradition were the Saint-Evroul monks known for?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "singing"
+      ]
+    },
+    {
+      "case_id": "squad_56de3f784396321400ee26fa",
+      "question": "What ruined Richard's plans to reach Acre?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "a storm"
+      ]
+    },
+    {
+      "case_id": "squad_56de4b074396321400ee2794",
+      "question": "What architecture type came before Norman in England?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "Anglo-Saxon"
+      ]
+    },
+    {
+      "case_id": "squad_56dde0379a695914005b9637",
+      "question": "When was the Latin version of the word Norman first recorded?",
+      "should_answer": true,
+      "document": "normans.txt",
+      "answers": [
+        "9th century"
+      ]
+    },
+    {
+      "case_id": "squad_5ad40358604f3c001a3ffd7e",
+      "question": "What law has 3 customeries?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3ee2d604f3c001a3ff7e2",
+      "question": "Who did Robert lead agains Dyrrachium in 1107?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3ad61604f3c001a3fec0d",
+      "question": "when did Nors encampments ivolve into destructive incursions?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3fb6e604f3c001a3ffb5f",
+      "question": "What came under Williams dominace before the conquest?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3f8d2604f3c001a3ffa8e",
+      "question": "What did Sybilla of Normandy introduce to Scotland?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3ea79604f3c001a3ff6eb",
+      "question": "What expedition did George Maniaces lead in the 10th century?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3ea79604f3c001a3ff6ea",
+      "question": "Who did the Normans serve under in the 10th century?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3f5b0604f3c001a3ff9ab",
+      "question": "Who identified themselves as French during the Hundred Years War?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad3af11604f3c001a3fec64",
+      "question": "What did maternal Old Norse traditions merge with?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_5ad40280604f3c001a3ffd58",
+      "question": "What year did Richards fleet avoid a storm?",
+      "should_answer": false,
+      "document": "normans.txt"
+    },
+    {
+      "case_id": "squad_570d4606b3d812140066d619",
+      "question": "What state in Australia is the center of dairy farming?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "Victoria"
+      ]
+    },
+    {
+      "case_id": "squad_570d4606b3d812140066d61a",
+      "question": "How many dairy cows are there in Australia?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "3 million"
+      ]
+    },
+    {
+      "case_id": "squad_570d4030fed7b91900d45da2",
+      "question": "What type of rail line is Pacific National?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "freight",
+        "freight services"
+      ]
+    },
+    {
+      "case_id": "squad_570d2d68fed7b91900d45cbf",
+      "question": "How many tonnes of tomatoes does Victoria produce?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "121,200",
+        "270,000"
+      ]
+    },
+    {
+      "case_id": "squad_570d2417fed7b91900d45c40",
+      "question": "What city in Victoria is called the sporting capital of Australia?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "Melbourne"
+      ]
+    },
+    {
+      "case_id": "squad_570d4c3bfed7b91900d45e35",
+      "question": "The passage of what act gave Victoria its own government?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "Colony of Victoria Act",
+        "Colony of Victoria Act 1855",
+        "the Colony of Victoria Act"
+      ]
+    },
+    {
+      "case_id": "squad_570d30fdfed7b91900d45ce5",
+      "question": "How cold does this region of Victoria get in the winner?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "15 °C",
+        "15 °C (59 °F)"
+      ]
+    },
+    {
+      "case_id": "squad_570d30fdfed7b91900d45ce4",
+      "question": "What does the average temperatures exceed in the summer?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "32 °C",
+        "32 °C (90 °F)"
+      ]
+    },
+    {
+      "case_id": "squad_570d3468b3d812140066d547",
+      "question": "What brand of car is manufactured in Broadmeadows?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "Ford"
+      ]
+    },
+    {
+      "case_id": "squad_570d32e4fed7b91900d45d05",
+      "question": "What government set standards do all schools have to meet?",
+      "should_answer": true,
+      "document": "victoria_australia.txt",
+      "answers": [
+        "curriculum",
+        "curriculum standards"
+      ]
+    },
+    {
+      "case_id": "squad_5a637f8768151a001a922319",
+      "question": "How many representatives does each state have?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a638a2468151a001a92234c",
+      "question": "What is covered by the state in addition to tuition?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a638bf768151a001a922365",
+      "question": "What percentage was the increase of agricultural products since 2004?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a63730568151a001a9222dc",
+      "question": "How many seats does Australia have in the House of Representatives?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a63981168151a001a9223b5",
+      "question": "Which rail line operates Around the island?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a6394b768151a001a92239a",
+      "question": "What is the Victoria state color?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a6381d868151a001a922325",
+      "question": "Who is the first Premier of Victoria?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a63866968151a001a922336",
+      "question": "What political party is strongest in Melbourne's poor regional areas?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a638ffe68151a001a922382",
+      "question": "What type of manufacturing plant is Victoria getting soon?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_5a63969068151a001a9223aa",
+      "question": "Where is the highest section of Victoria?",
+      "should_answer": false,
+      "document": "victoria_australia.txt"
+    },
+    {
+      "case_id": "squad_57268c01dd62a815002e8916",
+      "question": "How does cooling of the local environment affect the mnemiopsis?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "significantly slowed the animal's metabolism",
+        "slowed the animal's metabolism"
+      ]
+    },
+    {
+      "case_id": "squad_572683075951b619008f7513",
+      "question": "How are eggs and sperm released?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "pores in the epidermis",
+        "via pores in the epidermis"
+      ]
+    },
+    {
+      "case_id": "squad_572659ea5951b619008f7054",
+      "question": "What runs from the balancer in the statocyst to the comb rows?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "a ciliary groove",
+        "ciliary groove"
+      ]
+    },
+    {
+      "case_id": "squad_572684365951b619008f7543",
+      "question": "Which genus lack tentacles and sheaths?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "Beroe"
+      ]
+    },
+    {
+      "case_id": "squad_57264a0ef1498d1400e8db41",
+      "question": "Which group of ctenophore are are hardest to study?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "oceanic species"
+      ]
+    },
+    {
+      "case_id": "squad_57265c10f1498d1400e8dd36",
+      "question": "What does the bathocyroe and ocyropsis do to escape danger?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "by clapping their lobes",
+        "clapping their lobes"
+      ]
+    },
+    {
+      "case_id": "squad_57268a37f1498d1400e8e33c",
+      "question": "Why was it thought that  ctenophores were a poor diet for other animals?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "low ratio of organic matter to salt and water",
+        "their low ratio of organic matter to salt and water"
+      ]
+    },
+    {
+      "case_id": "squad_572681c1dd62a815002e8797",
+      "question": "What do platyctenida use their pharynx for?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "as a muscular \"foot\"",
+        "cling to and creep on surfaces"
+      ]
+    },
+    {
+      "case_id": "squad_572684365951b619008f7540",
+      "question": "Where do juvenile platyctenids live?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "among the plankton"
+      ]
+    },
+    {
+      "case_id": "squad_572684365951b619008f7541",
+      "question": "When do juvenile develop into adults?",
+      "should_answer": true,
+      "document": "ctenophora.txt",
+      "answers": [
+        "after dropping to the sea-floor"
+      ]
+    },
+    {
+      "case_id": "squad_5a834af4e60761001a2eb51c",
+      "question": "How much is a rotifer able to eat in one day?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a83a80ae60761001a2eb857",
+      "question": "What is Cnidaria sometimes categorized as instead of Ctenophora?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a837038e60761001a2eb6f5",
+      "question": "What is volume normally as concentrated as?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a835778e60761001a2eb5dc",
+      "question": "What is the lack of a  jelly-like layer also called when in a complex animal?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a834caae60761001a2eb53b",
+      "question": "What happens to plankton when they mature?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a8398bbe60761001a2eb808",
+      "question": "What has the fish larvae caused a sharp drop in?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a835482e60761001a2eb598",
+      "question": "What kind of organs do some sponges have?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a838db9e60761001a2eb7bd",
+      "question": "What are most species of the genus Ocryopsis thought to be?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a839654e60761001a2eb7f1",
+      "question": "How much food can crustacean larvae eat per day?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5a8359c1e60761001a2eb5f4",
+      "question": "How long can the cillia grow on ctenophores?",
+      "should_answer": false,
+      "document": "ctenophora.txt"
+    },
+    {
+      "case_id": "squad_5710e8c8a58dae1900cd6b27",
+      "question": "After Huguenots fled France, their last remaining bastion was where?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Cévennes",
+        "Cévennes region in the south"
+      ]
+    },
+    {
+      "case_id": "squad_57108198b654c5140001f93b",
+      "question": "What country currently has a group who call themselves Huguenots?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Australia"
+      ]
+    },
+    {
+      "case_id": "squad_57107a3ea58dae1900cd69df",
+      "question": "Where in South Carolina did Huguenot nobility settle?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Charleston Orange district",
+        "the Charleston Orange district"
+      ]
+    },
+    {
+      "case_id": "squad_5710f4b8b654c5140001fa48",
+      "question": "In what era did some members of this community emigrate to the US?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "1890s"
+      ]
+    },
+    {
+      "case_id": "squad_57111428b654c5140001fb01",
+      "question": "How many Huguenots were killed in Toulouse?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Nearly 3,000"
+      ]
+    },
+    {
+      "case_id": "squad_571098f8a58dae1900cd6ab5",
+      "question": "When did Mechlin lace develop?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "first half of the eighteenth century"
+      ]
+    },
+    {
+      "case_id": "squad_57111380a58dae1900cd6bd6",
+      "question": "Who was one French pro-reform Roman Catholic of the 15th century?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Jacques Lefevre"
+      ]
+    },
+    {
+      "case_id": "squad_571099b2b654c5140001f9b6",
+      "question": "What years did this occupation take place?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "1806-07",
+        "1806-07."
+      ]
+    },
+    {
+      "case_id": "squad_571114cfb654c5140001fb09",
+      "question": "Who became king in 1643?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Louis XIV"
+      ]
+    },
+    {
+      "case_id": "squad_5710eca0a58dae1900cd6b3c",
+      "question": "What town was actually granted to the Huguenots on arrival?",
+      "should_answer": true,
+      "document": "huguenot.txt",
+      "answers": [
+        "Manakin Town"
+      ]
+    },
+    {
+      "case_id": "squad_5ad268cbd7d075001a429294",
+      "question": "In what year was the Edict of Nantes revoked?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad26ba1d7d075001a42935a",
+      "question": "Where was Andrew Lortie originally from?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad25c69d7d075001a428ea7",
+      "question": "What Huguenot French family had the largest brandy distilling business in South Africa?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad24600d7d075001a428aca",
+      "question": "How many Huguenots were killed altogether in France?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad27081d7d075001a429455",
+      "question": "In what year was D'Olier Street built in Dublin?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad266f8d7d075001a42920a",
+      "question": "Who was William the Silent's father?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad275ccd7d075001a429510",
+      "question": "Which side won the First World War Battle of Tannenberg?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad2447dd7d075001a428a69",
+      "question": "What French city was Jacques Lefevre from?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad25d49d7d075001a428eee",
+      "question": "In what year was Pedro Menendez de Aviles born?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    },
+    {
+      "case_id": "squad_5ad24d2ad7d075001a428c22",
+      "question": "In what year were the Dragonnades started?",
+      "should_answer": false,
+      "document": "huguenot.txt"
+    }
+  ]
+}

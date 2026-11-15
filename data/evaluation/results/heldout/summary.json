@@ -1,0 +1,44 @@
+{
+  "gemini": {
+    "model": "gemini-3.5-flash-lite",
+    "answerable": 50,
+    "unanswerable": 50,
+    "evidence_in_top_k": 48,
+    "correct": 42,
+    "wrong": 6,
+    "declined_answerable": 2,
+    "refused_unanswerable": 33,
+    "made_up": 17,
+    "refusals_answerable": {
+      "retrieval_gate": 0,
+      "llm": 2,
+      "check_after_writing": 0
+    },
+    "refusals_unanswerable": {
+      "retrieval_gate": 1,
+      "llm": 32,
+      "check_after_writing": 0
+    }
+  },
+  "phi3_mini": {
+    "model": "phi3:mini",
+    "answerable": 50,
+    "unanswerable": 50,
+    "evidence_in_top_k": 48,
+    "correct": 32,
+    "wrong": 9,
+    "declined_answerable": 9,
+    "refused_unanswerable": 16,
+    "made_up": 34,
+    "refusals_answerable": {
+      "retrieval_gate": 0,
+      "llm": 0,
+      "check_after_writing": 9
+    },
+    "refusals_unanswerable": {
+      "retrieval_gate": 1,
+      "llm": 5,
+      "check_after_writing": 10
+    }
+  }
+}

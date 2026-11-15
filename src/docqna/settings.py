@@ -86,6 +86,9 @@ class Settings(BaseSettings):
     # provider has its own measured value (Ollama phi3:mini / Gemini).
     grounding_min_score: float = 3.3
     gemini_grounding_min_score: float = 1.5
+    # Prompt-injection defences (src/docqna/rag/injection.py), measured in
+    # experiments/attack_prompt_injection.py.
+    injection_filter_enabled: bool = True
     max_cached_session_indexes: int = 256
 
     # Logging

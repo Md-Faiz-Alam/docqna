@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { closestSentence, pageLabel, splitCitations, splitSentences } from "@/lib/citations";
-import { inventedAnswers, quality, results } from "@/lib/results";
+import { duration, inventedAnswers, quality, results } from "@/lib/results";
 import { getSessionId, resetSessionId } from "@/lib/session";
 import { parseEventBlock, readEvents } from "@/lib/sse";
 import { percent } from "@/lib/utils";
@@ -102,5 +102,14 @@ describe("measured results", () => {
     expect(percent(1)).toBe("100%");
     expect(percent(0.3729)).toBe("37.3%");
     expect(percent(null)).toBe("–");
+  });
+});
+
+describe("duration", () => {
+  it("formats milliseconds for the speed table", () => {
+    expect(duration(43.4)).toBe("43 ms");
+    expect(duration(1915.2)).toBe("1.9 s");
+    expect(duration(38250)).toBe("38 s");
+    expect(duration(null)).toBe("–");
   });
 });

@@ -37,8 +37,12 @@ The RAG pipeline includes:
 - citation normalization/repair
 - citation validation
 - safe fallback behavior when citation validation fails
+- an injection filter that removes text addressed to an AI assistant (instructions to AI systems, attempts to override or reveal the rules, fake prompt sections, Markdown images) from retrieved passages before the LLM sees them; removed text is shown as `[removed: text addressed to an AI assistant]` in the sources
+- a link check that withholds any answer containing a link or e-mail address that none of the sources contains
 
-These controls reduce prompt-injection and unsupported-answer risk, but they do not make arbitrary uploaded content inherently trustworthy.
+Prompt hardening alone was not enough: in the attack test (`experiments/attack_prompt_injection.py`, results in `docs/evaluation.md` section 16) Gemini followed hidden document instructions in 6 of 20 attacks, adding a phishing link and stating a planted false fact, and the grounding check let these through because the attacker's text really was in the cited source. The filter and link check are pattern rules for known attack shapes. They stopped every attack in that test, but they cannot guarantee that a new phrasing is caught.
+
+These controls reduce prompt-injection and unsupported-answer risk, but they do not make arbitrary uploaded content inherently trustworthy. During streaming, draft text is shown before the final checks run; the final response replaces it.
 
 ---
 

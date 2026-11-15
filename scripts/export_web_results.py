@@ -77,6 +77,173 @@ def answer_quality(provider: str, label: str, settings: Settings) -> dict[str, A
     return row
 
 
+def pipeline_layers(provider: str, label: str) -> dict[str, Any]:
+    """Combined counts per layer from experiments/compare_pipeline_layers.py."""
+
+    folder = "phi3_mini" if provider == "ollama" else provider
+    summary = _load(RESULTS / "pipeline_layers" / folder / "summary.json")
+    return {
+        "provider": provider,
+        "label": label,
+        "layers": [
+            {
+                "key": key,
+                "label": name,
+                **{
+                    field: summary["combined"][key][field]
+                    for field in (
+                        "answerable",
+                        "unanswerable",
+                        "evidence_in_top_k",
+                        "correct",
+                        "wrong",
+                        "false_answers",
+                    )
+                },
+            }
+            for key, name in summary["layers"].items()
+        ],
+    }
+
+
+def prompt_injection(provider: str, label: str) -> dict[str, Any] | None:
+    """Attack results before and after the defence, from attack_prompt_injection.py."""
+
+    folder = "phi3_mini" if provider == "ollama" else provider
+    path = RESULTS / "prompt_injection" / folder / "summary.json"
+    if not path.exists():
+        return None
+    summary = _load(path)
+    runs = summary["runs"]
+    if not {"baseline", "defended"} <= runs.keys():
+        return None
+    return {
+        "provider": provider,
+        "label": label,
+        "attacks": [
+            {
+                "key": key,
+                "label": name,
+                "cases": runs["baseline"]["by_attack"][key]["cases"],
+                "before": runs["baseline"]["by_attack"][key]["hijacked_shown"],
+                "after": runs["defended"]["by_attack"][key]["hijacked_shown"],
+            }
+            for key, name in summary["attack_labels"].items()
+            if key in runs["baseline"]["by_attack"]
+        ],
+        "overall": {
+            stage: {
+                "cases": runs[stage]["overall"]["cases"],
+                "llm_fell_for_it": runs[stage]["overall"]["hijacked_written"],
+                "user_saw_it": runs[stage]["overall"]["hijacked_shown"],
+                "real_answer_cases": runs[stage]["overall"]["real_answer_cases"],
+                "real_answer_correct": runs[stage]["overall"]["real_answer_correct"],
+            }
+            for stage in ("baseline", "defended")
+        },
+    }
+
+
+def speed_and_cost(settings: Settings) -> list[dict[str, Any]]:
+    """Per-stage timings, tokens and cost from measure_speed_and_cost.py."""
+
+    path = RESULTS / "speed_and_cost" / "summary.json"
+    if not path.exists():
+        return []
+    labels = {"phi3_mini": "phi3:mini (local)", "gemini": f"Gemini {settings.gemini_model}"}
+    rows = []
+    for folder, s in _load(path).items():
+        public_docs = [d for d in s["indexing"] if not d["document"].startswith("private")]
+        private_docs = [d for d in s["indexing"] if d["document"].startswith("private")]
+        rows.append(
+            {
+                "provider": s["provider"],
+                "label": labels.get(folder, folder),
+                "processor": s["hardware"]["processor"],
+                "logical_cpus": s["hardware"]["logical_cpus"],
+                "questions": s["questions"],
+                "stages_ms": {
+                    stage: {"median": v["median"], "p95": v["p95"]}
+                    for stage, v in s["stages_ms"].items()
+                },
+                "tokens": s["mean_tokens_per_question"],
+                "cost_per_1000_usd": (s["cost_usd"] or {}).get("per_1000_questions"),
+                "startup_seconds": round(sum(s["startup_seconds"].values()), 1),
+                "index_public_seconds": round(sum(d["seconds"] for d in public_docs), 2),
+                "index_private": private_docs[0] if private_docs else None,
+            }
+        )
+    return rows
+
+
+def heldout(settings: Settings) -> dict[str, Any] | None:
+    """Unseen SQuAD 2.0 results from evaluate_heldout.py, with Gemini's hand review."""
+
+    path = RESULTS / "heldout" / "summary.json"
+    if not path.exists():
+        return None
+    labels = {"phi3_mini": "phi3:mini (local)", "gemini": f"Gemini {settings.gemini_model}"}
+    rows = [
+        {
+            "provider": folder,
+            "label": labels.get(folder, folder),
+            **{
+                key: s[key]
+                for key in (
+                    "answerable",
+                    "unanswerable",
+                    "evidence_in_top_k",
+                    "correct",
+                    "wrong",
+                    "declined_answerable",
+                    "made_up",
+                )
+            },
+        }
+        for folder, s in _load(path).items()
+    ]
+    review_path = RESULTS / "heldout" / "gemini" / "manual_review.json"
+    review = None
+    if review_path.exists():
+        r = _load(review_path)
+        review = {
+            key: len(group["cases"]) for key, group in r["unanswerable_but_answered"].items()
+        } | {key: len(cases) for key, cases in r["answerable_not_correct"].items()}
+    return {"rows": rows, "gemini_review": review}
+
+
+def grading_check() -> dict[str, Any] | None:
+    """Agreement between the automatic grading and the AI-assisted human labels."""
+
+    path = RESULTS / "grading_check" / "summary.json"
+    if not path.exists():
+        return None
+    s = _load(path)
+
+    def row(key: str, label: str, report: dict[str, Any]) -> dict[str, Any]:
+        strict = report["strict"]
+        return {
+            "key": key,
+            "label": label,
+            "compared": strict["compared"],
+            "agree": strict["agree"],
+            "kappa": strict["kappa"],
+            "auto_too_harsh": strict["human_correct_auto_not"],
+            "auto_too_generous": strict["auto_correct_human_not"],
+        }
+
+    kinds = s["by_question_type"]
+    return {
+        "labelled": s["labelled"],
+        "label_counts": s["label_counts"],
+        "rows": [
+            row("answerable", "Normal questions", kinds["answerable"]),
+            row("unanswerable", "SQuAD trick questions", kinds["unanswerable"]),
+            row("overall", "All answers", s["overall"]),
+        ],
+    }
+
+
 def main() -> None:
     settings = Settings(_env_file=None)  # type: ignore[call-arg]
 
@@ -127,6 +294,21 @@ def main() -> None:
             answer_quality("ollama", "phi3:mini (local)", settings),
             answer_quality("gemini", f"Gemini {settings.gemini_model}", settings),
         ],
+        "pipeline_layers": [
+            pipeline_layers("ollama", "phi3:mini (local)"),
+            pipeline_layers("gemini", f"Gemini {settings.gemini_model}"),
+        ],
+        "prompt_injection": [
+            row
+            for row in (
+                prompt_injection("ollama", "phi3:mini (local)"),
+                prompt_injection("gemini", f"Gemini {settings.gemini_model}"),
+            )
+            if row is not None
+        ],
+        "speed_and_cost": speed_and_cost(settings),
+        "heldout": heldout(settings),
+        "grading_check": grading_check(),
         "old_gate": {
             "label": "Before recalibration (gate >= 0)",
             "public_correct": _r(sweep["selection"]["old"]["public"]["answerable_correct"]),

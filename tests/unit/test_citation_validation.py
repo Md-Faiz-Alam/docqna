@@ -159,3 +159,15 @@ def test_citation_normalization() -> None:
     assert (
         RAGPipeline._normalize_citations("Supported claim [Citation 1].") == "Supported claim [1]."
     )
+
+
+def test_grouped_citations_are_split() -> None:
+    # Found by the held-out SQuAD test: correct answers citing "[1, 5]" were refused.
+    assert RAGPipeline._normalize_citations("A storm [1, 5].") == "A storm [1][5]."
+    assert RAGPipeline._normalize_citations("Two [2,3; 4] and [1].") == "Two [2][3][4] and [1]."
+    assert RAGPipeline._normalize_citations("In 2007, 2008 [x].") == "In 2007, 2008 [x]."
+    ids, error = RAGPipeline._validate_citations(
+        answer=RAGPipeline._normalize_citations("A storm dispersed the fleet [1, 5]."),
+        result_count=5,
+    )
+    assert (ids, error) == ([1, 5], None)
