@@ -4,7 +4,7 @@
 
 ## 1. Scope
 
-DocQ&A processes user-uploaded PDF, DOCX, and TXT documents and sends retrieved document text to a configured local Ollama model for grounded answer generation.
+DocQ&A processes user-uploaded PDF, DOCX, and TXT documents and sends retrieved document text to the configured LLM for grounded answer generation: a local Ollama model by default, or Google's hosted Gemini API when `LLM_PROVIDER=gemini`.
 
 This document describes the current application security model and the controls that remain before broad public exposure.
 
@@ -19,6 +19,7 @@ The main trust boundaries are:
 - `.env` and deployment credentials are operator-managed secrets
 - persistent document/index data must be protected by the host and deployment environment
 - Ollama is an internal generation service in the Docker topology, not a public API surface
+- browser cross-origin access is limited to the `CORS_ALLOWED_ORIGINS` allow-list (default: none); CORS is a browser protection, not authentication
 
 ---
 
@@ -123,7 +124,9 @@ Do not commit:
 
 `.env.example` should contain only safe defaults and placeholders.
 
-The production Docker configuration currently uses Ollama only; no external generation API key is required for the validated stack.
+The validated Docker stack uses Ollama only and needs no external API key.
+
+Gemini mode needs `GEMINI_API_KEY`. Keep it only in `.env` or the hosting platform's secret store, never in code or Git. The key is sent only as a request header to Google, and DocQ&A never logs it or puts it in error messages. Gemini mode sends questions and retrieved document passages to Google; on the free tier Google may use them to improve its products. Use Ollama for private or sensitive documents.
 
 ---
 

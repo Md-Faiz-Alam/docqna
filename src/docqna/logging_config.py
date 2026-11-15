@@ -32,12 +32,6 @@ def reset_request_id(token: Token[str]) -> None:
     _REQUEST_ID.reset(token)
 
 
-def get_request_id() -> str:
-    """Return the current request ID."""
-
-    return _REQUEST_ID.get()
-
-
 def configure_logging(*, force: bool = False, log_dir: str | Path | None = None) -> logging.Logger:
     """
     Configure DocQ&A application logging.

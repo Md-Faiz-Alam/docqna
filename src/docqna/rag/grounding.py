@@ -11,7 +11,7 @@ long chunk that mostly covers other topics would otherwise drag the score of a
 correct answer down. Each cited source is split into sentences and pairs of
 adjacent sentences, and the best match counts.
 
-Calibrated in experiments/run_phase23_answerability_recalibration.py.
+Calibrated in experiments/calibrate_answerability.py.
 """
 
 import re

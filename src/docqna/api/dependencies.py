@@ -10,9 +10,11 @@ from functools import lru_cache
 
 from sentence_transformers import CrossEncoder
 
+from docqna.api.samples import sample_content_hashes
 from docqna.embeddings import BaseEmbeddingModel, SentenceTransformerEmbedding
 from docqna.exceptions import IndexingError, LLMConnectionError, RetrievalError
 from docqna.generation.providers.base import BaseLLMProvider
+from docqna.generation.providers.gemini import GeminiProvider
 from docqna.generation.providers.ollama import OllamaProvider
 from docqna.indexing import ChromaVectorStore, DocumentIndexService
 from docqna.ingestion import DocumentIngestionService, DocumentRegistry
@@ -89,11 +91,23 @@ def get_document_index_service() -> DocumentIndexService:
         max_active_documents=settings.max_active_documents,
         max_chunks_per_document=settings.max_chunks_per_document,
         document_retention_hours=settings.document_retention_hours,
+        limit_exempt_hashes=sample_content_hashes(settings.sample_documents_dir),
     )
 
 
-def build_llm(settings: Settings) -> OllamaProvider:
-    """Create the configured LLM provider."""
+def build_llm(settings: Settings) -> BaseLLMProvider:
+    """Create the LLM provider selected by `LLM_PROVIDER`."""
+
+    if settings.llm_provider == "gemini":
+        key = settings.gemini_api_key.get_secret_value() if settings.gemini_api_key else ""
+        return GeminiProvider(
+            api_key=key,
+            model=settings.gemini_model,
+            temperature=settings.llm_temperature,
+            max_tokens=settings.llm_max_tokens,
+            timeout_seconds=settings.llm_timeout_seconds,
+            thinking_level=settings.gemini_thinking_level,
+        )
 
     return OllamaProvider(
         base_url=settings.ollama_base_url,
@@ -151,7 +165,7 @@ def build_rag_pipeline(
     )
 
     grounding_verifier = (
-        GroundingVerifier(scorer=reranker.model, min_score=settings.grounding_min_score)
+        GroundingVerifier(scorer=reranker.model, min_score=settings.active_grounding_min_score)
         if settings.grounding_check_enabled
         else None
     )
@@ -188,12 +202,14 @@ def get_rag_pipeline() -> RAGPipeline:
     session's BM25 index is invalidated (see invalidate_session_index).
     """
 
+    settings = get_settings()
     llm = get_llm()
     if not llm.health_check():
-        raise LLMConnectionError("Ollama is not reachable.")
+        name = "Gemini" if settings.llm_provider == "gemini" else "Ollama"
+        raise LLMConnectionError(f"{name} is not reachable.")
 
     return build_rag_pipeline(
-        settings=get_settings(),
+        settings=settings,
         session_retriever=get_session_retriever(),
         cross_encoder_model=get_cross_encoder_model(),
         llm=llm,

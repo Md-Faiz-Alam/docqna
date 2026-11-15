@@ -32,7 +32,7 @@ flowchart LR
 | RRF | rank fusion across dense and lexical retrieval |
 | Cross-Encoder | reranking candidate chunks |
 | Answerability gate | abstain when evidence confidence is insufficient |
-| Ollama | local LLM generation |
+| Ollama / Gemini | LLM generation: local Ollama (default) or hosted Gemini, chosen by `LLM_PROVIDER` |
 | Citation validation | normalize, repair, and verify source references |
 | Registry | document identity, versioning, ownership/session scope |
 
@@ -116,7 +116,8 @@ The provided documents do not contain enough information to answer the question.
 | Final top-k | 5 |
 | Retrieval gate (rank-1 CE score) | -10.5 |
 | Grounding check (best CE answer vs cited-source sentence) | 3.3 |
-| LLM | `phi3:mini` |
+| LLM | `phi3:mini` (Ollama); Gemini mode uses `gemini-3.5-flash-lite` with minimal thinking |
+| Grounding check threshold, Gemini mode | 1.5 |
 | LLM temperature | 0 |
 | Max generated tokens | 320 |
 | Ollama timeout | 180 seconds |

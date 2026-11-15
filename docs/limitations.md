@@ -10,7 +10,7 @@ Scanned pages (pages without a text layer) are rendered and read with Tesseract,
 
 ### Some answerable questions still end in abstention
 
-With the phase-23 configuration (retrieval gate `-10.5` plus sentence-level grounding check `3.3`), the public benchmark answers 69.5% of paraphrased answerable questions correctly. Most of the rest end in the safe abstention, not in a wrong answer. Users can still see "not enough information" for questions the documents do answer, especially for paraphrases far from the document's wording.
+With the calibrated configuration (retrieval gate `-10.5` plus sentence-level grounding check `3.3`), the public benchmark answers 69.5% of paraphrased answerable questions correctly. Most of the rest end in the safe abstention, not in a wrong answer. Users can still see "not enough information" for questions the documents do answer, especially for paraphrases far from the document's wording.
 
 ### Session isolation is not authentication
 
@@ -20,7 +20,13 @@ This does not provide accounts, passwords, OAuth, account recovery, durable cros
 
 ### Dataset-specific answerability calibration
 
-The retrieval gate (`-10.5`) and grounding threshold (`3.3`) were selected on 105 questions (75 public, 30 private). The evaluation includes only 28 unanswerable questions, so "0 false answers" means "none observed in 28", not a guarantee. Long answers that combine several facts can score low against any single sentence and be withheld. Re-run phase 23 when the domain, LLM, reranker or chunking changes materially.
+The retrieval gate (`-10.5`) and grounding threshold (`3.3`) were selected on 105 questions (75 public, 30 private). The evaluation includes only 28 unanswerable questions, so "0 false answers" means "none observed in 28", not a guarantee. Long answers that combine several facts can score low against any single sentence and be withheld. Re-run the answerability calibration (`experiments/calibrate_answerability.py`) when the domain, LLM, reranker or chunking changes materially.
+
+### Cloud demo container
+
+**Storage is temporary.** The Hugging Face container keeps uploads, indexes and feedback inside the container, so they disappear when it restarts or sleeps.
+
+**Sample documents bypass the document quotas.** They are small and fixed, but a script that keeps creating new session IDs could load them repeatedly. Each load adds only a few kilobytes and is removed after `DOCUMENT_RETENTION_HOURS`, and requests are rate-limited per session, but there is no global cap on sample loads.
 
 ### Over-citation
 

@@ -10,6 +10,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  web:
+    name: Website lint, types, tests, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
   quality:
     name: Lint, types, unit tests
     runs-on: ubuntu-latest
@@ -100,4 +123,10 @@ jobs:
         with:
           context: .
           file: docker/streamlit.Dockerfile
+          push: false
+      - name: Build cloud image (Hugging Face Space)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/cloud.Dockerfile
           push: false

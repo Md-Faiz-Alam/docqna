@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from docqna.api.dependencies import get_document_index_service_provider, invalidate_session_index
 from docqna.api.retention import purge_expired_documents
+from docqna.api.samples import sample_document_paths
 from docqna.api.schemas import (
     DocumentDeleteResponse,
     DocumentListResponse,
@@ -16,7 +17,12 @@ from docqna.api.schemas import (
 )
 from docqna.api.session import require_session_id
 from docqna.constants import SUPPORTED_FILE_EXTENSIONS
-from docqna.exceptions import DocumentLoadError, DocumentValidationError, UnsupportedFileTypeError
+from docqna.exceptions import (
+    DocumentLoadError,
+    DocumentValidationError,
+    DuplicateDocumentError,
+    UnsupportedFileTypeError,
+)
 from docqna.indexing import DocumentIndexService
 from docqna.settings import get_settings
 
@@ -113,6 +119,52 @@ def upload_document(
         document=DocumentResponse.model_validate(result.record.model_dump()),
         chunk_count=result.chunk_count,
     )
+
+
+@router.post(
+    "/samples",
+    response_model=DocumentListResponse,
+    responses={
+        404: {"model": ErrorResponse, "description": "No sample documents are bundled"},
+        500: {"model": ErrorResponse, "description": "Indexing error"},
+    },
+)
+def load_sample_documents(
+    session_id: str = Depends(require_session_id),
+    service_provider: ServiceProvider = Depends(get_document_index_service_provider),
+) -> DocumentListResponse:
+    """Index the bundled fictional sample documents into the caller's session.
+
+    Safe to call twice: samples already loaded are skipped. Samples do not
+    count toward the per-session or server document limits.
+    """
+
+    paths = sample_document_paths(get_settings().sample_documents_dir)
+    if not paths:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No sample documents are available."
+        )
+
+    service = service_provider()
+    purge_expired_documents(service)
+
+    loaded = 0
+    for path in paths:
+        try:
+            service.index_document(path, session_id=session_id)
+            loaded += 1
+        except DuplicateDocumentError:
+            continue
+
+    if loaded:
+        invalidate_session_index(session_id)
+    logger.info("sample_documents_loaded loaded=%d available=%d", loaded, len(paths))
+
+    documents = [
+        DocumentResponse.model_validate(record.model_dump())
+        for record in service.list_documents(session_id=session_id)
+    ]
+    return DocumentListResponse(count=len(documents), documents=documents)
 
 
 @router.get(

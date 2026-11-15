@@ -5,6 +5,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from docqna.api.errors import register_exception_handlers
 from docqna.api.middleware import request_observability
@@ -31,7 +32,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         APP_VERSION,
         settings.app_env,
         settings.llm_provider,
-        settings.ollama_model,
+        settings.llm_model,
         settings.embedding_model,
         settings.embedding_device,
     )
@@ -82,6 +83,19 @@ def create_app() -> FastAPI:
         )
     )
     application.middleware("http")(request_observability)
+    # Added last, so it is the outermost layer: rate-limit and error
+    # responses carry CORS headers too, and the browser can read them.
+    # CORS only stops other websites' browser JavaScript; it is not auth.
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_origin_regex=settings.cors_allowed_origin_regex or None,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=["Content-Type", SESSION_HEADER_NAME],
+        expose_headers=["X-Request-ID"],
+        max_age=600,
+    )
     register_exception_handlers(application)
 
     application.include_router(system.router)

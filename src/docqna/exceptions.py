@@ -78,6 +78,10 @@ class LLMConnectionError(GenerationError):
     """Raised when the configured LLM provider cannot be reached."""
 
 
+class LLMRateLimitError(GenerationError):
+    """Raised when a hosted LLM provider's request quota is exhausted."""
+
+
 # ---------------------------------------------------------
 # Citations
 # ---------------------------------------------------------

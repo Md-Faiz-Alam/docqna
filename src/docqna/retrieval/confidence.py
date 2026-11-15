@@ -29,8 +29,8 @@ class RetrievalConfidenceGate:
     Decide whether retrieved evidence is strong enough
     for the RAG system to attempt an answer.
 
-    Phase 15 initially uses the rank-1 cross-encoder
-    score as the confidence signal.
+    The confidence signal is the rank-1 cross-encoder
+    score.
 
     The threshold remains configurable so it can be
     calibrated from evaluation data instead of guessed.

@@ -33,3 +33,9 @@ docker/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# The fictional sample documents are baked into the cloud image.
+!data/evaluation/public/corpus/
+
+# The website is deployed separately (Vercel).
+web/

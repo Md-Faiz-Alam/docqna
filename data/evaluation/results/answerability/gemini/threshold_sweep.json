@@ -1,0 +1,598 @@
+{
+  "gate_only": {
+    "private": [
+      {
+        "threshold": -Infinity,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -12.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -11.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -11.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -10.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -10.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -9.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -9.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -8.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -8.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -7.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -7.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -6.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -6.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -5.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -5.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -4.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -4.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -3.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -3.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -2.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -2.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -1.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -1.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -0.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 0.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 0.5,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 1.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9444444444444444,
+        "answerable_correctly_cited": 0.9444444444444444,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 2.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9444444444444444,
+        "answerable_correctly_cited": 0.9444444444444444,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 2.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9444444444444444,
+        "answerable_correctly_cited": 0.9444444444444444,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 3.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9444444444444444,
+        "answerable_correctly_cited": 0.9444444444444444,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 3.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9444444444444444,
+        "answerable_correctly_cited": 0.9444444444444444,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 4.0,
+        "grounding_min": null,
+        "answerable_correct": 0.8888888888888888,
+        "answerable_correctly_cited": 0.8888888888888888,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      }
+    ],
+    "public": [
+      {
+        "threshold": -Infinity,
+        "grounding_min": null,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -12.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -11.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -11.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -10.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -10.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9661016949152542,
+        "answerable_correctly_cited": 0.9661016949152542,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -9.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9661016949152542,
+        "answerable_correctly_cited": 0.9661016949152542,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -9.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9491525423728814,
+        "answerable_correctly_cited": 0.9491525423728814,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -8.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9322033898305084,
+        "answerable_correctly_cited": 0.9322033898305084,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -8.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9152542372881356,
+        "answerable_correctly_cited": 0.9152542372881356,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -7.5,
+        "grounding_min": null,
+        "answerable_correct": 0.9152542372881356,
+        "answerable_correctly_cited": 0.9152542372881356,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -7.0,
+        "grounding_min": null,
+        "answerable_correct": 0.9152542372881356,
+        "answerable_correctly_cited": 0.9152542372881356,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -6.5,
+        "grounding_min": null,
+        "answerable_correct": 0.8813559322033898,
+        "answerable_correctly_cited": 0.8813559322033898,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -6.0,
+        "grounding_min": null,
+        "answerable_correct": 0.864406779661017,
+        "answerable_correctly_cited": 0.864406779661017,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -5.5,
+        "grounding_min": null,
+        "answerable_correct": 0.847457627118644,
+        "answerable_correctly_cited": 0.847457627118644,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -5.0,
+        "grounding_min": null,
+        "answerable_correct": 0.8135593220338984,
+        "answerable_correctly_cited": 0.8135593220338984,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -4.5,
+        "grounding_min": null,
+        "answerable_correct": 0.7796610169491526,
+        "answerable_correctly_cited": 0.7796610169491526,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -4.0,
+        "grounding_min": null,
+        "answerable_correct": 0.7288135593220338,
+        "answerable_correctly_cited": 0.7288135593220338,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -3.5,
+        "grounding_min": null,
+        "answerable_correct": 0.6949152542372882,
+        "answerable_correctly_cited": 0.6949152542372882,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -3.0,
+        "grounding_min": null,
+        "answerable_correct": 0.6440677966101694,
+        "answerable_correctly_cited": 0.6440677966101694,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -2.5,
+        "grounding_min": null,
+        "answerable_correct": 0.6271186440677966,
+        "answerable_correctly_cited": 0.6271186440677966,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -2.0,
+        "grounding_min": null,
+        "answerable_correct": 0.6271186440677966,
+        "answerable_correctly_cited": 0.6271186440677966,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -1.5,
+        "grounding_min": null,
+        "answerable_correct": 0.5254237288135594,
+        "answerable_correctly_cited": 0.5254237288135594,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -1.0,
+        "grounding_min": null,
+        "answerable_correct": 0.4915254237288136,
+        "answerable_correctly_cited": 0.4915254237288136,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": -0.5,
+        "grounding_min": null,
+        "answerable_correct": 0.4745762711864407,
+        "answerable_correctly_cited": 0.4745762711864407,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 0.0,
+        "grounding_min": null,
+        "answerable_correct": 0.423728813559322,
+        "answerable_correctly_cited": 0.423728813559322,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 0.5,
+        "grounding_min": null,
+        "answerable_correct": 0.4067796610169492,
+        "answerable_correctly_cited": 0.4067796610169492,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "grounding_min": null,
+        "answerable_correct": 0.4067796610169492,
+        "answerable_correctly_cited": 0.4067796610169492,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 1.5,
+        "grounding_min": null,
+        "answerable_correct": 0.3220338983050847,
+        "answerable_correctly_cited": 0.3220338983050847,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 2.0,
+        "grounding_min": null,
+        "answerable_correct": 0.3220338983050847,
+        "answerable_correctly_cited": 0.3220338983050847,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 2.5,
+        "grounding_min": null,
+        "answerable_correct": 0.2711864406779661,
+        "answerable_correctly_cited": 0.2711864406779661,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 3.0,
+        "grounding_min": null,
+        "answerable_correct": 0.22033898305084745,
+        "answerable_correctly_cited": 0.22033898305084745,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 3.5,
+        "grounding_min": null,
+        "answerable_correct": 0.1864406779661017,
+        "answerable_correctly_cited": 0.1864406779661017,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      {
+        "threshold": 4.0,
+        "grounding_min": null,
+        "answerable_correct": 0.13559322033898305,
+        "answerable_correctly_cited": 0.13559322033898305,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      }
+    ]
+  },
+  "selection": {
+    "rule": "constraints: false answers <= old config on both sets, private correct >= 0.94; then fewest false answers, most public correct, most private correct; prefer higher T; G at the middle of the tied range",
+    "old": {
+      "threshold": 0.0,
+      "public": {
+        "threshold": 0.0,
+        "grounding_min": null,
+        "answerable_correct": 0.423728813559322,
+        "answerable_correctly_cited": 0.423728813559322,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      "private": {
+        "threshold": 0.0,
+        "grounding_min": null,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      }
+    },
+    "selected": {
+      "threshold": -10.5,
+      "grounding_min": -1.0,
+      "public": {
+        "threshold": -10.5,
+        "grounding_min": -1.0,
+        "answerable_correct": 0.9830508474576272,
+        "answerable_correctly_cited": 0.9830508474576272,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      },
+      "private": {
+        "threshold": -10.5,
+        "grounding_min": -1.0,
+        "answerable_correct": 1.0,
+        "answerable_correctly_cited": 1.0,
+        "answerable_wrong_answer": 0.0,
+        "unanswerable_false_answer": 0.0
+      }
+    },
+    "tied_grounding_range": [
+      -4.0,
+      1.9
+    ]
+  }
+}

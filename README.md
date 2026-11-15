@@ -26,7 +26,7 @@ It is intentionally more than a basic “chat with PDF” demo: the project comp
 - cross-encoder reranking
 - metadata/document filtering
 - answerability threshold and exact safe abstention
-- grounded Ollama generation with `phi3:mini`
+- grounded generation with local Ollama `phi3:mini` (default, private) or hosted Google Gemini (`LLM_PROVIDER=gemini`)
 - citation normalization, repair, and validation
 - FastAPI backend
 - Streamlit UI
@@ -60,7 +60,8 @@ It is intentionally more than a basic “chat with PDF” demo: the project comp
 | Final context | Top 5 chunks |
 | Answerability: retrieval gate | Rank-1 CE score `>= -10.5` (skips clearly off-topic questions) |
 | Answerability: grounding check | Best CE(answer, cited-source sentence) `>= 3.3`, otherwise abstain |
-| LLM | Ollama `phi3:mini` |
+| LLM | Ollama `phi3:mini` (default) or Gemini `gemini-3.5-flash-lite` (`LLM_PROVIDER=gemini`) |
+| Grounding threshold per LLM | `3.3` for `phi3:mini`, `1.5` for Gemini (each measured, see below) |
 | Generation | temperature `0`, `num_predict=320` |
 
 Unsupported questions return exactly:
@@ -122,7 +123,7 @@ BM25 measured a slightly higher nDCG (`~0.9067`) than the RRF + cross-encoder co
 Final analysis artifacts are stored under:
 
 ```text
-data/evaluation/results/phase22g_final_analysis/
+data/evaluation/results/retrieval_summary/
 ```
 
 ### Public benchmark (runs in CI)
@@ -139,7 +140,7 @@ python -m docqna.evaluation.public_benchmark --check
 
 The last two columns measure only the first, cheap retrieval gate. Most unanswerable questions are stopped by the grounding check *after* generation, which needs the LLM and is measured separately.
 
-### Answerability recalibration (phase 23)
+### Answerability recalibration
 
 The benchmark showed that the original single threshold (cross-encoder score `>= 0`, tuned on one private document) refused 58% of naturally phrased answerable questions. Simply lowering it was not safe: with the gate off, `phi3:mini` answered 10 of 16 unanswerable questions, citing unrelated passages ("France won the 2018 World Cup [1]"). The fix has two stages. A loose retrieval gate (`-10.5`) skips clearly off-topic questions before the LLM runs. After generation, a **grounding check** scores the answer against each sentence of the sources it cites, using the same cross-encoder, and abstains unless one supports it. Both thresholds were chosen from an end-to-end run with the LLM on both datasets (105 questions), using a trust-first rule:
 
@@ -150,7 +151,14 @@ The benchmark showed that the original single threshold (cross-encoder score `>=
 
 With the new configuration, none of the 28 unanswerable questions got an invented answer. The trade-off is one private answer, a long multi-claim answer that is correct but weakly matched to any single sentence.
 
-Reproduce with [`experiments/run_phase23_answerability_recalibration.py`](experiments/run_phase23_answerability_recalibration.py). Details are in [`docs/evaluation.md`](docs/evaluation.md#13-answerability-recalibration-with-the-llm-in-the-loop).
+**With Gemini** (`gemini-3.5-flash-lite`, same 105 questions, same gate, grounding `>= 1.5`): public 98.3% correct, private 100% correct, 0 of 28 invented answers, about 1.5–2 seconds per answer. Gemini declined every unanswerable question on its own; the lower grounding threshold keeps all of its correct answers.
+
+| | Public: correct | Public: false answers | Private: correct | Private: false answers | Typical answer time |
+|---|---:|---:|---:|---:|---:|
+| `phi3:mini` (local) | 69.5% | 0% | 94.4% | 0% | slow on CPU |
+| **Gemini `gemini-3.5-flash-lite`** | **98.3%** | **0%** | **100%** | **0%** | **1.5–2 s** |
+
+Reproduce with [`experiments/calibrate_answerability.py`](experiments/calibrate_answerability.py) (add `--provider gemini` for Gemini). Details are in [`docs/evaluation.md`](docs/evaluation.md#13-answerability-recalibration-with-the-llm-in-the-loop).
 
 See [`docs/evaluation.md`](docs/evaluation.md).
 
@@ -182,7 +190,7 @@ docqna/
 │   ├── embeddings/          # embedding model adapters
 │   ├── indexing/            # Chroma vector store + document index service
 │   ├── retrieval/           # dense, BM25, RRF hybrid, cross-encoder, confidence gate
-│   ├── generation/          # LLM providers (Ollama)
+│   ├── generation/          # LLM providers (Ollama, Gemini)
 │   ├── rag/                 # prompts + cited RAG pipeline
 │   ├── evaluation/          # metrics, runners, reporting
 │   ├── ui/                  # Streamlit client
@@ -192,12 +200,13 @@ docqna/
 │   ├── integration/         # real models / Ollama — `pytest -m integration`
 │   ├── experiments/         # tests for experiment-runner logic
 │   └── fixtures/            # self-contained test documents
-├── experiments/             # phase-22 evaluation runners (see experiments/README.md)
-├── data/evaluation/         # labelled dataset + committed experiment results
-├── scripts/                 # operational / diagnostic scripts
-├── docker/                  # Dockerfiles (API, UI)
-├── docs/                    # architecture, evaluation, limitations
-├── .github/workflows/ci.yml # lint, types, tests + coverage gate, image builds
+├── experiments/             # evaluation experiments (see experiments/README.md)
+├── data/evaluation/         # labelled datasets (private + public) + committed results
+├── scripts/                 # feedback export, website results export
+├── web/                     # public website: Next.js + TypeScript (see web/README.md)
+├── docker/                  # Dockerfiles (API, UI, cloud)
+├── docs/                    # roadmap, architecture, evaluation, limitations
+├── .github/workflows/ci.yml # lint, types, tests + coverage gate, website checks, image builds
 ├── docker-compose.yml
 └── pyproject.toml           # single source of dependencies and tool config
 ```
@@ -288,6 +297,17 @@ DOCUMENT_RETENTION_HOURS=24
 LOG_LEVEL=INFO
 ```
 
+To answer with hosted Google Gemini instead of local Ollama, create a key in Google AI Studio and set:
+
+```env
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your-key-here   # only in .env, which Git ignores
+GEMINI_MODEL=gemini-3.5-flash-lite
+GEMINI_THINKING_LEVEL=minimal
+```
+
+Gemini mode sends the question and the retrieved document passages to Google. On the free tier, Google may use that data to improve its products, so use Ollama for private documents. Gemini has its own measured grounding threshold (`GEMINI_GROUNDING_MIN_SCORE=1.5`); see [`docs/evaluation.md`](docs/evaluation.md#14-gemini-recalibration-roadmap-step-3).
+
 ---
 
 ## Run locally
@@ -313,11 +333,13 @@ The local Streamlit UI uses `http://127.0.0.1:8000` as the API fallback unless `
 ```text
 GET    /health                    liveness (loads nothing)
 GET    /ready                     readiness: vector store, registry, LLM (503 if any is down)
+GET    /info                      active LLM, models, sample documents and limits (no secrets)
 GET    /metrics                   Prometheus metrics
 POST   /qa                        answer with verified citations (JSON)
 POST   /qa/stream                 same, streamed as server-sent events
 POST   /feedback                  thumbs up/down on an answer
 POST   /documents                 upload and index a document
+POST   /documents/samples         load the fictional sample documents into the session
 GET    /documents                 list the session's documents
 DELETE /documents/{document_id}   delete a document (all versions)
 ```
@@ -329,6 +351,10 @@ Document and QA operations require the anonymous session header enforced by the 
 **Conversation memory.** `/qa` and `/qa/stream` accept an optional `history` of up to 12 earlier turns (`{"role": "user"|"assistant", "content": ...}`, oldest first). When history is present, the question is first rewritten into a standalone question ("And for flights?" becomes "Which flight class is allowed for business travel?"). That rewritten question drives retrieval and the answer, and it is returned as `standalone_question`. If the rewrite fails, the original question is used.
 
 **Feedback.** `POST /feedback` stores a rating with the question and answer text, kept for `FEEDBACK_RETENTION_DAYS` (default 30). `python scripts/export_feedback.py --out drafts.json` exports down-voted answers as draft evaluation cases for a person to label.
+
+**Sample documents.** `POST /documents/samples` indexes the four fictional company documents from the public benchmark into the caller's session, so a visitor can try the demo without uploading anything. Calling it again skips samples already loaded. Samples do not count toward the per-session or server document limits.
+
+**CORS.** Browsers may call the API only from the origins in `CORS_ALLOWED_ORIGINS` (comma-separated, for example `https://docqna.vercel.app`), plus any origin matching `CORS_ALLOWED_ORIGIN_REGEX` (for example Vercel preview URLs). The default is no cross-origin access. CORS stops other websites' scripts in a browser; it is not authentication, and non-browser clients can still call the API.
 
 **Rate limits.** By default each session (or client IP) gets 20 questions and 10 uploads per minute per API process. Over the limit, requests get `429` with `Retry-After`. Change this with `RATE_LIMIT_QA_PER_MINUTE` and `RATE_LIMIT_UPLOADS_PER_MINUTE`; `0` disables a limit. If you run several API instances, also rate-limit at the reverse proxy.
 
@@ -386,6 +412,17 @@ docker compose run --rm --user root api chown -R 10001:10001 /app/data /app/.cac
 ```
 
 The first document upload or first QA request can be slower because the embedding and cross-encoder models may need to download into the persistent Hugging Face cache.
+
+### Cloud container (Hugging Face Spaces)
+
+[`docker/cloud.Dockerfile`](docker/cloud.Dockerfile) builds one self-contained backend for a Hugging Face Docker Space, or any other Docker host. It answers with Gemini, so it needs no Ollama. The embedding and reranker models are baked into the image, so a cold start downloads nothing. It runs as UID 1000 on port 7860, like a Space.
+
+```bash
+docker build -f docker/cloud.Dockerfile -t docqna-cloud .
+docker run --rm -p 7860:7860 -e GEMINI_API_KEY -e CORS_ALLOWED_ORIGINS=http://localhost:3000 docqna-cloud
+```
+
+`-e GEMINI_API_KEY` without a value passes the key from your shell, so it does not appear in the command. In the Space, set `GEMINI_API_KEY` as a **secret** and `CORS_ALLOWED_ORIGINS` as a variable. Uploaded documents live inside the container and are lost when it restarts or sleeps; that is intended for a public demo.
 
 ---
 
@@ -492,13 +529,13 @@ Completed:
 - multi-turn chat: follow-up questions are rewritten into standalone questions using recent turns
 - thumbs up/down answer feedback stored in SQLite, exportable as draft evaluation cases
 - public 75-case benchmark with a CI retrieval-quality gate
+- Google Gemini as an optional answer writer, with its own measured grounding threshold
+- cloud-ready backend: single Hugging Face container, CORS allow-list, `/info`, one-click sample documents
+- public website (Next.js, TypeScript, Tailwind, shadcn/ui): landing page, live demo with streamed answers and clickable citations, measured-results page
 
-Next:
+Next (see [`docs/roadmap.md`](docs/roadmap.md)):
 
-- deploy the validated Docker stack to a remote Linux VM/server
-- add reverse proxy and HTTPS for the public URL
-- add host firewall rules (and reverse-proxy rate limiting if running several API instances)
-- define persistent-volume backup/recovery policy
+- deploy the backend to a Hugging Face Space and the website to Vercel
 - final public demo and portfolio polish
 
 ---

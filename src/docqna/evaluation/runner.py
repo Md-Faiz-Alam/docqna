@@ -39,7 +39,7 @@ def load_evaluation_cases(path: str | Path) -> list[EvaluationCase]:
     """
     Load and validate evaluation cases from JSON.
 
-    Both the legacy Phase 11 datasets and the Phase 21 v2 dataset
+    Both the legacy datasets and the current private dataset
     are supported through ``EvaluationCase`` compatibility logic.
     """
 

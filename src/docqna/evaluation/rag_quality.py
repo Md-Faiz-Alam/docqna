@@ -180,7 +180,7 @@ class RAGQualityEvaluator:
     and semantic citation correctness.
 
     Unanswerable cases are intentionally skipped here because
-    abstention behavior is measured separately by Phase 21C.
+    abstention behavior is measured separately by the answerability metrics.
     """
 
     def __init__(self, rag_pipeline: RAGPipeline, judge: RAGQualityJudge) -> None:

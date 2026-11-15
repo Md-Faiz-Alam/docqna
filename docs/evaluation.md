@@ -21,7 +21,7 @@ Versioned datasets:
 
 ```text
 data/evaluation/baseline_questions.json
-data/evaluation/evaluation_dataset_v2.json
+data/evaluation/private/cases.json
 data/evaluation/unanswerable_questions.json
 ```
 
@@ -107,7 +107,7 @@ The result is dataset-specific evidence, not a universal guarantee. The threshol
 ## 8. Final artifacts
 
 ```text
-data/evaluation/results/phase22g_final_analysis/
+data/evaluation/results/retrieval_summary/
 ```
 
 This directory contains the final experiment matrix, error analysis, manifest, report, and charts used to support the production configuration.
@@ -171,11 +171,11 @@ These are operational validation checks, not additional benchmark cases. They do
 
 **Finding.** Retrieval generalises to a new domain and to paraphrased questions. The answerability threshold does not. The cross-encoder's rank-1 scores for answerable paraphrases range from about -10 to +8. Unanswerable questions mostly score below -8, but some reach +3.5, so no single threshold separates the two well: at `0`, 58% of answerable questions are refused. The original threshold was tuned on the 30-case private set, whose questions were closer to the document's wording.
 
-This was fixed in phase 23 (next section). CI runs the benchmark and fails if any metric drops below `data/evaluation/public/thresholds.json`. These thresholds are regression floors set just below the values under the current gate (`-10.5`): Hit@1 0.746, Hit@5 1.0, MRR 0.863, answerable gate pass 1.0, unanswerable gate abstain 0.312. The gate-only abstain rate is now low by design, because unanswerable questions are mostly stopped by the grounding check after generation. That check needs the LLM, so it is measured by phase 23 rather than in CI.
+This was fixed by the answerability calibration (next section). CI runs the benchmark and fails if any metric drops below `data/evaluation/public/thresholds.json`. These thresholds are regression floors set just below the values under the current gate (`-10.5`): Hit@1 0.746, Hit@5 1.0, MRR 0.863, answerable gate pass 1.0, unanswerable gate abstain 0.312. The gate-only abstain rate is now low by design, because unanswerable questions are mostly stopped by the grounding check after generation. That check needs the LLM, so it is measured by the answerability calibration rather than in CI.
 
 ## 13. Answerability recalibration with the LLM in the loop
 
-`experiments/run_phase23_answerability_recalibration.py` answers all 105 questions once with the retrieval gate **disabled** (75 public, 30 private; `phi3:mini`, temperature 0). For each question it records the rank-1 cross-encoder score, whether the model answered, and whether the answer is correct. An answer counts as correct if a cited source contains the labelled evidence, or if the answer states the labelled fact; the private set requires at least half of the expected answer terms. Any gate threshold can then be simulated offline.
+`experiments/calibrate_answerability.py` answers all 105 questions once with the retrieval gate **disabled** (75 public, 30 private; `phi3:mini`, temperature 0). For each question it records the rank-1 cross-encoder score, whether the model answered, and whether the answer is correct. An answer counts as correct if a cited source contains the labelled evidence, or if the answer states the labelled fact; the private set requires at least half of the expected answer terms. Any gate threshold can then be simulated offline.
 
 **The LLM is not a safe second line of defence on its own.** With no gate, `phi3:mini` answered 10 of 16 unanswerable public questions and attached citations to unrelated passages. Examples: "France won the 2018 World Cup [1]", "the dress code is business casual [1]", "the engineering team uses Python and Java [1]". A retrieval gate alone cannot separate the cases either. Lowering it from `0` to `-4` raises correct public answers from 37% to 64%, but false answers go from 6% to 31%.
 
@@ -202,4 +202,36 @@ The rule selects `T = -10.5`, `G = 3.3` (tied range 2.5–4.0, well clear of the
 
 Keeping the private set at 100% would require `G <= -2.1`. That is because of one correct but long, multi-claim answer (`quality_001`). Such a low threshold readmits invented answers and drops public correct answers back to about 36%.
 
-**Caveats.** The thresholds were selected and reported on the same 105 questions, so the numbers are optimistic. Only 28 unanswerable questions exist across both sets, so "0 false answers" means none observed in 28. The recorded answers come from one model (`phi3:mini`); a different LLM needs a new run. All raw per-case results and the sweep are in `data/evaluation/results/phase23_recalibration/`.
+**Caveats.** The thresholds were selected and reported on the same 105 questions, so the numbers are optimistic. Only 28 unanswerable questions exist across both sets, so "0 false answers" means none observed in 28. The recorded answers come from one model (`phi3:mini`); a different LLM needs a new run. All raw per-case results and the sweep are in `data/evaluation/results/answerability/phi3_mini/`.
+
+---
+
+## 14. Gemini recalibration (roadmap step 3)
+
+The same study was repeated with Google Gemini `gemini-3.5-flash-lite` (thinking level `minimal`, temperature 0, 320 output tokens), on the same 105 questions:
+
+```bash
+python -m experiments.calibrate_answerability run --dataset public --provider gemini
+python -m experiments.calibrate_answerability run --dataset private --provider gemini
+python -m experiments.calibrate_answerability ground --dataset public --provider gemini
+python -m experiments.calibrate_answerability ground --dataset private --provider gemini
+python -m experiments.calibrate_answerability analyze --provider gemini
+```
+
+**Model choice.** In a first speed check, `gemini-3.6-flash` took 9–14 s per answer and `gemini-3.8-flash` failed with a server overload after about 3 minutes. `gemini-3.5-flash-lite` answered in 1–2 s, so it is the default.
+
+**Without any gate, Gemini answered 58 of 59 answerable public questions with a correct citation, all 18 answerable private questions, and declined all 28 unanswerable questions on its own.** Median time per question was 1.5 s (public) and 1.9 s (private); the slowest took 3.2 s. No quota errors occurred.
+
+| Configuration | Public correct | Public wrong answers | Public false answers | Private correct | Private false answers |
+|---|---:|---:|---:|---:|---:|
+| `phi3:mini`, gate `>= -10.5`, grounding `>= 3.3` (section 13) | 0.695 | 0.017 | 0.000 | 0.944 | 0.000 |
+| Gemini, same thresholds | 0.983 | 0.000 | 0.000 | 0.889 | 0.000 |
+| **Gemini, gate `>= -10.5`, grounding `>= 1.5` (selected)** | **0.983** | **0.000** | **0.000** | **1.000** | **0.000** |
+
+The one public question Gemini did not answer (`hb_13`) was declined by the model itself ("not enough information"), not by a threshold.
+
+**Threshold choice.** The retrieval gate stays at `-10.5`: below it the gate costs no correct answers, and it still skips clearly off-topic questions before any LLM call. The strict `phi3:mini` grounding threshold (`3.3`) would refuse 2 of Gemini's 18 correct private answers, because Gemini paraphrases more than `phi3:mini`. Its lowest-scoring correct answer scores 1.94.
+
+The automatic rule in `analyze` picked `G = -1.0`, the middle of the tied range `-4.0` to `1.9`. That tie-break assumes there are false answers to keep a margin from, but Gemini produced none, so the middle of the range is arbitrary and would remove most of the safety net. Instead, `G = 1.5` was chosen by hand: the highest round value that keeps every correct Gemini answer, with a 0.44 margin below the weakest one. This choice was made after seeing the data and is reported here for transparency. Gemini uses it through `GEMINI_GROUNDING_MIN_SCORE`; Ollama keeps `GROUNDING_MIN_SCORE = 3.3`.
+
+**Caveats.** As in section 13, thresholds were chosen and reported on the same questions, so the numbers are optimistic, and "0 false answers" means none observed in 28 unanswerable questions. `phi3:mini`'s invented answers scored up to 2.45, so `1.5` would not have stopped them; the lower threshold relies on Gemini's own refusals, which this run measured but cannot guarantee. Hosted models can also change behind the same name, so the run should be repeated if answers drift. Raw per-case results and the sweep are in `data/evaluation/results/answerability/gemini/` (the private per-case answers are git-ignored).

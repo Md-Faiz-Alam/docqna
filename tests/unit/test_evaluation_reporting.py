@@ -45,7 +45,7 @@ def test_evaluation_reporting() -> None:
     report = build_report()
 
     metadata = {
-        "experiment": "phase21f_test",
+        "experiment": "example_experiment",
         "retriever": "hybrid_reranker",
         "chunking": "fixed_200_40",
     }
@@ -62,7 +62,7 @@ def test_evaluation_reporting() -> None:
         payload = json.loads(paths["json"].read_text(encoding="utf-8"))
 
         assert payload["report_type"] == "RetrievalEvaluationReport"
-        assert payload["metadata"]["experiment"] == "phase21f_test"
+        assert payload["metadata"]["experiment"] == "example_experiment"
         assert payload["report"]["num_cases"] == 1
         assert payload["report"]["cases"][0]["case_id"] == "case_001"
 

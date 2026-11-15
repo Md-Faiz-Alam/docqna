@@ -1,0 +1,22 @@
+{
+  "inputs": {
+    "chunking": "data\\evaluation\\results\\chunking_strategies\\chunking_comparison.json",
+    "embedding": "data\\evaluation\\results\\embedding_models\\embedding_comparison.json",
+    "retrieval": "data\\evaluation\\results\\retrieval_methods\\retrieval_comparison.json",
+    "threshold": "data\\evaluation\\results\\retrieval_threshold\\abstention_threshold_comparison.json",
+    "topk": "data\\evaluation\\results\\context_sizes\\topk_comparison.json"
+  },
+  "outputs": {
+    "charts": [
+      "data\\evaluation\\results\\retrieval_summary\\charts\\chunking_quality.svg",
+      "data\\evaluation\\results\\retrieval_summary\\charts\\retrieval_quality.svg",
+      "data\\evaluation\\results\\retrieval_summary\\charts\\embedding_quality.svg",
+      "data\\evaluation\\results\\retrieval_summary\\charts\\topk_tradeoff.svg",
+      "data\\evaluation\\results\\retrieval_summary\\charts\\threshold_calibration.svg"
+    ],
+    "error_analysis": "data\\evaluation\\results\\retrieval_summary\\error_analysis.csv",
+    "experiment_matrix": "data\\evaluation\\results\\retrieval_summary\\experiment_matrix.csv",
+    "report": "data\\evaluation\\results\\retrieval_summary\\report.md"
+  },
+  "results_folder": "retrieval_summary"
+}

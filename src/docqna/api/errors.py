@@ -18,6 +18,7 @@ from docqna.exceptions import (
     IndexingError,
     LLMConnectionError,
     LLMModelError,
+    LLMRateLimitError,
     ResourceLimitError,
     RetrievalError,
     UnsupportedFileTypeError,
@@ -54,6 +55,10 @@ ERROR_SPECS: dict[type[DocQNAError], ErrorSpec] = {
         status.HTTP_503_SERVICE_UNAVAILABLE, "llm_connection_error", logging.ERROR
     ),
     LLMModelError: ErrorSpec(status.HTTP_503_SERVICE_UNAVAILABLE, "llm_model_error", logging.ERROR),
+    # The upstream provider's quota, not this client's request rate.
+    LLMRateLimitError: ErrorSpec(
+        status.HTTP_503_SERVICE_UNAVAILABLE, "llm_rate_limited", logging.WARNING
+    ),
     RetrievalError: ErrorSpec(
         status.HTTP_500_INTERNAL_SERVER_ERROR, "retrieval_error", logging.ERROR
     ),

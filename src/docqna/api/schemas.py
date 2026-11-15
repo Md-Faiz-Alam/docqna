@@ -14,6 +14,32 @@ class HealthResponse(BaseModel):
     version: str
 
 
+class InfoLimits(BaseModel):
+    """Public resource limits, so a client can validate before uploading."""
+
+    max_upload_size_mb: int
+    max_question_chars: int
+    max_documents_per_session: int
+    document_retention_hours: int
+    supported_file_types: list[str]
+
+
+class InfoResponse(BaseModel):
+    """Public, non-secret description of the running configuration."""
+
+    app: str
+    version: str
+    llm_provider: str
+    llm_model: str
+    # True when questions and retrieved passages are sent to a hosted LLM
+    # (a client should show a privacy notice).
+    external_llm: bool
+    embedding_model: str
+    reranker_model: str
+    sample_documents: list[str]
+    limits: InfoLimits
+
+
 class QAMetadataFilters(BaseModel):
     """Optional metadata filters applied during retrieval."""
 

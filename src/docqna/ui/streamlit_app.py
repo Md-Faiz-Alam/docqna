@@ -254,40 +254,6 @@ def build_qa_payload(
     return payload
 
 
-def ask_api(
-    api_url: str, question: str, top_k: int, *, session_id: str, document_id: str | None
-) -> tuple[dict[str, Any] | None, str | None]:
-    """Send a grounded QA request to FastAPI."""
-
-    payload = json.dumps(
-        build_qa_payload(question=question, top_k=top_k, document_id=document_id)
-    ).encode("utf-8")
-
-    request = Request(
-        url=f"{api_url}/qa",
-        data=payload,
-        headers={
-            "Accept": "application/json",
-            "Content-Type": ("application/json"),
-            SESSION_HEADER_NAME: session_id,
-        },
-        method="POST",
-    )
-
-    try:
-        with urlopen(request, timeout=300) as response:
-            return (_decode_json_bytes(response.read()), None)
-
-    except HTTPError as exc:
-        return (None, _http_error_detail(exc))
-
-    except URLError as exc:
-        return (None, f"Could not connect to backend: {exc.reason}")
-
-    except Exception as exc:
-        return (None, f"Unexpected request error: {exc}")
-
-
 def iter_sse_events(lines: Iterable[bytes]) -> Iterator[tuple[str, dict[str, Any]]]:
     """Parse a server-sent-events byte stream into (event, data) pairs."""
 

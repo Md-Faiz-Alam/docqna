@@ -56,15 +56,16 @@ Steps 1–4 and 6 are DocQ&A's own code. Only step 5 uses an AI model, and that 
 | **Public website anyone can open** | ❌ Not yet: this roadmap |
 | **Modern, product-quality user interface** | ❌ Not yet: this roadmap |
 
-### Measured quality (current local AI model)
+### Measured quality
 
 On a public test set of 75 questions (59 answerable, 16 deliberately unanswerable):
 
-| What we measure | Result |
-|---|---|
-| The right passage is found in the top 5 results | **100%** |
-| Answerable questions answered correctly | **69.5%** |
-| Made-up answers to unanswerable questions | **0 of 28** (across both test sets) |
+| What we measure | Local model (`phi3:mini`) | Gemini |
+|---|---|---|
+| The right passage is found in the top 5 results | **100%** | **100%** (same search) |
+| Answerable questions answered correctly | **69.5%** | **98.3%** |
+| Made-up answers to unanswerable questions (both test sets) | **0 of 28** | **0 of 28** |
+| Typical time per answer | slow on a normal computer | **about 2 seconds** |
 
 The remaining answerable questions end in an honest "not enough information", not a wrong answer.
 
@@ -137,6 +138,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 - **Why:** the free public server is too slow for a local AI model; Gemini answers in seconds.
 - **Done when:** both options work, tests pass, and Ollama is still the default for private use.
 - **Who:** developer (Claude).
+- **Status:** ✅ Done. Gemini is built and tested with a stand-in for Google's servers; the first real answers need the key from step 2.
 
 ### Step 2: Add the Gemini key
 - **What:** create a free API key in Google AI Studio, in its own project, and put it in the local `.env` file.
@@ -149,6 +151,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 - **Why:** the current settings were tuned for the local model; a different AI model behaves differently.
 - **Done when:** Gemini gets its own measured, documented settings, plus a side-by-side comparison of the local model and Gemini.
 - **Who:** developer (runs the test with the owner's key).
+- **Status:** ✅ Done. With Gemini: 98.3% of public questions answered correctly (local model: 69.5%), 100% of private ones, 0 invented answers out of 28, about 2 seconds per answer. Gemini gets its own safety-check setting (1.5 instead of 3.3).
 
 ### Step 4: Prepare the backend for the cloud
 - **What:**
@@ -158,6 +161,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
   - add a "load sample documents" option so visitors can try it instantly.
 - **Done when:** the container runs locally exactly as it will in the cloud.
 - **Who:** developer.
+- **Status:** ✅ Done. The cloud container (`docker/cloud.Dockerfile`) was built and run locally with Gemini: sample documents load in about a second, answers come back in about 3 seconds with citations, off-topic questions are refused, only the allowed website can call it from a browser, and it uses about 580 MB of memory.
 
 ### Step 5: Build the modern website
 - **What:** a new website using industry-standard tools (Next.js, TypeScript, Tailwind CSS, shadcn/ui), with three pages:
@@ -167,6 +171,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 - **Also:** dark/light mode, mobile-friendly layout, accessibility, automated tests.
 - **Done when:** the full flow works in a browser against the backend, and checks pass automatically on GitHub.
 - **Who:** developer.
+- **Status:** ✅ Built in `web/` and tested in a browser against the cloud container: sample documents, streamed answers, clickable citations with the matching sentence highlighted, follow-up questions, feedback, an honest refusal, and the "waking up" message all work. Lint, type checks, 20 tests and the production build pass locally; the GitHub check runs on the next push.
 
 ### Step 6: Go live
 - **What:**
@@ -185,11 +190,11 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 
 | Step | What | Who |
 |---|---|---|
-| 1 | Gemini support (Ollama stays) | Developer |
+| 1 | Gemini support (Ollama stays) ✅ | Developer |
 | 2 | Create and store the Gemini key | Owner |
-| 3 | Re-tune safety checks for Gemini | Developer |
-| 4 | Cloud-ready backend | Developer |
-| 5 | Modern website | Developer |
+| 3 | Re-tune safety checks for Gemini ✅ | Developer |
+| 4 | Cloud-ready backend ✅ | Developer |
+| 5 | Modern website ✅ | Developer |
 | 6 | Accounts and deployment | Owner |
 | 7 | Polish and share | Both |
 

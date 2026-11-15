@@ -46,6 +46,7 @@ class DocumentIndexService:
         max_active_documents: int | None = None,
         max_chunks_per_document: int | None = None,
         document_retention_hours: int | None = None,
+        limit_exempt_hashes: frozenset[str] = frozenset(),
     ) -> None:
         self.ingestion_service = ingestion_service
         self.registry = registry
@@ -55,6 +56,9 @@ class DocumentIndexService:
         self.max_active_documents = max_active_documents
         self.max_chunks_per_document = max_chunks_per_document
         self.document_retention_hours = document_retention_hours
+        # Content hashes of the bundled sample documents. They are small and
+        # fixed, so they neither count toward nor are blocked by the quotas.
+        self.limit_exempt_hashes = limit_exempt_hashes
 
     def purge_expired_documents(self, *, now: datetime | None = None) -> int:
         """Delete logical documents older than the retention window.
@@ -114,7 +118,16 @@ class DocumentIndexService:
 
         filename = Path(path).name
 
-        session_records = self.registry.list_latest_records(session_id=session_id)
+        if (
+            self.limit_exempt_hashes
+            and self.registry.compute_content_hash(path) in self.limit_exempt_hashes
+        ):
+            return
+
+        def counted(records: list[DocumentRecord]) -> list[DocumentRecord]:
+            return [r for r in records if r.content_hash not in self.limit_exempt_hashes]
+
+        session_records = counted(self.registry.list_latest_records(session_id=session_id))
 
         # Uploading changed content under an existing filename creates
         # a new version of the same logical document and does not consume
@@ -137,7 +150,7 @@ class DocumentIndexService:
             )
 
         if self.max_active_documents is not None:
-            active_records = self.registry.list_latest_records()
+            active_records = counted(self.registry.list_latest_records())
 
             if len(active_records) >= self.max_active_documents:
                 raise ResourceLimitError(

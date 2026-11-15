@@ -7,7 +7,7 @@ class EvaluationCase(BaseModel):
     """
     One manually curated evaluation question.
 
-    Phase 21 supports both answerable and unanswerable cases.
+    The evaluation dataset supports both answerable and unanswerable cases.
 
     Backward compatibility:
     - legacy answerable cases that omit ``should_answer`` are
