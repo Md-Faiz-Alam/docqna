@@ -13,10 +13,9 @@ DocQ&A is a retrieval-augmented generation (RAG) system for PDF, Word and text f
 **[Try the live demo →](https://your-site.vercel.app)**
 -->
 
-<!-- Demo GIF: record a 5–10 s clip (upload → ask → streamed answer → click a citation),
-save it as docs/images/demo.gif, then replace this comment with:
-<p align="center"><img src="docs/images/demo.gif" alt="DocQ&A demo: a question answered with a clickable citation" width="820"></p>
--->
+<p align="center">
+  <img src="docs/images/demo.gif" alt="DocQ&A demo: load sample documents, ask a question, get a cited answer, open the highlighted source passage, and see an honest refusal for an off-topic question" width="860">
+</p>
 
 ## Results
 
