@@ -24,7 +24,7 @@ The retrieval gate (`-10.5`) and grounding threshold (`3.3`) were selected on 10
 
 ### Cloud demo container
 
-**Storage is temporary.** The Hugging Face container keeps uploads, indexes and feedback inside the container, so they disappear when it restarts or sleeps.
+**Storage is temporary.** The cloud container keeps uploads, indexes and feedback inside the container, so they disappear when it restarts or scales to zero.
 
 **Sample documents bypass the document quotas.** They are small and fixed, but a script that keeps creating new session IDs could load them repeatedly. Each load adds only a few kilobytes and is removed after `DOCUMENT_RETENTION_HOURS`, and requests are rate-limited per session, but there is no global cap on sample loads.
 

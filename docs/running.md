@@ -165,16 +165,16 @@ docker compose run --rm --user root api chown -R 10001:10001 /app/data /app/.cac
 
 The first document upload or first QA request can be slower because the embedding and cross-encoder models may need to download into the persistent Hugging Face cache.
 
-### Cloud container (Hugging Face Spaces)
+### Cloud container (Azure Container Apps or any Docker host)
 
-[`docker/cloud.Dockerfile`](../docker/cloud.Dockerfile) builds one self-contained backend for a Hugging Face Docker Space, or any other Docker host. It answers with Gemini, so it needs no Ollama. The embedding and reranker models are baked into the image, so a cold start downloads nothing. It runs as UID 1000 on port 7860, like a Space.
+[`docker/cloud.Dockerfile`](../docker/cloud.Dockerfile) builds one self-contained backend for any Docker host. The live demo runs it on Azure Container Apps, pulling `ghcr.io/md-faiz-alam/docqna-api:latest`, which [`publish-image.yml`](../.github/workflows/publish-image.yml) rebuilds on every backend change. It answers with Gemini, so it needs no Ollama. The embedding and reranker models are baked into the image, so a cold start downloads nothing. It runs as UID 1000 on `$PORT` (default 7860).
 
 ```bash
 docker build -f docker/cloud.Dockerfile -t docqna-cloud .
 docker run --rm -p 7860:7860 -e GEMINI_API_KEY -e CORS_ALLOWED_ORIGINS=http://localhost:3000 docqna-cloud
 ```
 
-`-e GEMINI_API_KEY` without a value passes the key from your shell, so it does not appear in the command. In the Space, set `GEMINI_API_KEY` as a **secret** and `CORS_ALLOWED_ORIGINS` as a variable. Uploaded documents live inside the container and are lost when it restarts or sleeps; that is intended for a public demo.
+`-e GEMINI_API_KEY` without a value passes the key from your shell, so it does not appear in the command. On the host, store `GEMINI_API_KEY` as a **secret** and set `CORS_ALLOWED_ORIGINS` to the website's address, for example `https://docqna-lake.vercel.app,http://localhost:3000`. Uploaded documents live inside the container and are lost when it restarts or scales to zero; that is intended for a public demo.
 
 ---
 

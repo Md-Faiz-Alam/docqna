@@ -9,9 +9,7 @@
 
 DocQ&A is a retrieval-augmented generation (RAG) system for PDF, Word and text files. Every answer cites the exact passage it came from, and every citation is checked against the source before it is shown. When the documents don't contain the answer, it says so instead of guessing.
 
-<!-- Live demo: add the link here once the site is deployed, e.g.
-**[Try the live demo →](https://your-site.vercel.app)**
--->
+**[Try the live demo →](https://docqna-lake.vercel.app)** (no sign-up; the first answer after a quiet spell can take a few seconds while the server wakes up)
 
 <p align="center">
   <img src="docs/images/demo.gif" alt="DocQ&A demo: load sample documents, ask a question, get a cited answer, open the highlighted source passage, and see an honest refusal for an off-topic question" width="860">

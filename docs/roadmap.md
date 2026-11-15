@@ -55,7 +55,7 @@ Steps 1–4 and 6 are DocQ&A's own code. Only step 5 uses an AI model, and that 
 | Runs on your own computer with Docker | ✅ Done |
 | Cloud-ready backend (one container, Gemini) | ✅ Done |
 | **Modern website** (landing page, live demo, results) | ✅ Built in `web/` |
-| **Public website anyone can open** | ⏳ Next: step 6 below |
+| **Public website anyone can open** | ✅ Live at [docqna-lake.vercel.app](https://docqna-lake.vercel.app) |
 
 ### Measured quality
 
@@ -95,7 +95,7 @@ At the same time, keep a **private mode** for people who want to run it on their
                         ▼
 ┌───────────────────────────────────────────────────┐
 │  BACKEND (the "brain")                            │
-│  DocQ&A API, hosted free on Hugging Face Spaces   │
+│  DocQ&A API, on Azure Container Apps (free grant) │
 │  • reads documents  • searches  • ranks  • checks │
 └───────────────────────────────────────────────────┘
                         │  only the 5 best passages
@@ -112,7 +112,7 @@ At the same time, keep a **private mode** for people who want to run it on their
 | | **Public demo** | **Private / self-hosted** |
 |---|---|---|
 | Who uses it | Anyone with the link | The owner, or a company on its own server |
-| Where it runs | Vercel + Hugging Face (cloud) | Your own computer or server (Docker) |
+| Where it runs | Vercel + Azure Container Apps (cloud) | Your own computer or server (Docker) |
 | AI model | Google Gemini (fast, strong) | Ollama `phi3:mini` (local) |
 | Speed | A few seconds per answer | About 45 seconds per answer on a normal PC |
 | Privacy | Passages are sent to Google: **do not upload confidential files** | Nothing leaves the machine |
@@ -123,7 +123,8 @@ At the same time, keep a **private mode** for people who want to run it on their
 | Service | Role | Why it was chosen |
 |---|---|---|
 | **Vercel** | Hosts the website | Free for personal projects, very fast worldwide, built for Next.js |
-| **Hugging Face Spaces** | Runs the backend | Free with 16 GB of memory, enough for the search and ranking models. Vercel, Netlify and Render's free tier are too small for these models |
+| **Azure Container Apps** | Runs the backend | Its monthly free grant covers a demo with 1 CPU and 2 GB of memory, enough for the search and ranking models, and it scales to zero when idle. Vercel, Netlify and Render's free tiers are too small for these models, and Hugging Face Docker Spaces now need a paid plan |
+| **GitHub Container Registry** | Stores the backend image | Free for public images; a GitHub Action rebuilds it on every backend change |
 | **Google Gemini (free tier)** | Writes answers in the demo | Free, fast, and much stronger than small local models |
 | **Ollama** | Writes answers in private mode | Runs on your own computer; data stays private |
 | **GitHub** | Stores the code; runs automatic checks | Already in use |
@@ -171,10 +172,11 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 
 ### Step 6: Go live
 - **What:**
-  1. create free accounts on **Hugging Face** and **Vercel**;
-  2. deploy the backend to a Hugging Face Space and add the Gemini key as a **secret** there;
-  3. deploy the website to Vercel and point it at the backend.
+  1. publish the backend image to GitHub Container Registry with a GitHub Action;
+  2. run it on **Azure Container Apps** (1 CPU, 2 GB, scale to zero) with the Gemini key stored as a **secret** and a spending alert set;
+  3. deploy the website to **Vercel** and point it at the backend, and allow the site's address in the backend's CORS setting.
 - **Done when:** the public link works from any device with the owner's computer switched off.
+- **Status:** ✅ Live at https://docqna-lake.vercel.app. Hugging Face was the original plan, but its Docker Spaces now need a paid plan, so the backend moved to Azure.
 
 ### Step 7: Polish and share
 - **What:** a README with a screenshot or GIF and the live link, plus a short write-up of the quality results (for example, *"from 37% to 69.5% correct answers with zero invented answers"*).
@@ -189,18 +191,18 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 | 3 | Re-tune safety checks for Gemini ✅ |
 | 4 | Cloud-ready backend ✅ |
 | 5 | Modern website ✅ |
-| 6 | Accounts and deployment |
+| 6 | Accounts and deployment ✅ |
 | 7 | Polish and share |
 
 ---
 
 ## 6. Good to know (limits of the free setup)
 
-- **Sleeping server:** a free Hugging Face Space sleeps after about 48 hours with no visitors. The next visitor waits about 1–2 minutes while it wakes up; the website shows a friendly message and retries automatically.
+- **Sleeping server:** the backend scales to zero when nobody is using it, so it costs nothing while idle. The next visitor waits a little while it wakes up; the website shows a friendly message and retries automatically.
 - **Uploads are temporary:** uploaded documents are cleared when the server restarts, and automatically after 24 hours. Sample documents are always available.
 - **Shared free quota:** all visitors share the free Gemini limits. Under heavy use, some visitors may briefly see "busy, try again shortly". Built-in rate limits stop any single visitor from using it all up.
 - **Privacy in the demo:** in the public demo, passages from uploaded files are processed by Google Gemini, and the free tier may be used by Google to improve its products. **Do not upload confidential documents to the demo.** Use private mode for sensitive files.
-- **Free-tier rules change:** the free limits of Hugging Face, Vercel and Gemini can change over time. Check their current terms before deploying.
+- **Free-tier rules change:** the free limits of Azure, Vercel and Gemini can change over time. Check their current terms before deploying.
 
 ---
 
@@ -230,7 +232,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 | **OCR** | Optical Character Recognition: reading text from scanned images |
 | **Streaming** | Showing the answer word by word as it is written |
 | **Frontend / backend** | The website people see / the server that does the work |
-| **Hugging Face Spaces** | A free cloud service for hosting AI apps |
+| **Azure Container Apps** | Microsoft's cloud service that runs containers and scales them to zero when idle |
 | **Vercel** | A free cloud service for hosting websites |
 | **Docker / container** | A standard package that runs the same way on any computer or server |
 | **CI** | Continuous Integration: automatic tests that run on GitHub after every change |
