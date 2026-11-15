@@ -5,6 +5,8 @@
 [![CI](https://github.com/Md-Faiz-Alam/docqna/actions/workflows/ci.yml/badge.svg)](https://github.com/Md-Faiz-Alam/docqna/actions/workflows/ci.yml)
 ![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
 ![Next.js](https://img.shields.io/badge/website-Next.js-black)
+![Azure Container Apps](https://img.shields.io/badge/backend-Azure%20Container%20Apps-0078D4)
+![Vercel](https://img.shields.io/badge/website-Vercel-black)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 DocQ&A is a retrieval-augmented generation (RAG) system for PDF, Word and text files. Every answer cites the exact passage it came from, and every citation is checked against the source before it is shown. When the documents don't contain the answer, it says so instead of guessing.
@@ -50,6 +52,27 @@ flowchart LR
 
 Full design: [docs/architecture.md](docs/architecture.md).
 
+## Deployment
+
+The live demo runs entirely in the cloud: the backend on **Microsoft Azure**, the website on Vercel.
+
+```mermaid
+flowchart LR
+    GH[GitHub push] --> GA[GitHub Actions<br/>build Docker image]
+    GA --> CR[GitHub Container<br/>Registry]
+    CR --> ACA[Azure Container Apps<br/>FastAPI backend]
+    V[Vercel<br/>Next.js website] -->|HTTPS + CORS| ACA
+    ACA --> GM[Google Gemini]
+```
+
+- **Azure Container Apps** (Consumption plan, UAE North) runs the backend container with 1 vCPU and 2 GiB, HTTPS ingress, and **scale to zero**, so it costs nothing while idle and fits inside the monthly free grant.
+- The Gemini API key is stored as an **Azure secret** and passed to the container as an environment variable, never in code. Allowed website origins are set through `CORS_ALLOWED_ORIGINS`.
+- An **Azure budget with email alerts** guards against unexpected spend.
+- A GitHub Action ([publish-image.yml](.github/workflows/publish-image.yml)) rebuilds and publishes the image on every backend change. Vercel redeploys the website on every push.
+- The backend's interactive API reference is public: [OpenAPI docs](https://docqna-api.lemonground-08652996.uaenorth.azurecontainerapps.io/docs).
+
+Setup details: [docs/running.md](docs/running.md#cloud-container-azure-container-apps-or-any-docker-host).
+
 ## What makes it different
 
 - **Every design choice was measured.** Chunking strategies, embedding models, retrieval methods, context size and the refusal thresholds were each compared experimentally, and the results are committed ([evaluation write-up](docs/evaluation.md), [experiments](experiments/)).
@@ -89,6 +112,7 @@ To answer with Gemini instead, run the single cloud container with `GEMINI_API_K
 | Generation | Ollama `phi3:mini` (local) or Google Gemini `gemini-3.5-flash-lite` |
 | Ingestion | pypdf, pypdfium2 + Tesseract OCR, python-docx, SQLite registry |
 | Website | Next.js, TypeScript, Tailwind CSS, shadcn/ui, Recharts |
+| Cloud | Microsoft Azure Container Apps, GitHub Container Registry, Vercel |
 | Quality | pytest (85% coverage), Vitest, ruff, mypy, GitHub Actions, Docker |
 
 ## Documentation

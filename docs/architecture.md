@@ -245,11 +245,37 @@ Container/network behavior:
 
 The local Docker stack has passed end-to-end validation for service health, document upload/indexing, grounded QA with citations, exact abstention, browser-refresh session continuity, persistent Chroma/registry data, and API-container recreation.
 
-Public cloud hosting, reverse-proxy configuration, and HTTPS are still pending.
+The public cloud deployment is described in section 11.
 
 ---
 
-## 11. Deployment validation boundary
+## 11. Cloud deployment (Azure Container Apps)
+
+```mermaid
+flowchart LR
+    DEV[Push to main] --> GA[GitHub Actions]
+    GA -->|docker/cloud.Dockerfile| GHCR[(ghcr.io/md-faiz-alam/docqna-api)]
+    GHCR --> ACA[Azure Container Apps<br/>Consumption plan, UAE North]
+    USER[Browser] --> VC[Vercel: Next.js site]
+    USER -->|HTTPS, CORS| ACA
+    ACA --> GEM[Google Gemini API]
+```
+
+- **Image:** `docker/cloud.Dockerfile` builds one self-contained backend with the embedding and reranker models baked in, so a cold start downloads nothing. It runs as UID 1000 and answers with Gemini, so no Ollama is needed. [`publish-image.yml`](../.github/workflows/publish-image.yml) pushes `:latest` and a per-commit tag to GitHub Container Registry.
+- **Compute:** one Azure Container App with 1 vCPU and 2 GiB of memory, external HTTPS ingress to port 7860, and minimum replicas set to 0. The app scales to zero when idle and fits inside the Consumption plan's monthly free grant. The website shows a "waking up" message while it starts.
+- **Secrets and configuration:** `GEMINI_API_KEY` is an Azure Container Apps **secret** referenced by an environment variable. `LLM_PROVIDER=gemini` comes from the image, and `CORS_ALLOWED_ORIGINS` lists the Vercel site and `http://localhost:3000`. Configuration changes create a new revision.
+- **Cost control:** an Azure budget with email alerts on the subscription.
+- **Region:** UAE North, one of the regions allowed by the Azure for Students policy.
+- **Website:** Vercel builds `web/` with `NEXT_PUBLIC_API_URL` pointing at the Container App. Browsers call the backend directly over HTTPS.
+- **State:** uploads, indexes and feedback live inside the container and are lost when it scales to zero or restarts. That is intended for a public demo; sample documents are always available.
+
+Validated against the live deployment: `/health` and `/ready` return 200, a CORS preflight from the Vercel origin is allowed, sample documents load in about 2 s, and a cited answer returns in about 4.5 s.
+
+Public API reference: <https://docqna-api.lemonground-08652996.uaenorth.azurecontainerapps.io/docs>.
+
+---
+
+## 12. Deployment validation boundary
 
 The successful local Docker validation proves packaging, service connectivity, persistence, and the tested product flow on the development machine.
 
@@ -266,7 +292,7 @@ Those concerns remain part of public deployment hardening rather than RAG archit
 
 ---
 
-## 12. Key trade-offs
+## 13. Key trade-offs
 
 ### Hybrid retrieval
 
@@ -294,7 +320,7 @@ The workload is a deterministic retrieval-and-answer pipeline. Additional orches
 
 ---
 
-## 13. Failure modes
+## 14. Failure modes
 
 | Failure mode | Current mitigation |
 |---|---|
