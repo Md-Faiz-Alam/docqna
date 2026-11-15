@@ -1,0 +1,57 @@
+name: Publish backend image
+
+# Builds the cloud backend (docker/cloud.Dockerfile) and publishes it to
+# GitHub Container Registry, where Azure Container Apps pulls it from.
+# Free for public images, so no Azure Container Registry is needed.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "pyproject.toml"
+      - "docker/cloud.Dockerfile"
+      - "data/evaluation/public/corpus/**"
+      - ".github/workflows/publish-image.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: publish-image
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/md-faiz-alam/docqna-api
+
+jobs:
+  publish:
+    name: Build and push to ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/cloud.Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=DocQ&A backend (FastAPI, hybrid retrieval, Gemini)
+            org.opencontainers.image.licenses=MIT
+          cache-from: type=gha,scope=cloud
+          cache-to: type=gha,scope=cloud,mode=max
