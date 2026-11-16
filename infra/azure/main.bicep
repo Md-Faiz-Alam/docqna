@@ -82,14 +82,14 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           // default. Startup allows up to 4 minutes for the models to load.
           probes: [
             {
-              type: 'Startup'
+              type: 'Liveness'
               tcpSocket: {
                 port: targetPort
               }
-              initialDelaySeconds: 1
-              periodSeconds: 1
-              timeoutSeconds: 3
-              failureThreshold: 240
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
               successThreshold: 1
             }
             {
@@ -104,14 +104,14 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
               successThreshold: 1
             }
             {
-              type: 'Liveness'
+              type: 'Startup'
               tcpSocket: {
                 port: targetPort
               }
-              initialDelaySeconds: 0
-              periodSeconds: 10
-              timeoutSeconds: 5
-              failureThreshold: 3
+              initialDelaySeconds: 1
+              periodSeconds: 1
+              timeoutSeconds: 3
+              failureThreshold: 240
               successThreshold: 1
             }
           ]
