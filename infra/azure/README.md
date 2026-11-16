@@ -10,7 +10,8 @@
 | Image | `ghcr.io/md-faiz-alam/docqna-api:latest` (public, from [publish-image.yml](../../.github/workflows/publish-image.yml)) |
 | Resources | 1 vCPU, 2 GiB |
 | Ingress | external HTTPS, HTTP/1, target port 7860, insecure connections off |
-| Scaling | 0 to 1 replicas, HTTP scale rule `http-scaler` |
+| Scaling | 0 to 1 replicas, HTTP scale rule `http-scaler`, Consumption workload profile |
+| Health probes | TCP startup, readiness and liveness checks on port 7860 |
 | Secret | `gemini-api-key`, exposed to the container as `GEMINI_API_KEY` |
 | Configuration | `CORS_ALLOWED_ORIGINS` = the Vercel site and `http://localhost:3000` |
 

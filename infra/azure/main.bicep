@@ -43,6 +43,7 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   properties: {
     managedEnvironmentId: environment.id
+    workloadProfileName: 'Consumption'
     configuration: {
       activeRevisionsMode: 'Single'
       ingress: {
@@ -50,13 +51,6 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: targetPort
         transport: 'http'
         allowInsecure: false
-        clientCertificateMode: 'ignore'
-        traffic: [
-          {
-            latestRevision: true
-            weight: 100
-          }
-        ]
       }
       secrets: [
         {
@@ -82,6 +76,43 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'GEMINI_API_KEY'
               secretRef: 'gemini-api-key'
+            }
+          ]
+          // TCP health checks on the app port, matching the ones Azure adds by
+          // default. Startup allows up to 4 minutes for the models to load.
+          probes: [
+            {
+              type: 'Startup'
+              tcpSocket: {
+                port: targetPort
+              }
+              initialDelaySeconds: 1
+              periodSeconds: 1
+              timeoutSeconds: 3
+              failureThreshold: 240
+              successThreshold: 1
+            }
+            {
+              type: 'Readiness'
+              tcpSocket: {
+                port: targetPort
+              }
+              initialDelaySeconds: 0
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 48
+              successThreshold: 1
+            }
+            {
+              type: 'Liveness'
+              tcpSocket: {
+                port: targetPort
+              }
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+              successThreshold: 1
             }
           ]
         }
