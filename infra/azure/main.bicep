@@ -18,7 +18,7 @@ param appName string = 'docqna-api'
 @description('Name of the existing Container Apps environment.')
 param environmentName string = 'docqna-env'
 
-@description('Backend image, built by .github/workflows/publish-image.yml.')
+@description('Backend image, built by .github/workflows/publish-image.yml. Pass the live commit SHA tag (see README).')
 param image string = 'ghcr.io/md-faiz-alam/docqna-api:latest'
 
 @description('Website origins allowed to call the API, comma-separated.')
@@ -45,7 +45,10 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
     managedEnvironmentId: environment.id
     workloadProfileName: 'Consumption'
     configuration: {
-      activeRevisionsMode: 'Single'
+      // Multiple: the deploy pipeline (infra/azure/deploy.sh) starts each new
+      // revision at 0% traffic, smoke-tests it, then moves traffic to it. The
+      // pipeline sets revision traffic weights; this template does not.
+      activeRevisionsMode: 'Multiple'
       ingress: {
         external: true
         targetPort: targetPort

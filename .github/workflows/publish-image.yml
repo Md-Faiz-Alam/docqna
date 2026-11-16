@@ -1,35 +1,66 @@
-name: Publish backend image
+name: Publish and deploy backend
 
-# Builds the cloud backend (docker/cloud.Dockerfile) and publishes it to
-# GitHub Container Registry, where Azure Container Apps pulls it from.
-# Free for public images, so no Azure Container Registry is needed.
+# Runs only after CI has passed on main (called from ci.yml), or by hand.
+#
+# 1. changes: skip everything when no backend file changed in this push.
+# 2. publish: build docker/cloud.Dockerfile and push it to GitHub Container
+#    Registry, tagged with the commit SHA.
+# 3. deploy:  blue/green deploy to Azure Container Apps (infra/azure/deploy.sh):
+#    new revision at 0% traffic, smoke test at its own address, then 100%.
+#    Signs in to Azure with OIDC, so no Azure password is stored in GitHub.
+#    Without the AZURE_* secrets the deploy is skipped and only the image is
+#    published. Setup: infra/azure/README.md.
+# 4. Move the :latest tag to the image only once it is live (or when the
+#    deploy is not configured), so :latest never points at an untested image.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "src/**"
-      - "pyproject.toml"
-      - "docker/cloud.Dockerfile"
-      - "data/evaluation/public/corpus/**"
-      - ".github/workflows/publish-image.yml"
+  workflow_call:
   workflow_dispatch:
-
-concurrency:
-  group: publish-image
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-  packages: write
 
 env:
   IMAGE: ghcr.io/md-faiz-alam/docqna-api
 
 jobs:
+  changes:
+    name: Backend changed?
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      backend: ${{ steps.diff.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: diff
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" != "push" ] || [ -z "$BEFORE" ] \
+            || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+            || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "Manual run or no previous commit to compare with: deploying."
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only "$BEFORE" "$GITHUB_SHA")
+          echo "Changed files:"; echo "$changed"
+          if echo "$changed" | grep -qE '^(src/|pyproject\.toml$|docker/cloud\.Dockerfile$|data/evaluation/public/corpus/|scripts/smoke_test\.py$|infra/azure/deploy\.sh$|\.github/workflows/publish-image\.yml$)'; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No backend change: nothing to deploy."
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
   publish:
     name: Build and push to ghcr.io
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v7
 
@@ -46,12 +77,82 @@ jobs:
           context: .
           file: docker/cloud.Dockerfile
           push: true
-          tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.description=DocQ&A backend (FastAPI, hybrid retrieval, Gemini)
             org.opencontainers.image.licenses=MIT
           cache-from: type=gha,scope=cloud
           cache-to: type=gha,scope=cloud,mode=max
+
+  deploy:
+    name: Blue/green deploy to Azure
+    needs: publish
+    runs-on: ubuntu-latest
+    # Shows each deployment on GitHub; required reviewers can be added to
+    # this environment later (Settings -> Environments -> production).
+    environment:
+      name: production
+      url: https://docqna-lake.vercel.app
+    # Never run two deployments at once, and never cancel one halfway.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Check that Azure sign-in is configured
+        id: config
+        env:
+          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          if [ -n "$CLIENT_ID" ] && [ -n "$TENANT_ID" ] && [ -n "$SUBSCRIPTION_ID" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Azure deploy skipped::AZURE_CLIENT_ID, AZURE_TENANT_ID and AZURE_SUBSCRIPTION_ID are not set, so the image was published but not deployed. Setup: infra/azure/README.md."
+          fi
+
+      - uses: actions/checkout@v7
+        if: steps.config.outputs.enabled == 'true'
+
+      - name: Sign in to Azure (OIDC)
+        if: steps.config.outputs.enabled == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy, smoke-test, switch traffic
+        if: steps.config.outputs.enabled == 'true'
+        # `shell: bash` adds pipefail, so a failed deploy is not hidden by `tee`.
+        shell: bash
+        env:
+          REVISION_SUFFIX: v${{ github.run_number }}-${{ github.run_attempt }}-${{ github.sha }}
+        run: |
+          # Short, unique per run and attempt, and traceable to the commit.
+          export REVISION_SUFFIX="${REVISION_SUFFIX:0:24}"
+          bash infra/azure/deploy.sh "$IMAGE:$GITHUB_SHA" 2>&1 | tee deploy.log
+          {
+            echo "### Deployed \`$GITHUB_SHA\`"
+            echo '```text'
+            tail -n 4 deploy.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Point :latest at this image
+        run: docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE:$GITHUB_SHA"

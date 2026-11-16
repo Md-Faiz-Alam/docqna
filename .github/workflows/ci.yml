@@ -7,7 +7,9 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # A newer push cancels an older run, except on main: a main run may be
+  # deploying, and a deploy must never be cancelled halfway.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   web:
@@ -124,3 +126,15 @@ jobs:
           context: .
           file: docker/cloud.Dockerfile
           push: false
+
+  release:
+    name: Publish image and deploy to Azure
+    # Only after every CI job passed, and only for pushes to main.
+    needs: [web, quality, benchmark, docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/publish-image.yml
+    secrets: inherit
