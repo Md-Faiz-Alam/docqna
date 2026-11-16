@@ -121,7 +121,7 @@ Optional:
 
 - **Approval before going live:** Settings -> Environments -> `production` -> Required reviewers. Each deploy then waits for a click.
 - **Deploy only from `main`:** in the same environment, under Deployment branches, choose `main`.
-- **Pull requests only:** Settings -> Branches -> add a rule for `main` that requires the CI checks to pass.
+- **Branch protection (set up):** `main` requires a pull request whose four CI checks pass (`Lint, types, unit tests`, `Retrieval quality gate`, `Docker images build`, `Website lint, types, tests, build`) on a branch that is up to date with `main`, with all review conversations resolved. Force-pushes and deleting `main` are blocked. No approval is required, since a sole maintainer cannot approve their own pull request. The repository admin can still push directly, and GitHub reports it as a bypassed rule. The deploy jobs are not required checks: they run only after a merge. Change it under Settings -> Branches.
 
 ### Check a deploy
 
