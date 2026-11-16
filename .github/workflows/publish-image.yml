@@ -137,11 +137,7 @@ jobs:
         if: steps.config.outputs.enabled == 'true'
         # `shell: bash` adds pipefail, so a failed deploy is not hidden by `tee`.
         shell: bash
-        env:
-          REVISION_SUFFIX: v${{ github.run_number }}-${{ github.run_attempt }}-${{ github.sha }}
         run: |
-          # Short, unique per run and attempt, and traceable to the commit.
-          export REVISION_SUFFIX="${REVISION_SUFFIX:0:24}"
           bash infra/azure/deploy.sh "$IMAGE:$GITHUB_SHA" 2>&1 | tee deploy.log
           {
             echo "### Deployed \`$GITHUB_SHA\`"

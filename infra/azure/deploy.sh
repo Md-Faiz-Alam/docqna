@@ -11,9 +11,11 @@
 # 4. Quick smoke test against production. Fail: redeploy the previous
 #    production image (automatic rollback) and fail the run.
 #
-# The apps run in an Azure Container Apps Express environment, which allows
-# one active revision per app, so a separate staging app takes the place of
-# testing a new revision at 0% traffic.
+# The apps run in an Azure Container Apps Express environment: one active
+# revision per app, rolling updates only, and no custom revision names
+# (https://learn.microsoft.com/azure/container-apps/express-overview). So a
+# separate staging app takes the place of testing a new revision at 0%
+# traffic, and each deploy is a plain image update.
 #
 # Run by .github/workflows/publish-image.yml after CI passes, or by hand in
 # Azure Cloud Shell from a clone of the repository. Needs `az` signed in.
@@ -26,8 +28,6 @@ APP="${APP:-docqna-api}"
 STAGING_APP="${STAGING_APP:-docqna-api-staging}"
 RESOURCE_GROUP="${RESOURCE_GROUP:-docqna-rg}"
 WEBSITE_ORIGIN="${WEBSITE_ORIGIN:-https://docqna-lake.vercel.app}"
-# Lower-case letters, digits and '-', starting with a letter.
-REVISION_SUFFIX="${REVISION_SUFFIX:-v$(date -u +%Y%m%d%H%M%S)}"
 SMOKE_TEST="$(cd "$(dirname "$0")/../.." && pwd)/scripts/smoke_test.py"
 
 step() { echo; echo "==> $*"; }
@@ -42,9 +42,9 @@ image_of() {
     --query "properties.template.containers[0].image" -o tsv
 }
 
-deploy_to() {  # app image revision-suffix
+deploy_to() {  # app image: a rolling update to a new revision
   az containerapp update --name "$1" --resource-group "$RESOURCE_GROUP" \
-    --image "$2" --revision-suffix "$3" -o none
+    --image "$2" -o none
 }
 
 step "Image: $IMAGE (build $BUILD)"
@@ -58,7 +58,7 @@ fi
 
 staging_url="https://$(fqdn "$STAGING_APP")"
 step "Deploying to staging ($STAGING_APP)"
-deploy_to "$STAGING_APP" "$IMAGE" "$REVISION_SUFFIX"
+deploy_to "$STAGING_APP" "$IMAGE"
 
 step "Full smoke test on staging: $staging_url"
 if ! python3 "$SMOKE_TEST" "$staging_url" --origin "$WEBSITE_ORIGIN" --expect-build "$BUILD" --wait 600; then
@@ -71,7 +71,7 @@ fi
 previous=$(image_of "$APP")
 production_url="https://$(fqdn "$APP")"
 step "Staging passed. Deploying to production ($APP); previous image: $previous"
-deploy_to "$APP" "$IMAGE" "$REVISION_SUFFIX"
+deploy_to "$APP" "$IMAGE"
 
 step "Quick smoke test on production: $production_url"
 if python3 "$SMOKE_TEST" "$production_url" --quick --origin "$WEBSITE_ORIGIN" --expect-build "$BUILD" --wait 600; then
@@ -92,7 +92,7 @@ if [[ "$previous" == *:latest || "$previous" != *:* ]]; then
 fi
 
 step "Production check failed: rolling back to $previous"
-deploy_to "$APP" "$previous" "${REVISION_SUFFIX}-rb"
+deploy_to "$APP" "$previous"
 python3 "$SMOKE_TEST" "$production_url" --quick --origin "$WEBSITE_ORIGIN" --wait 600 || true
 echo "Rolled back to $previous." >&2
 exit 1
