@@ -7,8 +7,10 @@
 // The Container Apps environment already exists and is referenced, not
 // created. Deploy steps: infra/azure/README.md.
 
-@description('Azure region. Must match the environment.')
-param location string = resourceGroup().location
+// The app must live in its environment's region. The resource group itself is
+// in Central India, so resourceGroup().location cannot be used here.
+@description('Azure region of the Container Apps environment.')
+param location string = 'uaenorth'
 
 @description('Name of the container app.')
 param appName string = 'docqna-api'

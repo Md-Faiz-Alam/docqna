@@ -1,5 +1,6 @@
 using 'main.bicep'
 
+param location = 'uaenorth'
 param appName = 'docqna-api'
 param environmentName = 'docqna-env'
 param image = 'ghcr.io/md-faiz-alam/docqna-api:latest'

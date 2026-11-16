@@ -4,8 +4,8 @@
 
 | Setting | Value |
 |---|---|
-| Resource group | `docqna-rg` (UAE North) |
-| Environment | `docqna-env` (existing, referenced) |
+| Resource group | `docqna-rg` (its metadata lives in Central India) |
+| Environment | `docqna-env` in UAE North (existing, referenced). The app's `location` must match it. |
 | Container app | `docqna-api` |
 | Image | `ghcr.io/md-faiz-alam/docqna-api:latest` (public, from [publish-image.yml](../../.github/workflows/publish-image.yml)) |
 | Resources | 1 vCPU, 2 GiB |
