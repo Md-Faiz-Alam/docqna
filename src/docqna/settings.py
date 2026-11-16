@@ -43,6 +43,12 @@ class Settings(BaseSettings):
     rate_limit_qa_per_minute: int = 20
     rate_limit_uploads_per_minute: int = 10
     rate_limit_feedback_per_minute: int = 30
+    # Each client IP may make this many times the per-session limit, so a script
+    # cannot dodge the limits by sending a new session ID each time. 0 disables it.
+    rate_limit_ip_factor: int = 3
+    # Proxies in front of the API that append to X-Forwarded-For (Azure Container
+    # Apps ingress: 1). 0 uses the socket address and ignores the header.
+    trusted_proxy_hops: int = 0
 
     # Answer feedback (question/answer text is kept to build evaluation cases)
     feedback_retention_days: int = 30
@@ -84,10 +90,25 @@ class Settings(BaseSettings):
     # provider has its own measured value (Ollama phi3:mini / Gemini).
     grounding_min_score: float = 3.3
     gemini_grounding_min_score: float = 1.5
+    # Score each answer sentence against the sources it cites, and use the weakest
+    # (on) instead of scoring the whole answer as one claim (off). Same thresholds;
+    # measured in experiments/compare_grounding_checks.py.
+    grounding_per_sentence: bool = True
     # Prompt-injection defences (src/docqna/rag/injection.py), measured in
     # experiments/attack_prompt_injection.py.
     injection_filter_enabled: bool = True
+    # Stream unverified draft tokens on /qa/stream before the final checks run.
+    # Off by default: a draft can contain a made-up answer or an injected link
+    # that the checks then withdraw, but the user has already seen it.
+    stream_drafts: bool = False
+    # Put the answer rules in the LLM's system role and wrap each document in a
+    # tag with a random per-request name. Off until the attack and answerability
+    # tests are re-run with it (it changes what the LLM sees).
+    separate_prompt_roles: bool = False
     max_cached_session_indexes: int = 256
+    # Key that signs answers so clients cannot forge assistant turns in history.
+    # Unset: a random key per process (answers from before a restart stop counting).
+    history_signing_key: SecretStr | None = None
 
     # Logging
     log_level: str = "INFO"

@@ -56,11 +56,14 @@ describe("AnswerCard", () => {
 });
 
 describe("chat history", () => {
+  const signed = (content: string): QAResponse => ({ ...answered, answer: content, answer_signature: `sig-${content}` });
+
   it("keeps completed turns only, oldest first, at most 12", () => {
     const messages: Message[] = Array.from({ length: 14 }, (_, i) => ({
       id: i,
       role: i % 2 ? "assistant" : "user",
       content: `turn ${i}`,
+      response: i % 2 ? signed(`turn ${i}`) : undefined,
     }));
     messages.push({ id: 99, role: "assistant", content: "", pending: true });
     messages.push({ id: 100, role: "assistant", content: "", error: "failed" });
@@ -68,7 +71,22 @@ describe("chat history", () => {
     const history = historyFrom(messages);
     expect(history).toHaveLength(12);
     expect(history[0]).toEqual({ role: "user", content: "turn 2" });
-    expect(history.at(-1)).toEqual({ role: "assistant", content: "turn 13" });
+    expect(history.at(-1)).toEqual({ role: "assistant", content: "turn 13", signature: "sig-turn 13" });
+  });
+
+  it("leaves out assistant turns the API did not sign", () => {
+    const messages: Message[] = [
+      { id: 1, role: "user", content: "Leave?" },
+      { id: 2, role: "assistant", content: "24 days [1].", response: answered },
+      { id: 3, role: "user", content: "And hours?" },
+      { id: 4, role: "assistant", content: "38 hours [1].", response: signed("38 hours [1].") },
+    ];
+
+    expect(historyFrom(messages)).toEqual([
+      { role: "user", content: "Leave?" },
+      { role: "user", content: "And hours?" },
+      { role: "assistant", content: "38 hours [1].", signature: "sig-38 hours [1]." },
+    ]);
   });
 });
 

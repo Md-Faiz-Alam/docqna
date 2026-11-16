@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
 #
-# One self-contained backend container for a Hugging Face Docker Space
-# (also runs anywhere else Docker does). It answers with hosted Gemini, so
+# One self-contained backend container for the public demo on Azure Container
+# Apps (also runs anywhere else Docker does). It answers with hosted Gemini, so
 # it needs no Ollama. Embedding and reranker models are baked into the image
 # so a cold start does not download them.
 #
-# Build and run locally exactly as the Space does:
+# Build and run locally exactly as the cloud does:
 #   docker build -f docker/cloud.Dockerfile -t docqna-cloud .
 #   docker run --rm -p 7860:7860 -e GEMINI_API_KEY=... docqna-cloud
 #
@@ -40,7 +40,7 @@ COPY README.md ./
 COPY src ./src
 RUN python -m pip install --no-deps .
 
-# Hugging Face Spaces run the container as UID 1000.
+# Run as an unprivileged user (UID 1000).
 RUN useradd --create-home --uid 1000 user \
     && mkdir -p /app/data /app/logs /app/.cache/huggingface /app/samples \
     && chown -R user:user /app
@@ -70,6 +70,7 @@ ENV APP_ENV=production \
     LOG_DIR=/app/logs \
     LOG_TO_FILE=false \
     SAMPLE_DOCUMENTS_DIR=/app/samples \
+    TRUSTED_PROXY_HOPS=1 \
     HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1
 
@@ -79,6 +80,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\", \"7860\")}/health', timeout=5)"
 
 # One worker: rate limits and per-session search indexes live in process
-# memory. --proxy-headers takes the visitor's IP from the platform proxy
-# (used for rate limiting requests without a session header).
-CMD ["sh", "-c", "exec uvicorn docqna.api.main:app --host 0.0.0.0 --port \"${PORT}\" --workers 1 --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
+# memory. No --proxy-headers: with --forwarded-allow-ips='*' uvicorn trusts the
+# leftmost X-Forwarded-For entry, which a client can fake. The rate limiter
+# reads the entry the platform proxy appended instead (TRUSTED_PROXY_HOPS=1).
+CMD ["sh", "-c", "exec uvicorn docqna.api.main:app --host 0.0.0.0 --port \"${PORT}\" --workers 1 --no-proxy-headers --no-access-log"]

@@ -100,9 +100,10 @@ export const api = {
 };
 
 /**
- * Ask a question and stream the answer. `onToken` receives the draft text
- * as it is generated; the resolved value is the final, citation-checked
- * answer, which replaces the draft.
+ * Ask a question and stream the answer. `onToken` receives draft text only
+ * when the backend runs with STREAM_DRAFTS=true (off by default, so usually
+ * no drafts arrive); the resolved value is the final, citation-checked
+ * answer, which replaces any draft.
  */
 export async function askStream(
   sessionId: string,

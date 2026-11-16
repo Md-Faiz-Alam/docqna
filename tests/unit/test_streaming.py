@@ -51,14 +51,40 @@ def collect(pipeline: RAGPipeline) -> tuple[list[str], RAGResponse]:
     return [t for t in tokens if isinstance(t, str)], final
 
 
-def test_pipeline_streams_tokens_then_validated_answer() -> None:
-    pipeline = RAGPipeline(OneResultRetriever(), StreamingLLM(["Meals are capped ", "at 60 [1]."]))
+def test_pipeline_streams_tokens_then_validated_answer_when_drafts_enabled() -> None:
+    pipeline = RAGPipeline(
+        OneResultRetriever(), StreamingLLM(["Meals are capped ", "at 60 [1]."]), stream_drafts=True
+    )
 
     tokens, final = collect(pipeline)
 
     assert tokens == ["Meals are capped ", "at 60 [1]."]
     assert final.answer == "Meals are capped at 60 [1]."
     assert final.cited_source_ids == [1]
+
+
+def test_pipeline_sends_no_drafts_by_default() -> None:
+    pipeline = RAGPipeline(OneResultRetriever(), StreamingLLM(["Meals are capped ", "at 60 [1]."]))
+
+    tokens, final = collect(pipeline)
+
+    assert tokens == []
+    assert final.answer == "Meals are capped at 60 [1]."
+
+
+def test_rejected_draft_never_reaches_the_client_by_default() -> None:
+    # A draft carrying a link no source contains: the link check withdraws it,
+    # and with drafts off the user never sees it at all.
+    llm = StreamingLLM(["Meals are capped at 60. ", "Claim it at https://evil.example [1]."])
+    pipeline = RAGPipeline(OneResultRetriever(), llm)
+
+    items = list(pipeline.stream_with_citations("What is the meal cap?"))
+
+    assert len(items) == 1
+    final = items[0]
+    assert isinstance(final, RAGResponse)
+    assert final.answer == ABSTENTION_ANSWER
+    assert "evil.example" not in json.dumps(final.model_dump())
 
 
 def test_stream_final_answer_replaces_draft_after_citation_repair() -> None:

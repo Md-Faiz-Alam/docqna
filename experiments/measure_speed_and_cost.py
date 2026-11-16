@@ -133,13 +133,15 @@ class TimedLLM(BaseLLMProvider):
 
 class TimedVerifier(GroundingVerifier):
     def __init__(self, inner: GroundingVerifier, watch: Stopwatch) -> None:
-        super().__init__(scorer=inner.scorer, min_score=inner.min_score)
+        super().__init__(
+            scorer=inner.scorer, min_score=inner.min_score, per_sentence=inner.per_sentence
+        )
         self.watch = watch
 
-    def evaluate(self, answer: str, cited_texts: list[str]) -> GroundingDecision:
+    def check(self, answer: str, sources: list[str], citation_ids: list[int]) -> GroundingDecision:
         started = time.perf_counter()
         try:
-            return super().evaluate(answer, cited_texts)
+            return super().check(answer, sources, citation_ids)
         finally:
             self.watch.add("grounding_ms", started)
 
@@ -230,11 +232,15 @@ def run(provider: str, ollama_url: str, include_private: bool) -> Path:
             confidence_gate=RetrievalConfidenceGate(min_top_score=settings.answerability_min_score),
             grounding_verifier=TimedVerifier(
                 GroundingVerifier(
-                    scorer=reranker.model, min_score=settings.active_grounding_min_score
+                    scorer=reranker.model,
+                    min_score=settings.active_grounding_min_score,
+                    per_sentence=settings.grounding_per_sentence,
                 ),
                 watch,
             ),
             injection_filter=settings.injection_filter_enabled,
+            # Drafts on, so first_token_ms still measures how fast the model starts.
+            stream_drafts=True,
         )
 
         interval = GEMINI_MIN_INTERVAL_SECONDS if provider == "gemini" else 0.0

@@ -118,7 +118,7 @@ jobs:
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Build cloud image (Hugging Face Space)
+      - name: Build cloud image (Azure Container Apps)
         uses: docker/build-push-action@v7
         with:
           context: .

@@ -8,7 +8,7 @@ proxy, since each process keeps its own counters.
 import time
 from collections import deque
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from threading import Lock
 
 from fastapi import Request, Response, status
@@ -64,19 +64,63 @@ class SlidingWindowLimiter:
             del self._hits[key]
 
 
-def _client_key(request: Request) -> str:
-    # The session header is the per-browser namespace; fall back to IP.
-    session_id = request.headers.get(SESSION_HEADER_NAME)
-    if session_id:
-        return f"s:{session_id.strip()[:128]}"
-    return f"ip:{request.client.host if request.client else 'unknown'}"
+def client_ip(request: Request, trusted_proxy_hops: int = 0) -> str:
+    """The caller's IP address, as far as it can be trusted.
+
+    With no trusted proxy, this is the socket peer address. Behind
+    `trusted_proxy_hops` proxies that each append to X-Forwarded-For, it is
+    the entry the outermost trusted proxy appended, counted from the right.
+    Entries further left were sent by the client and can be anything, so
+    they are never used (uvicorn's `--forwarded-allow-ips='*'` takes the
+    leftmost one, which a client can fake).
+    """
+
+    peer = request.client.host if request.client else "unknown"
+    if trusted_proxy_hops <= 0:
+        return peer
+
+    forwarded = [
+        host.strip()
+        for header in request.headers.getlist("x-forwarded-for")
+        for host in header.split(",")
+        if host.strip()
+    ]
+    if not forwarded:
+        return peer
+    return forwarded[-min(trusted_proxy_hops, len(forwarded))]
+
+
+def _client_keys(request: Request, trusted_proxy_hops: int) -> tuple[str, str | None]:
+    """(IP key, session key or None). The session ID is chosen by the client."""
+
+    session_id = request.headers.get(SESSION_HEADER_NAME, "").strip()
+    session_key = f"s:{session_id[:128]}" if session_id else None
+    return f"ip:{client_ip(request, trusted_proxy_hops)}", session_key
 
 
 def make_rate_limit_middleware(
-    rules: list[RateLimitRule], limiter: SlidingWindowLimiter | None = None
+    rules: list[RateLimitRule],
+    limiter: SlidingWindowLimiter | None = None,
+    *,
+    ip_limit_factor: int = 3,
+    trusted_proxy_hops: int = 0,
 ) -> Callable[[Request, Callable[[Request], Awaitable[Response]]], Awaitable[Response]]:
+    """Limit each session to `rule.limit`, and each IP to `rule.limit * ip_limit_factor`.
+
+    The session limit keeps one browser from using up a shared quota. The
+    IP limit stops a script that sends a fresh session ID with every
+    request; it is larger so that several people behind one address (an
+    office or mobile network) can still use the service. A factor of 0
+    turns the IP limit off.
+    """
+
     limiter = limiter or SlidingWindowLimiter()
     active_rules = [rule for rule in rules if rule.limit > 0]
+    ip_rules = {
+        rule.bucket: replace(rule, bucket=f"{rule.bucket}:ip", limit=rule.limit * ip_limit_factor)
+        for rule in active_rules
+        if ip_limit_factor > 0
+    }
 
     async def rate_limit(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
@@ -84,7 +128,18 @@ def make_rate_limit_middleware(
         for rule in active_rules:
             if not rule.matches(request.method, request.url.path):
                 continue
-            retry_after = limiter.hit(rule, _client_key(request))
+            ip_key, session_key = _client_keys(request, trusted_proxy_hops)
+            checks: list[tuple[RateLimitRule, str]] = []
+            if rule.bucket in ip_rules:
+                checks.append((ip_rules[rule.bucket], ip_key))
+            # Without a session header, the IP gets the per-session limit too.
+            checks.append((rule, session_key or ip_key))
+
+            retry_after = None
+            for check_rule, key in checks:
+                retry_after = limiter.hit(check_rule, key)
+                if retry_after is not None:
+                    break
             if retry_after is not None:
                 RATE_LIMITED.labels(bucket=rule.bucket).inc()
                 return JSONResponse(

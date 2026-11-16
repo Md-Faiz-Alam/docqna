@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse
 
 from docqna.api.dependencies import get_document_index_service_provider, get_rag_pipeline_provider
 from docqna.api.errors import resolve_error_spec
+from docqna.api.history import sign_answer, verified_history
 from docqna.api.retention import purge_expired_documents
 from docqna.api.schemas import CitationResponse, ErrorResponse, QARequest, QAResponse
 from docqna.api.session import require_session_id
@@ -56,11 +57,13 @@ def _prepare(
     return pipeline, metadata_filters
 
 
-def _history(request: QARequest) -> list[tuple[str, str]] | None:
-    return [(turn.role, turn.content) for turn in request.history] or None
+def _history(request: QARequest, session_id: str) -> list[tuple[str, str]] | None:
+    return verified_history(request.history, session_id) or None
 
 
-def _to_qa_response(response: RAGResponse, *, top_k: int, filter_keys: str) -> QAResponse:
+def _to_qa_response(
+    response: RAGResponse, *, top_k: int, filter_keys: str, session_id: str
+) -> QAResponse:
     abstained = not response.sources and not response.cited_source_ids
     cited_ids = set(response.cited_source_ids)
     sources = [
@@ -84,6 +87,7 @@ def _to_qa_response(response: RAGResponse, *, top_k: int, filter_keys: str) -> Q
         cited_source_ids=response.cited_source_ids,
         sources=sources,
         standalone_question=response.standalone_question,
+        answer_signature=sign_answer(session_id, response.answer),
     )
 
 
@@ -101,10 +105,13 @@ def ask_question(
         query=request.question,
         top_k=request.top_k,
         metadata_filters=metadata_filters,
-        history=_history(request),
+        history=_history(request, session_id),
     )
     return _to_qa_response(
-        response, top_k=request.top_k, filter_keys=",".join(sorted(metadata_filters))
+        response,
+        top_k=request.top_k,
+        filter_keys=",".join(sorted(metadata_filters)),
+        session_id=session_id,
     )
 
 
@@ -146,12 +153,14 @@ def ask_question_stream(
                 query=request.question,
                 top_k=request.top_k,
                 metadata_filters=metadata_filters,
-                history=_history(request),
+                history=_history(request, session_id),
             ):
                 if isinstance(item, str):
                     yield _sse("token", {"text": item})
                 else:
-                    final = _to_qa_response(item, top_k=request.top_k, filter_keys=filter_keys)
+                    final = _to_qa_response(
+                        item, top_k=request.top_k, filter_keys=filter_keys, session_id=session_id
+                    )
                     yield _sse("final", final.model_dump())
         except DocQNAError as exc:
             spec = resolve_error_spec(exc)

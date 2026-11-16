@@ -1,10 +1,17 @@
+import asyncio
 from unittest.mock import patch
 
+from fastapi import Request, Response
 from fastapi.testclient import TestClient
 
 from docqna.api.dependencies import get_rag_pipeline_provider
 from docqna.api.main import SESSION_HEADER_NAME, app
-from docqna.api.rate_limit import RateLimitRule, SlidingWindowLimiter
+from docqna.api.rate_limit import (
+    RateLimitRule,
+    SlidingWindowLimiter,
+    client_ip,
+    make_rate_limit_middleware,
+)
 from docqna.rag import ABSTENTION_ANSWER, RAGResponse
 
 
@@ -57,6 +64,69 @@ def test_question_endpoint_returns_429_with_retry_after(client: TestClient) -> N
     # A different session has its own budget.
     other = client.post("/qa", json={"question": "Hello?"}, headers={SESSION_HEADER_NAME: "z" * 32})
     assert other.status_code == 200
+
+
+def test_new_session_ids_cannot_get_around_the_ip_limit(client: TestClient) -> None:
+    app.dependency_overrides[get_rag_pipeline_provider] = lambda: AbstainingPipeline
+    ip_limit = 20 * 3  # settings defaults: per-session limit x RATE_LIMIT_IP_FACTOR
+
+    statuses = [
+        client.post(
+            "/qa", json={"question": "Hello?"}, headers={SESSION_HEADER_NAME: f"{n:032d}"}
+        ).status_code
+        for n in range(ip_limit + 1)
+    ]
+
+    assert statuses[:ip_limit] == [200] * ip_limit
+    assert statuses[-1] == 429
+
+
+def request_from(peer: str, *forwarded_for: str) -> Request:
+    headers = [(b"x-forwarded-for", value.encode()) for value in forwarded_for]
+    return Request({"type": "http", "headers": headers, "client": (peer, 1234)})
+
+
+def test_client_ip_ignores_forwarded_header_without_trusted_proxy() -> None:
+    assert client_ip(request_from("10.0.0.5", "1.2.3.4")) == "10.0.0.5"
+
+
+def test_client_ip_uses_entry_appended_by_the_trusted_proxy() -> None:
+    # The client faked "6.6.6.6"; the platform proxy appended the real address.
+    request = request_from("10.0.0.5", "6.6.6.6, 203.0.113.7")
+
+    assert client_ip(request, trusted_proxy_hops=1) == "203.0.113.7"
+    assert client_ip(request_from("10.0.0.5", "6.6.6.6", "203.0.113.7"), 1) == "203.0.113.7"
+
+
+def test_client_ip_falls_back_when_header_is_missing_or_short() -> None:
+    assert client_ip(request_from("10.0.0.5"), trusted_proxy_hops=1) == "10.0.0.5"
+    assert client_ip(request_from("10.0.0.5", "203.0.113.7"), trusted_proxy_hops=2) == (
+        "203.0.113.7"
+    )
+
+
+def test_ip_limit_can_be_turned_off() -> None:
+    limiter = SlidingWindowLimiter()
+    middleware = make_rate_limit_middleware([RULE], limiter, ip_limit_factor=0)
+
+    async def ok(_: Request) -> Response:
+        return Response("ok")
+
+    async def send(session: str) -> int:
+        request = Request(
+            {
+                "type": "http",
+                "method": "POST",
+                "path": "/qa",
+                "headers": [(SESSION_HEADER_NAME.lower().encode(), session.encode())],
+                "client": ("10.0.0.5", 1234),
+            }
+        )
+        return (await middleware(request, ok)).status_code
+
+    statuses = [asyncio.run(send(f"{n:032d}")) for n in range(10)]
+
+    assert statuses == [200] * 10
 
 
 def test_ready_reports_each_dependency(client: TestClient) -> None:

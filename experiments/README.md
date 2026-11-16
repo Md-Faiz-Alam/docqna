@@ -19,6 +19,7 @@ design decision and writes its results to its own folder under
 | `measure_speed_and_cost.py` | How long does each stage take, and what does an answer cost in tokens and dollars? | `speed_and_cost/phi3_mini/`, `speed_and_cost/gemini/` |
 | `build_heldout_set.py` | Builds the held-out test set: 100 questions from 5 SQuAD 2.0 articles, drawn with a fixed seed | writes `data/evaluation/heldout/` |
 | `evaluate_heldout.py` | How does the unchanged system do on questions it was never tuned on? | `heldout/phi3_mini/`, `heldout/gemini/` |
+| `compare_grounding_checks.py` | Whole-answer vs per-sentence grounding check, re-scored offline on recorded LLM answers (no LLM calls) | `grounding_checks/` |
 | `grading_check.py` | Does the automatic grading agree with a person? Draws 80 shown answers, serves a local blind labelling page, compares the labels | `grading_check/` |
 
 The first five scripts use the private test set, `data/evaluation/private/cases.json`

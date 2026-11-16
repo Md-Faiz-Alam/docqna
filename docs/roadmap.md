@@ -154,7 +154,7 @@ Each step has a clear goal and a clear "done when", so progress is easy to check
 
 ### Step 4: Prepare the backend for the cloud
 - **What:**
-  - package the backend as one container for Hugging Face;
+  - package the backend as one cloud container (first planned for Hugging Face, now on Azure);
   - allow only the official website to call the API (CORS);
   - add an `/info` endpoint so the website can show which model is in use;
   - add a "load sample documents" option so visitors can try it instantly.

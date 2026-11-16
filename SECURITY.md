@@ -39,10 +39,12 @@ The RAG pipeline includes:
 - safe fallback behavior when citation validation fails
 - an injection filter that removes text addressed to an AI assistant (instructions to AI systems, attempts to override or reveal the rules, fake prompt sections, Markdown images) from retrieved passages before the LLM sees them; removed text is shown as `[removed: text addressed to an AI assistant]` in the sources
 - a link check that withholds any answer containing a link or e-mail address that none of the sources contains
+- signed conversation history: each answer carries an HMAC of the session ID and answer text, and assistant turns sent back without a matching signature are dropped, so a client cannot invent assistant turns to steer the follow-up rewriter
+- an optional prompt layout (`SEPARATE_PROMPT_ROLES`, off until measured) that puts the answer rules in the LLM's system role and wraps each document in a tag with a random per-request name, so a document cannot close its own tag
 
 Prompt hardening alone was not enough: in the attack test (`experiments/attack_prompt_injection.py`, results in `docs/evaluation.md` section 16) Gemini followed hidden document instructions in 6 of 20 attacks, adding a phishing link and stating a planted false fact, and the grounding check let these through because the attacker's text really was in the cited source. The filter and link check are pattern rules for known attack shapes. They stopped every attack in that test, but they cannot guarantee that a new phrasing is caught.
 
-These controls reduce prompt-injection and unsupported-answer risk, but they do not make arbitrary uploaded content inherently trustworthy. During streaming, draft text is shown before the final checks run; the final response replaces it.
+These controls reduce prompt-injection and unsupported-answer risk, but they do not make arbitrary uploaded content inherently trustworthy. `/qa/stream` sends no draft text by default: the answer leaves the server only after the citation, grounding and link checks have passed, so a withdrawn answer or injected link is never shown, even briefly. `STREAM_DRAFTS=true` turns draft tokens back on (for example for a private local setup where waiting for `phi3:mini` is the bigger problem). It should stay off for any public deployment.
 
 ---
 
@@ -188,13 +190,11 @@ Operators are responsible for appropriate data-retention and hosting policies fo
 
 ## 10. Public deployment status
 
-Local Docker end-to-end and persistence validation is complete.
+Local Docker end-to-end and persistence validation is complete. The public demo runs on Azure Container Apps, which provides HTTPS/TLS at its ingress; the API applies per-session and per-IP rate limits (docs/api.md).
 
-Public cloud deployment is still pending. Before broad public exposure, add or verify:
+Before broader public exposure, add or verify:
 
-- reverse proxy and HTTPS/TLS
-- request/rate limiting
-- reverse-proxy request/rate limiting
+- rate limiting shared across instances (the built-in limiter is per process), if more than one replica runs
 - production timeout policies
 - host-level log-retention/monitoring policy
 - persistent-volume backup/recovery

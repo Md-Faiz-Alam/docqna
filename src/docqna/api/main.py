@@ -80,6 +80,8 @@ def create_app() -> FastAPI:
                 ),
             ],
             limiter=application.state.rate_limiter,
+            ip_limit_factor=settings.rate_limit_ip_factor,
+            trusted_proxy_hops=settings.trusted_proxy_hops,
         )
     )
     application.middleware("http")(request_observability)

@@ -22,11 +22,23 @@ export interface Message {
 
 const MAX_HISTORY_TURNS = 12;
 
-/** Earlier completed turns, oldest first, in the shape `/qa` accepts. */
+const MAX_TURN_CHARS = 4000;
+
+/**
+ * Earlier completed turns, oldest first, in the shape `/qa` accepts.
+ * Assistant turns carry the signature the API returned with the answer; the
+ * API ignores assistant turns without one, so they are left out here. They
+ * are never shortened, because a changed answer no longer matches its signature.
+ */
 export function historyFrom(messages: Message[]): ChatTurn[] {
   return messages
     .filter((m) => !m.pending && !m.error && m.content.trim())
-    .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }))
+    .flatMap((m): ChatTurn[] => {
+      if (m.role === "user") return [{ role: "user", content: m.content.slice(0, MAX_TURN_CHARS) }];
+      const signature = m.response?.answer_signature;
+      if (!signature || m.content.length > MAX_TURN_CHARS) return [];
+      return [{ role: "assistant", content: m.content, signature }];
+    })
     .slice(-MAX_HISTORY_TURNS);
 }
 
@@ -193,7 +205,7 @@ export function Chat({
                   ) : (
                     <p className="flex items-center gap-2 text-muted-foreground">
                       <Loader2Icon className="size-4 animate-spin" aria-hidden /> Searching your
-                      documents…
+                      documents and checking the answer…
                     </p>
                   )}
                 </li>

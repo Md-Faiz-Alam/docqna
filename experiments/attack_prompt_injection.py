@@ -23,7 +23,13 @@ with expected facts also check that the real answer still gets through.
 `--defence off` disables the injection filter and link check
 (`src/docqna/rag/injection.py`), which is how the pipeline was before they
 were added; its results are saved as `baseline`, the defended run as
-`defended`. `--provider ollama` runs `phi3:mini`. Results go to
+`defended`. `--separate-roles` puts the answer rules in the LLM's system
+role and each document in a tag with a random per-request name
+(`SEPARATE_PROMPT_ROLES`); its results get a `_separated` suffix:
+
+    python -m experiments.attack_prompt_injection run --provider gemini --defence on --separate-roles
+
+`--provider ollama` runs `phi3:mini`. Results go to
 `data/evaluation/results/prompt_injection/<provider>/`.
 """
 
@@ -130,8 +136,8 @@ def results_dir(provider: str) -> Path:
     return RESULTS_ROOT / ("phi3_mini" if provider == "ollama" else provider)
 
 
-def run(provider: str, defence: bool, ollama_url: str) -> Path:
-    label = "defended" if defence else "baseline"
+def run(provider: str, defence: bool, ollama_url: str, separate_roles: bool = False) -> Path:
+    label = ("defended" if defence else "baseline") + ("_separated" if separate_roles else "")
     cases = load_cases()
     out = results_dir(provider) / f"{label}.jsonl"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -140,6 +146,8 @@ def run(provider: str, defence: bool, ollama_url: str) -> Path:
         done = {json.loads(line)["case_id"] for line in out.read_text("utf-8").splitlines()}
 
     settings = experiment_settings(provider, ollama_url)
+    if separate_roles:
+        settings = settings.model_copy(update={"separate_prompt_roles": True})
     interval = GEMINI_MIN_INTERVAL_SECONDS if provider == "gemini" else 0.0
     work_dir = Path(tempfile.mkdtemp(prefix="docqna-attacks-"))
     filters: dict[str, str | int] = {"session_id": SESSION_ID}
@@ -154,9 +162,12 @@ def run(provider: str, defence: bool, ollama_url: str) -> Path:
             llm=llm,
             confidence_gate=RetrievalConfidenceGate(min_top_score=settings.answerability_min_score),
             grounding_verifier=GroundingVerifier(
-                scorer=reranker.model, min_score=settings.active_grounding_min_score
+                scorer=reranker.model,
+                min_score=settings.active_grounding_min_score,
+                per_sentence=settings.grounding_per_sentence,
             ),
             injection_filter=defence,
+            separate_prompt_roles=settings.separate_prompt_roles,
         )
 
         with out.open("a", encoding="utf-8") as sink:
@@ -282,13 +293,18 @@ def main() -> None:
     run_parser = sub.add_parser("run")
     run_parser.add_argument("--defence", choices=("on", "off"), required=True)
     run_parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    run_parser.add_argument(
+        "--separate-roles",
+        action="store_true",
+        help="rules in the system role, documents in random-name tags (SEPARATE_PROMPT_ROLES)",
+    )
     analyze_parser = sub.add_parser("analyze")
     for command_parser in (run_parser, analyze_parser):
         command_parser.add_argument("--provider", choices=PROVIDERS, default="gemini")
     args = parser.parse_args()
 
     if args.command == "run":
-        out = run(args.provider, args.defence == "on", args.ollama_url)
+        out = run(args.provider, args.defence == "on", args.ollama_url, args.separate_roles)
         print(f"wrote {out}")
     else:
         analyze(args.provider)

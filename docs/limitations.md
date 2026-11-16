@@ -14,7 +14,7 @@ With the calibrated configuration (retrieval gate `-10.5` plus sentence-level gr
 
 ### Session isolation is not authentication
 
-DocQ&A isolates document access using a high-entropy anonymous session identifier. The identifier is persisted in a browser cookie so the same browser can retain its anonymous namespace across normal page refreshes.
+DocQ&A isolates document access using a high-entropy anonymous session identifier. The identifier is kept in the browser's `localStorage`, so the same browser can retain its anonymous namespace across normal page refreshes.
 
 This does not provide accounts, passwords, OAuth, account recovery, durable cross-device identity, or verified user ownership. A different browser profile or incognito session receives a different anonymous namespace.
 
@@ -26,7 +26,7 @@ The retrieval gate (`-10.5`) and grounding threshold (`3.3`) were selected on 10
 
 **Storage is temporary.** The cloud container keeps uploads, indexes and feedback inside the container, so they disappear when it restarts or scales to zero.
 
-**Sample documents bypass the document quotas.** They are small and fixed, but a script that keeps creating new session IDs could load them repeatedly. Each load adds only a few kilobytes and is removed after `DOCUMENT_RETENTION_HOURS`, and requests are rate-limited per session, but there is no global cap on sample loads.
+**Sample documents bypass the document quotas.** They are small and fixed, but a script that keeps creating new session IDs could load them repeatedly. Each load adds only a few kilobytes and is removed after `DOCUMENT_RETENTION_HOURS`. Loads are rate-limited per session and per client IP, so new session IDs alone do not get around the limit, but there is no global cap on sample loads, and a client with many IP addresses can still load them repeatedly.
 
 ### Over-citation
 
@@ -59,11 +59,9 @@ Broader public exposure still needs:
 
 Docker volumes persist Chroma indexes, registry metadata, Ollama model data, and Hugging Face model downloads across container recreation. Anonymous uploaded documents now expire after 24 hours, but a production backup/recovery policy for persistent volumes has not yet been finalized.
 
-### Public cloud deployment is pending
+### Public demo deployment is single-instance
 
-The Docker stack has been validated locally end to end, including persistence across API-container recreation and browser-refresh session continuity.
-
-The remaining deployment work is to run the validated stack on a remote server and add the reverse-proxy/HTTPS configuration required for an internet-facing public URL.
+The public demo runs on Azure Container Apps (HTTPS ingress, 0 to 1 replicas) with the website on Vercel. One replica keeps rate limits and per-session search indexes consistent, because both live in process memory. Running more replicas would need a shared rate limiter and shared storage. Uploads and feedback in the demo are lost when the container restarts or scales to zero.
 
 ---
 

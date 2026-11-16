@@ -7,6 +7,7 @@ answer that points at sources it did not receive.
 
 import logging
 import re
+import secrets
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from time import perf_counter
@@ -28,6 +29,7 @@ from docqna.rag.prompt import (
     build_citation_repair_prompt,
     build_cited_rag_prompt,
     build_condense_question_prompt,
+    build_separated_rag_prompt,
 )
 from docqna.retrieval.base import BaseRetriever
 from docqna.retrieval.confidence import RetrievalConfidenceGate
@@ -122,12 +124,21 @@ class RAGPipeline:
         confidence_gate: RetrievalConfidenceGate | None = None,
         grounding_verifier: GroundingVerifier | None = None,
         injection_filter: bool = True,
+        stream_drafts: bool = False,
+        separate_prompt_roles: bool = False,
     ) -> None:
         self.retriever = retriever
         self.llm = llm
         self.confidence_gate = confidence_gate
         self.grounding_verifier = grounding_verifier
         self.injection_filter = injection_filter
+        # Off by default: draft text has not been through the citation, grounding
+        # and link checks, so sending it would show users answers (or injected
+        # links) that the final response then withdraws.
+        self.stream_drafts = stream_drafts
+        # Rules in the system role and documents in per-request tags, instead
+        # of one combined prompt. Off until measured (SEPARATE_PROMPT_ROLES).
+        self.separate_prompt_roles = separate_prompt_roles
 
     # ------------------------------------------------------------------
     # Answer post-processing (pure functions, unit-tested directly)
@@ -242,6 +253,18 @@ class RAGPipeline:
     def _generate_clean(self, prompt: str) -> str:
         return self._clean(self.llm.generate(prompt))
 
+    def _answer_prompt(self, query: str, results: list[RetrievalResult]) -> tuple[str, ...]:
+        """LLM arguments for the main answer: (prompt,) or (prompt, system prompt).
+
+        The combined layout passes the prompt alone, exactly as before the
+        separated layout existed.
+        """
+
+        if self.separate_prompt_roles:
+            system, user = build_separated_rag_prompt(query, results, secrets.token_hex(8))
+            return user, system
+        return (build_cited_rag_prompt(query=query, results=results),)
+
     def _check_grounding(
         self, results: list[RetrievalResult], generated: tuple[str, list[int]] | None
     ) -> tuple[str, list[int]] | None:
@@ -251,8 +274,9 @@ class RAGPipeline:
             return generated
 
         answer, citation_ids = generated
-        cited_texts = [results[cid - 1].text for cid in citation_ids if 1 <= cid <= len(results)]
-        decision = self.grounding_verifier.evaluate(answer, cited_texts)
+        decision = self.grounding_verifier.check(
+            answer, [result.text for result in results], citation_ids
+        )
         if decision.is_grounded:
             return generated
 
@@ -464,7 +488,7 @@ class RAGPipeline:
         generated: tuple[str, list[int]] | None = None
         if not self._should_abstain(results):
             timer.start_generation()
-            answer = self._generate_clean(build_cited_rag_prompt(query=query, results=results))
+            answer = self._clean(self.llm.generate(*self._answer_prompt(query, results)))
             generated = self._check_links(
                 results,
                 self._check_grounding(results, self._finalize_answer(query, results, answer)),
@@ -487,11 +511,13 @@ class RAGPipeline:
         metadata_filters: MetadataFilters | None = None,
         history: ChatHistory | None = None,
     ) -> Iterator[str | RAGResponse]:
-        """Yield draft answer text as it is generated, then the final RAGResponse.
+        """Yield the final RAGResponse, preceded by draft text only if `stream_drafts`.
 
-        The final response is authoritative: citation validation/repair run
-        after generation, so clients must replace the draft with it (it may
-        be a corrected answer or the abstention).
+        With `stream_drafts` off (the default) nothing is yielded until the
+        answer has passed every check, so unverified text never leaves the
+        server. With it on, drafts are yielded as generated; the final
+        response is still authoritative and clients must replace the draft
+        with it (it may be a corrected answer or the abstention).
         """
 
         query, metadata_filters, results, timer = self._prepare(
@@ -502,11 +528,10 @@ class RAGPipeline:
         if not self._should_abstain(results):
             timer.start_generation()
             parts: list[str] = []
-            for delta in self.llm.generate_stream(
-                build_cited_rag_prompt(query=query, results=results)
-            ):
+            for delta in self.llm.generate_stream(*self._answer_prompt(query, results)):
                 parts.append(delta)
-                yield delta
+                if self.stream_drafts:
+                    yield delta
             generated = self._check_links(
                 results,
                 self._check_grounding(

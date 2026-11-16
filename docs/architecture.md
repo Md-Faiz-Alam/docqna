@@ -86,7 +86,7 @@ flowchart TD
     PROMPT --> LLM[Ollama phi3:mini]
     LLM --> SAN[Output sanitization]
     SAN --> CIT[Citation normalization + validation]
-    CIT --> GRD{Best CE answer vs cited-source sentence >= 3.3?}
+    CIT --> GRD{Every answer sentence vs its own cited sources: weakest CE score >= 3.3?}
     GRD -->|No| ABS
     GRD -->|Yes| RESP[Answer + sources]
 ```
@@ -115,7 +115,7 @@ The provided documents do not contain enough information to answer the question.
 | Reranker candidate count | 20 |
 | Final top-k | 5 |
 | Retrieval gate (rank-1 CE score) | -10.5 |
-| Grounding check (best CE answer vs cited-source sentence) | 3.3 |
+| Grounding check (per sentence: each answer sentence vs the sources it cites; weakest sentence counts) | 3.3 |
 | LLM | `phi3:mini` (Ollama); Gemini mode uses `gemini-3.5-flash-lite` with minimal thinking |
 | Grounding check threshold, Gemini mode | 1.5 |
 | LLM temperature | 0 |
@@ -329,12 +329,12 @@ The workload is a deterministic retrieval-and-answer pipeline. Additional orches
 | Duplicate upload | content hashing + scoped registry checks |
 | Changed file with same name | versioning |
 | Cross-session leakage | backend-enforced session filters |
-| Browser refresh loses session namespace | browser-cookie-backed anonymous session ID |
+| Browser refresh loses session namespace | anonymous session ID kept in `localStorage` |
 | API container recreated | named volumes preserve Chroma and registry data |
 | Weak evidence | CE threshold + exact abstention |
-| Prompt injection in documents | untrusted-context prompting + sanitization |
+| Prompt injection in documents | untrusted-context prompting, injection filter on passages, link check on answers |
 | Invalid citations | normalization, repair, validation |
 | Ollama unavailable | health check and typed generation errors |
-| Scanned/image-only PDF | unsupported; documented limitation |
+| Scanned/image-only PDF | OCR with Tesseract, up to `MAX_OCR_PAGES` pages; rejected with a clear message when Tesseract is not installed |
 | Over-citation | known quality limitation |
-| Public traffic abuse | upload/question/document/chunk limits, 24-hour cleanup, memory caps, and log rotation implemented; per-session rate limiting (429 + Retry-After) implemented in the API |
+| Public traffic abuse | upload/question/document/chunk limits, 24-hour cleanup, memory caps, and log rotation implemented; per-session and per-IP rate limiting (429 + Retry-After) implemented in the API; the IP comes from the proxy-appended `X-Forwarded-For` entry, so neither new session IDs nor a faked header gets around it |

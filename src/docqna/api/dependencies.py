@@ -165,7 +165,11 @@ def build_rag_pipeline(
     )
 
     grounding_verifier = (
-        GroundingVerifier(scorer=reranker.model, min_score=settings.active_grounding_min_score)
+        GroundingVerifier(
+            scorer=reranker.model,
+            min_score=settings.active_grounding_min_score,
+            per_sentence=settings.grounding_per_sentence,
+        )
         if settings.grounding_check_enabled
         else None
     )
@@ -176,6 +180,8 @@ def build_rag_pipeline(
         confidence_gate=RetrievalConfidenceGate(min_top_score=settings.answerability_min_score),
         grounding_verifier=grounding_verifier,
         injection_filter=settings.injection_filter_enabled,
+        stream_drafts=settings.stream_drafts,
+        separate_prompt_roles=settings.separate_prompt_roles,
     )
 
 

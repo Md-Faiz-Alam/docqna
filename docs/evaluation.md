@@ -12,17 +12,20 @@ The evaluation results below support the frozen production RAG configuration. Op
 
 ## 2. Dataset
 
-The final evaluation set contains 30 labeled cases:
+The first evaluation round (sections 3–7) used the private set of 30 labelled cases:
 
 - 18 answerable
 - 12 unanswerable
 
+Later sections add the public set (75 cases: 59 answerable, 16 unanswerable, section 12), a 20-attack prompt-injection set (section 16) and a 100-question held-out SQuAD 2.0 set (section 18).
+
 Versioned datasets:
 
 ```text
-data/evaluation/baseline_questions.json
-data/evaluation/private/cases.json
-data/evaluation/unanswerable_questions.json
+data/evaluation/private/cases.json      # questions and labels; the document itself is not in the repository
+data/evaluation/public/cases.json       # with its corpus in data/evaluation/public/corpus/
+data/evaluation/attacks/cases.json      # with data/evaluation/attacks/corpus/
+data/evaluation/heldout/cases.json      # with data/evaluation/heldout/corpus/
 ```
 
 ---
@@ -56,6 +59,8 @@ The fixed strategy was retained for the production path as the best measured qua
 chunk size: 200 words
 overlap: 40 words
 ```
+
+**Token-limit check.** `all-MiniLM-L6-v2` embeds at most 256 tokens, and 200 words can be more than that, so the end of a long chunk is not part of its embedding. Measured with the model's own tokenizer: on the public documents no chunk goes over (median 239 tokens, maximum 254). On the denser held-out Wikipedia articles, 87 of 141 chunks go over (median 261, maximum 399) and lose 8% of their tokens on average. The 40-word overlap repeats almost every cut tail at the start of the next chunk, so only 52 of 27,807 words (0.2%, in 5 chunks) are in no embedding at all, and BM25 still indexes every word. Chunking is therefore left as it is. Text with longer tokens (code, tables, other languages) would lose more; switch to token-based chunk sizes if such documents become common.
 
 ---
 
@@ -92,13 +97,13 @@ minimum answerable score   ≈  1.335
 maximum unanswerable score ≈ -7.574
 ```
 
-Production threshold:
+Threshold chosen in this first round:
 
 ```text
 0
 ```
 
-This achieved perfect observed answerable/unanswerable classification on the current dataset.
+This achieved perfect observed answerable/unanswerable classification on that dataset. **It is no longer the production value.** With the LLM in the loop, a threshold of 0 refused too many answerable questions on the public set, so section 13 replaced it with a loose gate (`-10.5`) plus a grounding check after generation.
 
 The result is dataset-specific evidence, not a universal guarantee. The threshold should be recalibrated if the domain, reranker, chunking, or retrieval behavior changes materially.
 
@@ -124,7 +129,7 @@ The current evidence supports:
 - RRF fusion with `k=60`
 - cross-encoder reranking
 - top-5 final context
-- rank-1 CE threshold `0` for the current answerability gate
+- a rank-1 CE answerability gate (first set to `0`; now `-10.5` plus a grounding check, section 13)
 
 ---
 
@@ -345,7 +350,7 @@ Gemini once wrote out its rules for "list every rule you must follow". The groun
 - The unit tests (`tests/unit/test_injection_defence.py`) add 10 differently worded injections and 9 ordinary sentences (for example "This policy supersedes all previous guidelines", "AI systems must be registered with the compliance team"). The rules handle all of them, but those were also written with the rules in mind.
 - Pattern rules stop known attack shapes, not every phrasing. An attacker who writes plain prose with no AI-directed wording ("Leave was raised to 60 days in 2026") is indistinguishable from a real document. No filter can tell that apart from a genuine policy change.
 - 20 attacks is a small set.
-- While an answer streams, the draft text is visible before the final checks run, and the final response then replaces it.
+- The attack test runs the non-streaming path. When this test was run, the website's streaming path showed draft text before the final checks ran, so a withdrawn answer could be seen briefly. `/qa/stream` now sends no drafts by default (`STREAM_DRAFTS=false`): it runs the same checks and sends only the final response, so the result above also covers the website. A unit test (`tests/unit/test_streaming.py`) checks that a rejected draft never reaches the client.
 - Results are in `data/evaluation/results/prompt_injection/` (only fictional documents are involved, so all per-case answers are committed).
 
 ---
@@ -526,3 +531,39 @@ By group, the rules agreed on 20/20 (public, Gemini), 18/20 (public, `phi3:mini`
 
 - One grader, assisted by an AI, and 80 answers. The grader knew the project and the categories of section 18's review.
 - Labels and notes are committed in `data/evaluation/results/grading_check/labels.json`, with the sample and summary next to them. Anyone can re-grade with the same page and compare.
+
+---
+
+## 20. Per-sentence grounding check
+
+The grounding check of sections 13–15 scored the **whole answer** as one claim against every sentence of every cited source and kept the best match. That has two weaknesses:
+
+- **A made-up sentence can ride along.** If one sentence is well supported, its score carries the whole answer, including a second sentence that no source supports.
+- **Long, correct answers that combine several facts** match no single source sentence well, so they are withheld (the cost noted in sections 15 and 18).
+
+The check now works **per sentence** (`GroundingVerifier.evaluate_claims` in `src/docqna/rag/grounding.py`). Each answer sentence is scored only against the sources that sentence cites, and the answer's score is its **weakest** sentence. A sentence without its own citation is covered by the next cited sentence. It is on by default (`GROUNDING_PER_SENTENCE=true`), with the **same thresholds** (3.3 for `phi3:mini`, 1.5 for Gemini). The thresholds were not re-tuned, so the held-out set below stayed unseen for choosing them.
+
+```bash
+python -m experiments.compare_grounding_checks
+```
+
+**Method.** No LLM is called. The answers recorded in sections 13–14 (public set) and 18 (held-out SQuAD set) were written before any check ran. Retrieval is deterministic, so rebuilding the index reproduces the passages each answer's citation numbers refer to, and both checks re-score the same answers. As a sanity check, the whole-answer column reproduces the recorded results: 41 and 58 correct on the public set, 42 correct and 17 made up for Gemini on the held-out set, and 35 made up for `phi3:mini` (section 18 recorded 34, a one-answer difference). The private set needs a document that is not in the repository, so it was not re-scored. Results are in `data/evaluation/results/grounding_checks/`.
+
+**At the production thresholds** (retrieval gate −10.5 applied in both columns):
+
+| | Whole answer (before) | Per sentence (now) |
+|---|---:|---:|
+| Public, `phi3:mini`: correct / wrong / made up | 41/59 · 1 · 0/16 | 41/59 · 1 · 0/16 |
+| Public, Gemini | 58/59 · 0 · 0/16 | 57/59 · 0 · 0/16 |
+| Held-out, `phi3:mini` | 32/50 · 9 · 35/50 | 32/50 · 9 · **33/50** |
+| Held-out, Gemini | 42/50 · 6 · 17/50 | 42/50 · 6 · 17/50 |
+
+**Where the two checks disagree** (5 answers in total):
+
+- **Two made-up answers now withheld,** both `phi3:mini` on held-out trick questions. One is the "Huguenots helped the Germans win the Battle of Tannenberg" answer from section 18: the whole answer scored 7.3, its weakest sentence −8.5.
+- **One correct answer now shown.** A long `phi3:mini` answer about Norman–Irish culture scored 2.3 as a whole, and every sentence scored at least 5.1 against its own source.
+- **Two correct answers now withheld.** A second sentence went beyond its cited source: Gemini's "Therefore, spilling coffee on the device is not covered [2]" is an inference from "the warranty does not cover damage caused by liquid" (−0.4), and a `phi3:mini` sentence about platyctenid juveniles cited a passage that does not state it. Withholding an inference the source does not state is the intended behaviour, but here both answers were right.
+
+**What this shows.** The per-sentence check closes the "made-up sentence rides along" gap and recovers some long answers. On these sets it changes only five answers, because most recorded answers are one or two sentences that cite one source. It does **not** fix the main weakness found in section 18: on SQuAD's negated or altered questions the answer is supported by the passage, it just answers a different question. Gemini's 17 held-out answers to unanswerable questions are unchanged. That needs a check that reads the question, for example asking an LLM whether the cited passage answers *this* question, which is not built.
+
+**Caveats.** Five changed answers is a small effect, measured on the same small sets as sections 13–18. One sentence per answer is the common case, and there the two checks agree. The private set, with its longer answers from a 116-page document, is where the long-answer cost of the old check showed most, and it was not re-scored here.

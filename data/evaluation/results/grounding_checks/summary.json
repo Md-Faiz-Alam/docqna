@@ -1,0 +1,985 @@
+{
+  "retrieval_gate": -10.5,
+  "current_thresholds": {
+    "phi3_mini": 3.3,
+    "gemini": 1.5
+  },
+  "runs": {
+    "public/phi3_mini": {
+      "whole_at_current": {
+        "threshold": 3.3,
+        "correct": 41,
+        "wrong": 1,
+        "made_up": 0,
+        "answerable": 59,
+        "unanswerable": 16
+      },
+      "sentence_sweep": [
+        {
+          "threshold": -4.0,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 5,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -3.5,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 5,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -3.0,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 5,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -2.5,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 4,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -2.0,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 3,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -1.5,
+          "correct": 46,
+          "wrong": 2,
+          "made_up": 3,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -1.0,
+          "correct": 44,
+          "wrong": 2,
+          "made_up": 3,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -0.5,
+          "correct": 44,
+          "wrong": 2,
+          "made_up": 3,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 0.0,
+          "correct": 44,
+          "wrong": 2,
+          "made_up": 3,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 0.5,
+          "correct": 44,
+          "wrong": 2,
+          "made_up": 2,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 1.0,
+          "correct": 44,
+          "wrong": 2,
+          "made_up": 2,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 1.5,
+          "correct": 42,
+          "wrong": 2,
+          "made_up": 2,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 2.0,
+          "correct": 42,
+          "wrong": 2,
+          "made_up": 1,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 2.5,
+          "correct": 41,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 3.0,
+          "correct": 41,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 3.5,
+          "correct": 41,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 4.0,
+          "correct": 41,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 4.5,
+          "correct": 40,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 5.0,
+          "correct": 39,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 5.5,
+          "correct": 39,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 6.0,
+          "correct": 39,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 6.5,
+          "correct": 35,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 7.0,
+          "correct": 32,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 7.5,
+          "correct": 30,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 8.0,
+          "correct": 26,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 8.5,
+          "correct": 24,
+          "wrong": 1,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 9.0,
+          "correct": 21,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 9.5,
+          "correct": 17,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 10.0,
+          "correct": 11,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        }
+      ]
+    },
+    "public/gemini": {
+      "whole_at_current": {
+        "threshold": 1.5,
+        "correct": 58,
+        "wrong": 0,
+        "made_up": 0,
+        "answerable": 59,
+        "unanswerable": 16
+      },
+      "sentence_sweep": [
+        {
+          "threshold": -4.0,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -3.5,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -3.0,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -2.5,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -2.0,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -1.5,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -1.0,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": -0.5,
+          "correct": 58,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 0.0,
+          "correct": 57,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 0.5,
+          "correct": 57,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 1.0,
+          "correct": 57,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 1.5,
+          "correct": 57,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 2.0,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 2.5,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 3.0,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 3.5,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 4.0,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 4.5,
+          "correct": 56,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 5.0,
+          "correct": 55,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 5.5,
+          "correct": 55,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 6.0,
+          "correct": 55,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 6.5,
+          "correct": 53,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 7.0,
+          "correct": 51,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 7.5,
+          "correct": 50,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 8.0,
+          "correct": 44,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 8.5,
+          "correct": 38,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 9.0,
+          "correct": 33,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 9.5,
+          "correct": 24,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        },
+        {
+          "threshold": 10.0,
+          "correct": 14,
+          "wrong": 0,
+          "made_up": 0,
+          "answerable": 59,
+          "unanswerable": 16
+        }
+      ]
+    },
+    "heldout/phi3_mini": {
+      "whole_at_current": {
+        "threshold": 3.3,
+        "correct": 32,
+        "wrong": 9,
+        "made_up": 35,
+        "answerable": 50,
+        "unanswerable": 50
+      },
+      "sentence_sweep": [
+        {
+          "threshold": -4.0,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 41,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -3.5,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 39,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -3.0,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 39,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -2.5,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 39,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -2.0,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -1.5,
+          "correct": 35,
+          "wrong": 10,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -1.0,
+          "correct": 35,
+          "wrong": 9,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -0.5,
+          "correct": 35,
+          "wrong": 9,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 0.0,
+          "correct": 35,
+          "wrong": 9,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 0.5,
+          "correct": 35,
+          "wrong": 9,
+          "made_up": 38,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 1.0,
+          "correct": 35,
+          "wrong": 9,
+          "made_up": 37,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 1.5,
+          "correct": 34,
+          "wrong": 9,
+          "made_up": 35,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 2.0,
+          "correct": 34,
+          "wrong": 9,
+          "made_up": 34,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 2.5,
+          "correct": 34,
+          "wrong": 9,
+          "made_up": 33,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 3.0,
+          "correct": 33,
+          "wrong": 9,
+          "made_up": 33,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 3.5,
+          "correct": 31,
+          "wrong": 8,
+          "made_up": 33,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 4.0,
+          "correct": 31,
+          "wrong": 8,
+          "made_up": 32,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 4.5,
+          "correct": 30,
+          "wrong": 8,
+          "made_up": 31,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 5.0,
+          "correct": 28,
+          "wrong": 8,
+          "made_up": 31,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 5.5,
+          "correct": 27,
+          "wrong": 7,
+          "made_up": 30,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 6.0,
+          "correct": 26,
+          "wrong": 6,
+          "made_up": 30,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 6.5,
+          "correct": 24,
+          "wrong": 6,
+          "made_up": 26,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 7.0,
+          "correct": 23,
+          "wrong": 5,
+          "made_up": 21,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 7.5,
+          "correct": 22,
+          "wrong": 3,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 8.0,
+          "correct": 19,
+          "wrong": 2,
+          "made_up": 11,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 8.5,
+          "correct": 18,
+          "wrong": 2,
+          "made_up": 9,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 9.0,
+          "correct": 13,
+          "wrong": 0,
+          "made_up": 6,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 9.5,
+          "correct": 5,
+          "wrong": 0,
+          "made_up": 3,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 10.0,
+          "correct": 1,
+          "wrong": 0,
+          "made_up": 2,
+          "answerable": 50,
+          "unanswerable": 50
+        }
+      ]
+    },
+    "heldout/gemini": {
+      "whole_at_current": {
+        "threshold": 1.5,
+        "correct": 42,
+        "wrong": 6,
+        "made_up": 17,
+        "answerable": 50,
+        "unanswerable": 50
+      },
+      "sentence_sweep": [
+        {
+          "threshold": -4.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -3.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -3.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -2.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -2.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -1.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -1.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": -0.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 0.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 0.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 1.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 1.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 17,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 2.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 2.5,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 3.0,
+          "correct": 42,
+          "wrong": 6,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 3.5,
+          "correct": 42,
+          "wrong": 5,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 4.0,
+          "correct": 42,
+          "wrong": 5,
+          "made_up": 15,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 4.5,
+          "correct": 42,
+          "wrong": 5,
+          "made_up": 14,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 5.0,
+          "correct": 42,
+          "wrong": 5,
+          "made_up": 14,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 5.5,
+          "correct": 40,
+          "wrong": 5,
+          "made_up": 14,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 6.0,
+          "correct": 40,
+          "wrong": 5,
+          "made_up": 14,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 6.5,
+          "correct": 36,
+          "wrong": 5,
+          "made_up": 13,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 7.0,
+          "correct": 35,
+          "wrong": 4,
+          "made_up": 12,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 7.5,
+          "correct": 32,
+          "wrong": 4,
+          "made_up": 11,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 8.0,
+          "correct": 28,
+          "wrong": 3,
+          "made_up": 9,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 8.5,
+          "correct": 26,
+          "wrong": 2,
+          "made_up": 6,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 9.0,
+          "correct": 20,
+          "wrong": 0,
+          "made_up": 4,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 9.5,
+          "correct": 15,
+          "wrong": 0,
+          "made_up": 3,
+          "answerable": 50,
+          "unanswerable": 50
+        },
+        {
+          "threshold": 10.0,
+          "correct": 3,
+          "wrong": 0,
+          "made_up": 2,
+          "answerable": 50,
+          "unanswerable": 50
+        }
+      ]
+    }
+  }
+}

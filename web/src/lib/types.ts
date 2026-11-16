@@ -54,9 +54,13 @@ export interface QAResponse {
   cited_source_ids: number[];
   sources: Citation[];
   standalone_question: string | null;
+  /** Sent back as `signature` when this answer is part of later history. */
+  answer_signature?: string;
 }
 
 export interface ChatTurn {
   role: "user" | "assistant";
   content: string;
+  /** For assistant turns: the answer's `answer_signature`; unsigned ones are ignored. */
+  signature?: string;
 }

@@ -44,6 +44,10 @@ INJECTION_REMOVALS = Counter(
     "Parts of retrieved passages removed because they were addressed to an AI assistant.",
 )
 
+UNSIGNED_HISTORY_TURNS = Counter(
+    "docqna_unsigned_history_turns_total",
+    "Assistant turns dropped from conversation history because their signature was missing or wrong.",
+)
 UNSUPPORTED_LINK_REJECTIONS = Counter(
     "docqna_unsupported_link_rejections_total",
     "Generated answers replaced by abstention because they contained a link not in any source.",

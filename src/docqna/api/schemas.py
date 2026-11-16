@@ -99,6 +99,9 @@ class ChatTurn(BaseModel):
 
     role: Literal["user", "assistant"]
     content: str = Field(min_length=1, max_length=4000)
+    # For assistant turns: the `answer_signature` the API returned with that
+    # answer. Assistant turns without a valid signature are ignored.
+    signature: str | None = Field(default=None, max_length=128)
 
 
 class QARequest(BaseModel):
@@ -164,6 +167,9 @@ class QAResponse(BaseModel):
 
     # The rewritten standalone question, when conversation history was used.
     standalone_question: str | None = None
+
+    # Send back as the `signature` of this answer's turn in later `history`.
+    answer_signature: str = ""
 
 
 class DocumentResponse(BaseModel):
