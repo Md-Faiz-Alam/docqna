@@ -15,6 +15,8 @@
 | Secret | `gemini-api-key`, exposed to the container as `GEMINI_API_KEY` |
 | Configuration | `CORS_ALLOWED_ORIGINS` = the Vercel site and `http://localhost:3000` |
 
+**Verified against the live deployment:** `az deployment group what-if` reports no configuration differences between this template and the running app. The only line it shows is the read-only `runningStatus`, which a template cannot set. Earlier runs caught a region mismatch and the default health probes, both now in the template.
+
 [`main.bicepparam`](main.bicepparam) holds the values. The Gemini key is read from the `GEMINI_API_KEY` environment variable, so it never appears in a file or on the command line.
 
 ## Deploy or check for drift

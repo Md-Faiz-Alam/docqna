@@ -68,7 +68,7 @@ flowchart LR
 - **Azure Container Apps** (UAE North) runs the backend container with 1 vCPU and 2 GiB, HTTPS ingress, and **scale to zero** (0 to 1 replicas), so it costs nothing while idle and fits inside the monthly free grant.
 - The Gemini API key is stored as an **Azure secret** and passed to the container as an environment variable, never in code. Allowed website origins are set through `CORS_ALLOWED_ORIGINS`.
 - An **Azure budget with email alerts** guards against unexpected spend.
-- The Azure setup is also defined as **infrastructure as code** in [Bicep](infra/azure/main.bicep), with a preview-then-deploy guide in [infra/azure](infra/azure/README.md).
+- The Azure setup is also defined as **infrastructure as code** in [Bicep](infra/azure/main.bicep), checked against the live app with `what-if` (no drift), plus a deploy guide in [infra/azure](infra/azure/README.md).
 - A GitHub Action ([publish-image.yml](.github/workflows/publish-image.yml)) rebuilds and publishes the image on every backend change. Vercel redeploys the website on every push.
 - The backend's interactive API reference is public: [OpenAPI docs](https://docqna-api.lemonground-08652996.uaenorth.azurecontainerapps.io/docs).
 

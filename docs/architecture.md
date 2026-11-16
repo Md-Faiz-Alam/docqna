@@ -265,7 +265,7 @@ flowchart LR
 - **Compute:** one Azure Container App in an Express environment, with 1 vCPU and 2 GiB of memory, external HTTPS ingress to port 7860, and an HTTP scale rule between 0 and 1 replicas. The app scales to zero when idle and fits inside the Consumption plan's monthly free grant. The website shows a "waking up" message while it starts.
 - **Secrets and configuration:** `GEMINI_API_KEY` is an Azure Container Apps **secret** referenced by an environment variable. `LLM_PROVIDER=gemini` comes from the image, and `CORS_ALLOWED_ORIGINS` lists the Vercel site and `http://localhost:3000`. Configuration changes create a new revision.
 - **Cost control:** an Azure budget with email alerts on the subscription.
-- **Infrastructure as code:** [`infra/azure/main.bicep`](../infra/azure/main.bicep) defines the container app, its secret, ingress and scaling. `az deployment group what-if` previews changes before they are applied.
+- **Infrastructure as code:** [`infra/azure/main.bicep`](../infra/azure/main.bicep) defines the container app, its secret, ingress, health probes and scaling. `az deployment group what-if` against the live app reports no configuration drift.
 - **Region:** UAE North, one of the regions allowed by the Azure for Students policy.
 - **Website:** Vercel builds `web/` with `NEXT_PUBLIC_API_URL` pointing at the Container App. Browsers call the backend directly over HTTPS.
 - **State:** uploads, indexes and feedback live inside the container and are lost when it scales to zero or restarts. That is intended for a public demo; sample documents are always available.
