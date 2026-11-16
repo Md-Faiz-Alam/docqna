@@ -74,6 +74,11 @@ ENV APP_ENV=production \
     HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1
 
+# The commit this image was built from, shown in /info. Last, so a new commit
+# does not invalidate the cached layers above.
+ARG GIT_SHA=dev
+ENV BUILD_SHA=${GIT_SHA}
+
 EXPOSE 7860
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \

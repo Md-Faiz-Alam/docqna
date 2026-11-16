@@ -84,3 +84,31 @@ def test_real_answer_check_fails_on_a_bad_answer(
 
     with pytest.raises(SmokeTestFailure, match=message):
         smoke_test.check_real_answer("https://x")
+
+
+def test_wait_for_build_waits_until_the_new_commit_answers(monkeypatch: pytest.MonkeyPatch) -> None:
+    builds = iter(["old", "old", "new"])
+    seen: list[str] = []
+
+    def fake_call(method, url, **kwargs):
+        seen.append(url)
+        return 200, {}, {"build": next(builds)}
+
+    monkeypatch.setattr(smoke_test, "call", fake_call)
+    monkeypatch.setattr(smoke_test.time, "sleep", lambda _: None)
+
+    smoke_test.wait_for_build("https://x", "new", wait_seconds=60)
+
+    assert seen == ["https://x/info"] * 3
+
+
+def test_wait_for_build_fails_when_the_old_version_keeps_answering(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = iter(range(0, 1000, 10))
+    monkeypatch.setattr(smoke_test, "call", lambda *a, **k: (200, {}, {"build": "old"}))
+    monkeypatch.setattr(smoke_test.time, "sleep", lambda _: None)
+    monkeypatch.setattr(smoke_test.time, "monotonic", lambda: next(clock))
+
+    with pytest.raises(SmokeTestFailure, match="still reports build 'old'"):
+        smoke_test.wait_for_build("https://x", "new", wait_seconds=30)

@@ -255,15 +255,15 @@ The public cloud deployment is described in section 11.
 flowchart LR
     DEV[Push to main] --> CI[CI passes]
     CI -->|docker/cloud.Dockerfile| GHCR[(ghcr.io/md-faiz-alam/docqna-api:sha)]
-    GHCR -->|OIDC, deploy.sh| REV[New revision, 0% traffic,<br/>smoke test]
-    REV -->|pass: 100%| ACA[Azure Container Apps<br/>Consumption plan, UAE North]
+    GHCR -->|OIDC, deploy.sh| STG[Staging app,<br/>full smoke test]
+    STG -->|pass| ACA[Azure Container Apps<br/>Consumption plan, UAE North]
     USER[Browser] --> VC[Vercel: Next.js site]
     USER -->|HTTPS, CORS| ACA
     ACA --> GEM[Google Gemini API]
 ```
 
 - **Image:** `docker/cloud.Dockerfile` builds one self-contained backend with the embedding and reranker models baked in, so a cold start downloads nothing. It runs as UID 1000 and answers with Gemini, so no Ollama is needed. [`publish-image.yml`](../.github/workflows/publish-image.yml) pushes a per-commit tag to GitHub Container Registry, and moves `:latest` to it once it is live.
-- **Continuous deployment (blue/green):** `ci.yml` calls `publish-image.yml` only after every CI job has passed on `main`, and only when a backend file changed. [`deploy.sh`](../infra/azure/deploy.sh) creates a new revision at 0% traffic in multiple-revision mode, runs [`scripts/smoke_test.py`](../scripts/smoke_test.py) against that revision's own address (health, readiness, CORS, a refusal, one real cited and signed answer, the per-IP rate limit), and moves 100% of traffic to it only if every check passes. A failed revision is deactivated and users never reach it. The previous revision stays active at 0% for an instant rollback. GitHub signs in with OIDC (a federated credential scoped to the `production` environment), and the identity may change only the `docqna-rg` resource group. Setup and rollback: [infra/azure/README.md](../infra/azure/README.md).
+- **Continuous deployment (staging, then production):** `ci.yml` calls `publish-image.yml` only after every CI job has passed on `main`, and only when a backend file changed. [`deploy.sh`](../infra/azure/deploy.sh) deploys the image to the staging app `docqna-api-staging` and runs [`scripts/smoke_test.py`](../scripts/smoke_test.py) against it (health, readiness, CORS, a refusal, one real cited and signed answer, the per-IP rate limit), after `/info` reports the new commit. Only if every check passes does the same image go to production, which is checked again and rolled back to the previous image if that check fails. The Express environment allows one active revision per app, which rules out testing a new revision at 0% traffic next to the live one; the staging app takes that role. GitHub signs in with OIDC (a federated credential scoped to the `production` environment), and the identity may change only the `docqna-rg` resource group. Setup and rollback: [infra/azure/README.md](../infra/azure/README.md).
 - **Compute:** one Azure Container App in an Express environment, with 1 vCPU and 2 GiB of memory, external HTTPS ingress to port 7860, and an HTTP scale rule between 0 and 1 replicas. The app scales to zero when idle and fits inside the Consumption plan's monthly free grant. The website shows a "waking up" message while it starts.
 - **Secrets and configuration:** `GEMINI_API_KEY` is an Azure Container Apps **secret** referenced by an environment variable. `LLM_PROVIDER=gemini` comes from the image, and `CORS_ALLOWED_ORIGINS` lists the Vercel site and `http://localhost:3000`. Configuration changes create a new revision.
 - **Cost control:** an Azure budget with email alerts on the subscription.

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
 
     # Application
     app_env: str = "development"
+    # Commit the running image was built from (set by docker/cloud.Dockerfile).
+    # Shown in /info so a deploy can confirm which version answers.
+    build_sha: str = "dev"
 
     # Storage. All runtime state lives under data_dir unless overridden.
     data_dir: Path = PROJECT_ROOT / "data"

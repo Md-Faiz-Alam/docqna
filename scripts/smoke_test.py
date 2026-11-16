@@ -1,14 +1,16 @@
 """Smoke-test a running DocQ&A backend before it receives real traffic.
 
-The deploy script (infra/azure/deploy.sh) runs this against a new revision's
-own address while that revision still has 0% of the traffic. Only if every
-check passes does traffic move to it.
+The deploy script (infra/azure/deploy.sh) runs the full test against the
+staging app, and only if every check passes deploys the same image to
+production, which it then checks with --quick.
 
-    python scripts/smoke_test.py https://<revision-address> --origin https://docqna-lake.vercel.app
-    python scripts/smoke_test.py https://<app-address> --quick
+    python scripts/smoke_test.py https://<staging-address> --origin https://docqna-lake.vercel.app --expect-build <sha>
+    python scripts/smoke_test.py https://<production-address> --quick --expect-build <sha>
 
 Checks, in order:
-1. /health answers (waits for a cold start, up to --wait seconds)
+1. /health answers (waits for a cold start, up to --wait seconds); with
+   --expect-build, also waits until /info reports that commit, so the
+   checks never run against the previous version
 2. /ready: vector store, registry and LLM are reachable
 3. CORS: the website's origin may call the API (with --origin)
 4. a question in an empty session is refused without calling the LLM
@@ -93,6 +95,27 @@ def wait_for_health(base: str, wait_seconds: float) -> None:
             last = str(error)
         time.sleep(5)
     raise SmokeTestFailure(f"/health did not answer within {wait_seconds:.0f}s (last: {last})")
+
+
+def wait_for_build(base: str, expected: str, wait_seconds: float) -> None:
+    """Wait until /info reports the expected commit (the new revision is serving)."""
+
+    deadline = time.monotonic() + wait_seconds
+    seen = None
+    while time.monotonic() < deadline:
+        try:
+            status, _, payload = call("GET", f"{base}/info", timeout=30)
+            if status == 200 and isinstance(payload, dict):
+                seen = payload.get("build")
+                if seen == expected:
+                    print(f"ok    /info reports build {expected}")
+                    return
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            pass
+        time.sleep(5)
+    raise SmokeTestFailure(
+        f"/info still reports build {seen!r} after {wait_seconds:.0f}s, expected {expected!r}"
+    )
 
 
 def check_ready(base: str) -> None:
@@ -184,7 +207,7 @@ def main() -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "base_url", help="for example https://docqna-api--v704fd34.<env>.azurecontainerapps.io"
+        "base_url", help="for example https://docqna-api-staging.<env>.azurecontainerapps.io"
     )
     parser.add_argument("--origin", help="website origin whose CORS access is checked")
     parser.add_argument(
@@ -193,12 +216,17 @@ def main() -> int:
     parser.add_argument(
         "--quick", action="store_true", help="skip the LLM answer and rate-limit checks"
     )
+    parser.add_argument(
+        "--expect-build", help="commit SHA that /info must report before the checks run"
+    )
     args = parser.parse_args()
     base = args.base_url.rstrip("/")
 
     print(f"Smoke test: {base}")
     try:
         wait_for_health(base, args.wait)
+        if args.expect_build:
+            wait_for_build(base, args.expect_build, args.wait)
         check_ready(base)
         if args.origin:
             check_cors(base, args.origin)

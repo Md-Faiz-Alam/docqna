@@ -29,6 +29,8 @@ class InfoResponse(BaseModel):
 
     app: str
     version: str
+    # Commit the running image was built from ("dev" outside a built image).
+    build: str
     llm_provider: str
     llm_model: str
     # True when questions and retrieved passages are sent to a hosted LLM

@@ -2,7 +2,8 @@
 //
 // Describes the live container app: a public image from GitHub Container
 // Registry, 1 vCPU / 2 GiB, HTTPS ingress on port 7860, and HTTP scaling
-// between 0 and 1 replicas so it costs nothing while idle.
+// between 0 and 1 replicas so it costs nothing while idle. The same template
+// creates the staging app (appName=docqna-api-staging); see README.md.
 //
 // The Container Apps environment already exists and is referenced, not
 // created. Deploy steps: infra/azure/README.md.
@@ -45,10 +46,9 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
     managedEnvironmentId: environment.id
     workloadProfileName: 'Consumption'
     configuration: {
-      // Multiple: the deploy pipeline (infra/azure/deploy.sh) starts each new
-      // revision at 0% traffic, smoke-tests it, then moves traffic to it. The
-      // pipeline sets revision traffic weights; this template does not.
-      activeRevisionsMode: 'Multiple'
+      // Express environments allow one active revision per app. New versions
+      // are tested on a separate staging app instead (infra/azure/deploy.sh).
+      activeRevisionsMode: 'Single'
       ingress: {
         external: true
         targetPort: targetPort

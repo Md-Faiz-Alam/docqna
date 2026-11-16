@@ -5,9 +5,11 @@ name: Publish and deploy backend
 # 1. changes: skip everything when no backend file changed in this push.
 # 2. publish: build docker/cloud.Dockerfile and push it to GitHub Container
 #    Registry, tagged with the commit SHA.
-# 3. deploy:  blue/green deploy to Azure Container Apps (infra/azure/deploy.sh):
-#    new revision at 0% traffic, smoke test at its own address, then 100%.
-#    Signs in to Azure with OIDC, so no Azure password is stored in GitHub.
+# 3. deploy:  staging first, then production (infra/azure/deploy.sh): deploy to
+#    the staging app, run the full smoke test there, and only then deploy the
+#    same image to production, check it, and roll back automatically if that
+#    check fails. Signs in to Azure with OIDC, so no Azure password is stored
+#    in GitHub.
 #    Without the AZURE_* secrets the deploy is skipped and only the image is
 #    published. Setup: infra/azure/README.md.
 # 4. Move the :latest tag to the image only once it is live (or when the
@@ -78,6 +80,8 @@ jobs:
           file: docker/cloud.Dockerfile
           push: true
           tags: ${{ env.IMAGE }}:${{ github.sha }}
+          # Reported by /info, so the smoke test can tell the new version answers.
+          build-args: GIT_SHA=${{ github.sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -87,7 +91,7 @@ jobs:
           cache-to: type=gha,scope=cloud,mode=max
 
   deploy:
-    name: Blue/green deploy to Azure
+    name: Deploy to Azure (staging, then production)
     needs: publish
     runs-on: ubuntu-latest
     # Shows each deployment on GitHub; required reviewers can be added to
@@ -129,7 +133,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy, smoke-test, switch traffic
+      - name: Deploy to staging, smoke-test, deploy to production
         if: steps.config.outputs.enabled == 'true'
         # `shell: bash` adds pipefail, so a failed deploy is not hidden by `tee`.
         shell: bash

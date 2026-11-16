@@ -103,7 +103,9 @@ def test_default_settings_allow_no_cross_origin_calls() -> None:
 def test_info_describes_deployment_without_secrets(
     monkeypatch: pytest.MonkeyPatch, client: TestClient
 ) -> None:
-    settings = make_settings(llm_provider="gemini", gemini_api_key="super-secret-key")
+    settings = make_settings(
+        llm_provider="gemini", gemini_api_key="super-secret-key", build_sha="8c51115"
+    )
     monkeypatch.setattr("docqna.api.routes.system.get_settings", lambda: settings)
 
     response = client.get("/info")
@@ -111,6 +113,7 @@ def test_info_describes_deployment_without_secrets(
     assert response.status_code == 200
     body = response.json()
     assert body["llm_provider"] == "gemini"
+    assert body["build"] == "8c51115"
     assert body["llm_model"] == settings.gemini_model
     assert body["external_llm"] is True
     assert body["sample_documents"] == [p.name for p in sample_document_paths(SAMPLES_DIR)]

@@ -60,8 +60,8 @@ The live demo runs entirely in the cloud: the backend on **Microsoft Azure**, th
 flowchart LR
     GH[Push to main] --> CI[CI: tests,<br/>benchmark, Docker]
     CI -->|all green| CR[Image tagged with<br/>commit SHA]
-    CR --> BG[New revision at 0% traffic<br/>+ smoke test]
-    BG -->|pass| ACA[Azure Container Apps<br/>FastAPI backend]
+    CR --> ST[Staging app<br/>+ full smoke test]
+    ST -->|pass| ACA[Azure Container Apps<br/>FastAPI backend]
     V[Vercel<br/>Next.js website] -->|HTTPS + CORS| ACA
     ACA --> GM[Google Gemini]
 ```
@@ -70,7 +70,7 @@ flowchart LR
 - The Gemini API key is stored as an **Azure secret** and passed to the container as an environment variable, never in code. Allowed website origins are set through `CORS_ALLOWED_ORIGINS`.
 - An **Azure budget with email alerts** guards against unexpected spend.
 - The Azure setup is also defined as **infrastructure as code** in [Bicep](infra/azure/main.bicep), checked against the live app with `what-if` (no drift), plus a deploy guide in [infra/azure](infra/azure/README.md).
-- **Continuous deployment, blue/green:** after CI passes on `main`, [publish-image.yml](.github/workflows/publish-image.yml) builds the image tagged with its commit SHA and deploys it as a new revision at 0% traffic. A [smoke test](scripts/smoke_test.py) checks health, CORS, a real cited answer and the rate limit at that revision's own address; only then does it get 100% of traffic. A failed check leaves users on the old version, and the previous revision stays ready for a one-command rollback. GitHub signs in to Azure with OIDC, so no Azure password is stored. Vercel redeploys the website on every push.
+- **Continuous deployment through staging:** after CI passes on `main`, [publish-image.yml](.github/workflows/publish-image.yml) builds the image tagged with its commit SHA and deploys it to a staging app first. A [smoke test](scripts/smoke_test.py) checks health, CORS, a real cited answer and the rate limit there; only then does the same image go to production, which is checked again and rolled back automatically if the check fails. Users never reach a version that failed the smoke test. GitHub signs in to Azure with OIDC, so no Azure password is stored. Vercel redeploys the website on every push.
 - The backend's interactive API reference is public: [OpenAPI docs](https://docqna-api.lemonground-08652996.uaenorth.azurecontainerapps.io/docs).
 
 Setup details: [docs/running.md](docs/running.md#cloud-container-azure-container-apps-or-any-docker-host).

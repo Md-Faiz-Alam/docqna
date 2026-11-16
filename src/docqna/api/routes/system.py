@@ -48,6 +48,7 @@ def info() -> InfoResponse:
     return InfoResponse(
         app=APP_NAME,
         version=APP_VERSION,
+        build=settings.build_sha,
         llm_provider=settings.llm_provider,
         llm_model=settings.llm_model,
         external_llm=settings.llm_provider != "ollama",
